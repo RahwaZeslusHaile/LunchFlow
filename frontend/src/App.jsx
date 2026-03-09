@@ -1,7 +1,7 @@
 function App() {
   return (
     <main className="app">
-      <h1>🍱 LunchFlow</h1>
+      <h1>🍱 CYF Lunch Organiser</h1>
       <p>CYF Lunch Order Management System</p>
     </main>
   );
