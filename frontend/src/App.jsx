@@ -7,6 +7,7 @@ function App() {
         <button>Sign up</button>
         <button>Log in</button>
       </div>
+      <p>Access is limited to authorised CYF volunteers.</p>
     </main>
   );
 }
