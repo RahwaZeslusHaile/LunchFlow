@@ -1,6 +1,6 @@
 function LandingPage() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 gap-6 p-4">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 gap-6 p-4">
       <div className="max-w-md p-8 bg-white border rounded-xl shadow-md space-y-6 text-center">
         <h1 className="text-4xl font-bold">🍱 CYF Lunch Organiser</h1>
         <p className="text-gray-600 text-center max-w-md">
