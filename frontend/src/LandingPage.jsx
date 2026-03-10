@@ -6,8 +6,8 @@ function LandingPage() {
         <p className="text-gray-600 text-center max-w-md">
           Manage weekly lunch orders for CYF London classes
         </p>
-        <div className="homepage-buttons">
-          <button>Sign up</button>
+        <div className="flex justify-center gap-4">
+          <button >Sign up</button>
           <button>Log in</button>
         </div>
         <p>Access is limited to authorised CYF volunteers.</p>
