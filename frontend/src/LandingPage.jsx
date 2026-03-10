@@ -14,7 +14,9 @@ function LandingPage() {
             Log in
           </button>
         </div>
-        <p>Access is limited to authorised CYF volunteers.</p>
+        <p className="text-sm text-gray-500 border rounded-lg p-3">
+          Access is limited to authorised CYF volunteers.
+        </p>
       </div>
     </main>
   );
