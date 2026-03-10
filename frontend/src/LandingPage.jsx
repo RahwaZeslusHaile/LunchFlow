@@ -7,10 +7,10 @@ function LandingPage() {
           Manage weekly lunch orders for CYF London classes
         </p>
         <div className="flex justify-center gap-4">
-          <button className="px-6 py-2 border rounded-lg hover:bg-gray-100 transition">
+          <button className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
             Sign up
           </button>
-          <button className="px-6 py-2 border rounded-lg hover:bg-gray-100 transition">
+          <button className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
             Log in
           </button>
         </div>
