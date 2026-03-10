@@ -7,8 +7,12 @@ function LandingPage() {
           Manage weekly lunch orders for CYF London classes
         </p>
         <div className="flex justify-center gap-4">
-          <button >Sign up</button>
-          <button>Log in</button>
+          <button className="px-6 py-2 border rounded-lg hover:bg-gray-100 transition">
+            Sign up
+          </button>
+          <button className="px-6 py-2 border rounded-lg hover:bg-gray-100 transition">
+            Log in
+          </button>
         </div>
         <p>Access is limited to authorised CYF volunteers.</p>
       </div>
