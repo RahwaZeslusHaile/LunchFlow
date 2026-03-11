@@ -25,6 +25,8 @@ function SignupForm() {
           return;
         }
 
+        setError("");
+
     }
 
     return (
