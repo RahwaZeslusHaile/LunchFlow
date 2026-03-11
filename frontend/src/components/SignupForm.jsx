@@ -9,6 +9,12 @@ function SignupForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!userName.trim()) {
+            setError("Username is required");
+            return;
+        }
+        
     }
 
     return (
