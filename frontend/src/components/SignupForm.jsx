@@ -17,4 +17,4 @@ function SignupForm() {
 
 }
 
-export default SignupFrom;
+export default SignupForm;
