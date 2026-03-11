@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function LandingPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 gap-6 p-4">
@@ -7,12 +9,12 @@ function LandingPage() {
           Manage weekly lunch orders for CYF London classes
         </p>
         <div className="flex justify-center gap-4">
-          <button className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
+          <Link  to="/signup" className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
             Sign up
-          </button>
-          <button className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
+          </Link>
+          <Link  to="/login" className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition">
             Log in
-          </button>
+          </Link>
         </div>
         <p className="text-sm text-gray-500 border rounded-lg p-3">
           Access is limited to authorised CYF volunteers.

@@ -1,0 +1,49 @@
+import { useState } from "react";
+
+function LoginForm() {
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!userName.trim()) {
+      setError("Username is required");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Password is required");
+      return;
+    }
+
+    setError("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Log In</h2>
+      <input
+        type="email"
+        value={userName}
+        placeholder="Email"
+        onChange={(e) => setUserName(e.target.value)}
+        required
+      ></input>
+      <input
+        type="password"
+        value={password}
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      ></input>
+      {error && <p className="text-red-500">{error}</p>}
+      <button type="submit">Log In</button>
+    </form>
+  );
+}
+
+export default LoginForm;
