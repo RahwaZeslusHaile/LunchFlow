@@ -5,6 +5,8 @@ function SignupForm() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    const [error, setError] = useState("");
+
     return (
       <form>
         <h2>Sign Up</h2>
