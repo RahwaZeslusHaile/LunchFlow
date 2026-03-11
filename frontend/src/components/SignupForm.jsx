@@ -8,7 +8,7 @@ function SignupForm() {
     const [error, setError] = useState("");
 
     return (
-      <form>
+      <form onSubmit={handleSubmit}>
         <h2>Sign Up</h2>
         <input type="email" value={userName} placeholder="Email" onChange={(e) => setUserName(e.target.value)} required></input>
         <input type="password" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} required></input>
