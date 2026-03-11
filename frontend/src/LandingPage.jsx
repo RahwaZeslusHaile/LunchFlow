@@ -1,3 +1,7 @@
+import { useState } from "react";
+import SignupForm from "./components/SignupForm";
+import LoginForm from "./components/LoginForm";
+
 function LandingPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 gap-6 p-4">
