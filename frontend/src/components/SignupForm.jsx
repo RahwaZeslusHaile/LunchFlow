@@ -5,6 +5,7 @@ function SignupForm() {
         <input type="email" placeholder="Email" required></input>
         <input type="password" placeholder="Password" required></input>
         <input type="password" placeholder="Confirm Password" required></input>
+        <button type="submit">Sign Up</button>
       </form>
     );
 
