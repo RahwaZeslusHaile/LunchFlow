@@ -10,7 +10,7 @@ function SignupForm() {
         <h2>Sign Up</h2>
         <input type="email" value={userName} placeholder="Email" onChange={(e) => setUserName(e.target.value)} required></input>
         <input type="password" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} required></input>
-        <input type="password" value={confirmPassword} placeholder="Confirm Password" onChange={(e) => setConfirmPasswrd(e.target.value)} required></input>
+        <input type="password" value={confirmPassword} placeholder="Confirm Password" onChange={(e) => setConfirmPassward(e.target.value)} required></input>
         <button type="submit">Sign Up</button>
       </form>
     );
