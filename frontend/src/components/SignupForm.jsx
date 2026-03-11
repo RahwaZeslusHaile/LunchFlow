@@ -14,7 +14,17 @@ function SignupForm() {
             setError("Username is required");
             return;
         }
-        
+
+        if (!password.trim()) {
+          setError("Password is required");
+          return;
+        }
+
+        if (password != confirmPassword) {
+          setError("Passwords do not match");
+          return;
+        }
+
     }
 
     return (
