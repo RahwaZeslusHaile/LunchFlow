@@ -7,6 +7,10 @@ function SignupForm() {
 
     const [error, setError] = useState("");
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    }
+
     return (
       <form onSubmit={handleSubmit}>
         <h2>Sign Up</h2>
