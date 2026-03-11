@@ -35,6 +35,7 @@ function SignupForm() {
         <input type="email" value={userName} placeholder="Email" onChange={(e) => setUserName(e.target.value)} required></input>
         <input type="password" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} required></input>
         <input type="password" value={confirmPassword} placeholder="Confirm Password" onChange={(e) => setConfirmPassward(e.target.value)} required></input>
+        {error && <p className="text-red-500">{error}</p>}
         <button type="submit">Sign Up</button>
       </form>
     );
