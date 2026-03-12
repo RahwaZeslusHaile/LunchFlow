@@ -3,7 +3,7 @@ import { useState } from "react";
 function SignupForm() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
 
     const [error, setError] = useState("");
 
@@ -20,7 +20,7 @@ function SignupForm() {
           return;
         }
 
-        if (password !== confirmPassword) {
+        if (password !== confirmPass) {
           setError("Passwords do not match");
           return;
         }
@@ -34,7 +34,7 @@ function SignupForm() {
         <h2>Sign Up</h2>
         <input type="email" value={userName} placeholder="Email" onChange={(e) => setUserName(e.target.value)} required></input>
         <input type="password" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} required></input>
-        <input type="password" value={confirmPassword} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} required></input>
+        <input type="password" value={confirmPass} placeholder="Confirm Password" onChange={(e) => setConfirmPass(e.target.value)} required></input>
         {error && <p className="text-red-500">{error}</p>}
         <button type="submit">Sign Up</button>
       </form>
