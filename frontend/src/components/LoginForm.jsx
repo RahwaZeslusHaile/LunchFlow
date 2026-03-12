@@ -7,7 +7,7 @@ function LoginForm() {
 
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!userName.trim()) {
@@ -20,7 +20,35 @@ function LoginForm() {
       return;
     }
 
+    console.log("Sending login request to backend:", { userName, password});
+
     setError("");
+
+    try {
+      const response = await fetch(
+        "http://localhost:4000/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userName, password}),
+        });
+
+        const data = await response.json();
+        console.log("Response from backend:", data);
+
+        if (!response.ok) {
+          setError(data);
+          return;
+        }
+
+        alert("login successful");
+
+    } catch (err) {
+      console.error("Server-side or Network error:", err);
+      setError("Server-side error");
+
+    }
+
   };
 
   return (
