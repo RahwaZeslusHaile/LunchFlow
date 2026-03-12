@@ -49,10 +49,12 @@ function SignupForm() {
             alert("Signup successful");
 
         } catch (err) {
+          console.error("Server-side or Network error:", err);
+          setError("Server-side error");
 
         }
 
-    }
+    };
 
     return (
       <form onSubmit={handleSubmit}>
