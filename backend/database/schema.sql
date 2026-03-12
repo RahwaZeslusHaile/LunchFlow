@@ -12,3 +12,12 @@ CREATE TABLE account (
 
 INSERT INTO roles (position) VALUES ('Admin');
 INSERT INTO roles (position) VALUES ('Volunteer');
+
+CREATE TABLE invites (
+  invite_id  SERIAL PRIMARY KEY,
+  email      TEXT    NOT NULL,
+  token      TEXT    NOT NULL UNIQUE,
+  used       BOOLEAN NOT NULL DEFAULT FALSE,
+  expires_at TIMESTAMP NOT NULL,
+  created_by INTEGER REFERENCES account(account_id)
+);
