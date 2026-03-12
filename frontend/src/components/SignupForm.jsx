@@ -25,6 +25,8 @@ function SignupForm() {
           return;
         }
 
+        console.log("Sending signup request to backend:", { userName, password, confirmPass });
+
         setError("");
 
     }
