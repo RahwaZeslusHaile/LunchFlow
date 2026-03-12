@@ -38,6 +38,9 @@ function SignupForm() {
               body: JSON.stringify({ userName, password, confirmPass }),
             });
 
+            const data = await response.json();
+            console.log("Response from backend:", data);
+
         } catch (err) {
 
         }
