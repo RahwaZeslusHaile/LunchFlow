@@ -41,6 +41,13 @@ function SignupForm() {
             const data = await response.json();
             console.log("Response from backend:", data);
 
+            if (!response.ok) {
+              setError(data);
+              return;
+            }
+
+            alert("Signup successful");
+
         } catch (err) {
 
         }
