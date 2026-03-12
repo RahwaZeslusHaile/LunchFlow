@@ -42,7 +42,7 @@ function SignupForm() {
             console.log("Response from backend:", data);
 
             if (!response.ok) {
-              setError(data);
+              setError(data.message);
               return;
             }
 
