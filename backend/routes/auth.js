@@ -1,5 +1,5 @@
 import { Router } from "express";
-import pool from "../db.js";
+import pool from "..models/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
