@@ -16,4 +16,17 @@ const pool = new Pool({
   ssl: useSsl ? { rejectUnauthorized: false } : false
 });
 
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
+  process.exit(-1);
+});
+
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("❌ Database connection error:", err.message);
+  } else {
+    console.log("✅ Successfully connected to the database");
+  }
+});
+
 export default pool;
