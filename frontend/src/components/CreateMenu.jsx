@@ -9,27 +9,53 @@ function CreateMenu() {
     { id: 2, name: "bread", diet: "VEG" }
   ]);
 
-  const addItem = (selectedDiet) => {
+  const addItem = async (selectedDiet) => {
     if (!input.trim()) { setError("Food name is required"); return; }
     if (!selectedDiet.trim()) { setError("Please select a diet"); return; }
 
-    const lastId = list.length > 0
-      ? list[list.length - 1].id
-      : 0;
+  try {
+    const res = await fetch("/api/auth/createMenu", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: input,
+        diet: selectedDiet
+      })
+    });
 
-    const newId = lastId + 1;
+    const data = await res.json();
 
-    setList([
-      ...list,
-      { id: newId, name: input, diet: selectedDiet }
-    ]);
+    setList([...list, data]);
+
+  } catch (err) {
+    const tempItem = {
+      id: Date.now(),
+      name: input,
+      diet: selectedDiet
+    };
+
+    setList([...list, tempItem]);
+  }
 
     setInput("");
     setDiet("");  
   };
 
-  const removeItem = (id) => {
-    if (confirm("Are you sure you want to delete this item?")) {
+  const removeItem = async (id) => {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+
+    try {
+      await fetch(`/api/menu/${id}`, {
+        method: "DELETE"
+      });
+
+      setList(list.filter(item => item.id !== id));
+
+    } catch (err) {
+      console.log("Delete failed");
+
       setList(list.filter(item => item.id !== id));
     }
   };
