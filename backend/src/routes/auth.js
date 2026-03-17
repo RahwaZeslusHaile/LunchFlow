@@ -4,7 +4,6 @@ import  bcrypt from "bcrypt";
 
 const router = Router();
 
-// Helper functions
 
 async function findUserByEmail(email) {
   const result = await pool.query(
@@ -21,13 +20,12 @@ async function createUser(email, passwordHash, role_id) {
   );
 }
 
-// Signup EndPoint
 
 router.post("/signup", async (req, res) => {
   try {
 
   const { userName, password, confirmPass } = req.body;
-  const role_id = 2; // default Volunteer
+  const role_id = 2; 
 
   if (!userName || !userName.trim()) {
     return res.status(400).json("Username is required");
@@ -52,12 +50,11 @@ router.post("/signup", async (req, res) => {
       message: "User created successfully"
     });
   } catch (err) {
-    console.error(err);
+    console.error("Signup Auth Error:", err);
     res.status(500).json("Database error");
   }
 });
 
-// Login EndPoint
 
 router.post("/login", async (req, res) => {
   try {
@@ -90,7 +87,7 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("Login Auth Error:", err);
     res.status(500).json("Database error");
   }
 });
