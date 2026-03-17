@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 
+
 function LandingPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 gap-6 p-4">
@@ -29,6 +30,7 @@ function LandingPage() {
           Access is limited to authorised CYF volunteers.
         </p>
       </div>
+  
     </main>
   );
 }
