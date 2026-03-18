@@ -48,7 +48,7 @@ INSERT INTO dietary_restrictions (name) VALUES ('Halal');
 INSERT INTO dietary_restrictions (name) VALUES ('N/A');
 
 Create TABLE menu_items (
-  id SERIAL PRIMARY KEY,
+  menu_item_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   category_id INTEGER REFERENCES menu_categories(category_id) ON DELETE CASCADE,
   diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id)
