@@ -71,4 +71,9 @@ CREATE TABLE leftover_food (
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(id),
   quantity INTEGER NOT NULL DEFAULT 0,
 
-)
+);
+
+INSERT INTO leftover_food (menu_item_id, quantity, notes) VALUES
+(1, 10, 'Tortilla Wraps left from morning prep'),
+(3, 7, 'Salad Bowls leftover from yesterday lunch'),
+(4, 3, 'Coca-Cola cans leftover');
