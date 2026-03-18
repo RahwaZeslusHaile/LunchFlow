@@ -70,7 +70,7 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(id) ON DELETE CASCADE,
-  quantity INTEGER NOT NULL DEFAULT 0,
+  quantity INTEGER NOT NULL CHECK (quantity >= 0),
   notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
