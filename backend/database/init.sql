@@ -33,3 +33,7 @@ Create TABLE dietary_restrictions (
   name TEXT NOT NULL UNIQUE
 
 )
+
+INSERT INTO dietary_restrictions (name) VALUES ('Vegetarian');
+INSERT INTO dietary_restrictions (name) VALUES ('Non-Vegetarian');
+INSERT INTO dietary_restrictions (name) VALUES ('Halal');
