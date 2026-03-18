@@ -8,13 +8,7 @@ function LandingPage() {
         <p className="text-gray-600 text-center max-w-md">
           Manage weekly lunch orders for CYF London classes
         </p>
-        <div className="flex justify-center gap-4">
-          <Link
-            to="/signup"
-            className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition"
-          >
-            Sign up (Invite)
-          </Link>
+        <div className="flex justify-center">
           <Link
             to="/login"
             className="px-6 py-2 border rounded-lg shadow-sm hover:bg-gray-100 hover:shadow transition"
