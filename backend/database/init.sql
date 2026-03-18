@@ -45,6 +45,7 @@ Create TABLE dietary_restrictions (
 INSERT INTO dietary_restrictions (name) VALUES ('Vegetarian');
 INSERT INTO dietary_restrictions (name) VALUES ('Non-Vegetarian');
 INSERT INTO dietary_restrictions (name) VALUES ('Halal');
+INSERT INTO dietary_restrictions (name) VALUES ('N/A');
 
 Create TABLE menu_items (
   id SERIAL PRIMARY KEY,
@@ -57,11 +58,11 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 ('Tortilla Wraps', 1, 1),
 ('Falafels', 2, 1),
 ('Salad Bowl', 2, 1),
-('Coca-Cola', 3, 2),
-('Water', 3, 1),
-('Coffee', 4, 2),
-('Green Tea', 4, 2),
-('Paper Towels', 5, 1),
+('Coca-Cola', 3, 4),
+('Water', 3, 4),
+('Coffee', 4, 4),
+('Green Tea', 4, 4),
+('Paper Towels', 5, 4),
 ('Crisps', 6, 1),
 ('Bananas', 6, 1),
 ('Biscuits', 6, 1);
