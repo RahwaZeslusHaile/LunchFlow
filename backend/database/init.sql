@@ -28,6 +28,15 @@ Create TABLE menu_categories (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+INSERT INTO menu_categories (name) VALUES
+('Bakery'),
+('Chilled Meals'),
+('Drinks'),
+('Food Essentials'),
+('Non-Food Essentials'),
+('Snacks');
+
+
 Create TABLE dietary_restrictions (
   diet_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
