@@ -71,7 +71,7 @@ CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(id) ON DELETE CASCADE,
   quantity INTEGER NOT NULL DEFAULT 0,
-  notes TEXT
+  notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
