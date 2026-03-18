@@ -28,3 +28,8 @@ Create TABLE menu_categories (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+Create TABLE dietary_restrictions (
+  diet_id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+
+)
