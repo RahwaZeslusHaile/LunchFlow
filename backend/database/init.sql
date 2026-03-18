@@ -52,3 +52,17 @@ Create TABLE menu_items (
   category_id INTEGER REFERENCES menu_categories(category_id),
   diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id)
 );
+
+INSERT INTO menu_items (name, category_id, diet_id) VALUES
+('Tortilla Wraps', 1, 1),
+('Falafels', 2, 1),
+('Salad Bowl', 2, 1),
+('Coca-Cola', 3, 2),
+('Water', 3, 1),
+('Coffee', 4, 2),
+('Green Tea', 4, 2),
+('Paper Towels', 5, 1),
+('Crisps', 6, 1),
+('Bananas', 6, 1),
+('Biscuits', 6, 1);
+
