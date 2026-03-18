@@ -70,7 +70,7 @@ CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(id),
   quantity INTEGER NOT NULL DEFAULT 0,
-
+  notes TEXT
 );
 
 INSERT INTO leftover_food (menu_item_id, quantity, notes) VALUES
