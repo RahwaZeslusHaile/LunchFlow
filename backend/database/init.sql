@@ -31,9 +31,15 @@ Create TABLE menu_categories (
 Create TABLE dietary_restrictions (
   diet_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
-
-)
+);
 
 INSERT INTO dietary_restrictions (name) VALUES ('Vegetarian');
 INSERT INTO dietary_restrictions (name) VALUES ('Non-Vegetarian');
 INSERT INTO dietary_restrictions (name) VALUES ('Halal');
+
+Create TABLE menu_items (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  category_id INTEGER REFERENCES menu_categories(category_id),
+  diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id)
+);
