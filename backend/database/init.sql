@@ -66,3 +66,9 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 ('Bananas', 6, 1),
 ('Biscuits', 6, 1);
 
+CREATE TABLE leftover_food (
+  leftover_id SERIAL PRIMARY KEY,
+  menu_item_id INTEGER NOT NULL REFERENCES menu_items(id),
+  quantity INTEGER NOT NULL DEFAULT 0,
+
+)
