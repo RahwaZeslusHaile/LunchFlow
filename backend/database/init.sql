@@ -21,3 +21,10 @@ CREATE TABLE invites (
   expires_at TIMESTAMP NOT NULL,
   created_by INTEGER REFERENCES account(account_id)
 );
+
+Create TABLE menu_categories (
+  category_id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
