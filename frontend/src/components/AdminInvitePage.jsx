@@ -62,6 +62,13 @@ function AdminInvitePage() {
     }
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (error) {
+      setError("");
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#f4f1ea] to-[#e5e7eb] p-3 md:p-6">
       <div
@@ -120,7 +127,7 @@ function AdminInvitePage() {
                   type="email"
                   value={email}
                   placeholder="volunteer@codeyourfuture.io"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   required
                   className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
                 />
