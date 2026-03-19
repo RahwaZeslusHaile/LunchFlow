@@ -85,3 +85,10 @@ Create TABLE classes (
   class_id SERIAL PRIMARY KEY,
   name TEXT Not Null UNIQUE
 );
+
+INSERT INTO classes (name) VALUES
+('ITD'),
+('ITP'),
+('Piscine'),
+('SDC'),
+('Launch');
