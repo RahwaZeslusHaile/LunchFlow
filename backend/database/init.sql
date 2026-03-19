@@ -67,6 +67,20 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 ('Bananas', 6, 1),
 ('Biscuits', 6, 1);
 
+
+Create TABLE classes (
+  class_id SERIAL PRIMARY KEY,
+  name TEXT Not Null UNIQUE
+);
+
+INSERT INTO classes (name) VALUES
+('ITD'),
+('ITP'),
+('Piscine'),
+('SDC'),
+('Launch');
+
+
 CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
@@ -81,18 +95,6 @@ INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
 (3, 2, 7, 'Salad Bowls leftover from yesterday lunch'),
 (4, 3, 3, 'Coca-Cola cans leftover');
 
-
-Create TABLE classes (
-  class_id SERIAL PRIMARY KEY,
-  name TEXT Not Null UNIQUE
-);
-
-INSERT INTO classes (name) VALUES
-('ITD'),
-('ITP'),
-('Piscine'),
-('SDC'),
-('Launch');
 
 
 Create TABLE attendance (
