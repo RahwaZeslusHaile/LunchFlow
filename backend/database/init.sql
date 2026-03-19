@@ -79,3 +79,9 @@ INSERT INTO leftover_food (menu_item_id, quantity, notes) VALUES
 (1, 10, 'Tortilla Wraps left from morning prep'),
 (3, 7, 'Salad Bowls leftover from yesterday lunch'),
 (4, 3, 'Coca-Cola cans leftover');
+
+
+Create TABLE classes (
+  class_id SERIAL PRIMARY KEY,
+  name TEXT Not Null UNIQUE
+);
