@@ -99,6 +99,14 @@ Create TABLE attendance (
   class_id INTEGER NOT NULL REFERENCES classes(class_id),
   session_date DATE NOT NULL,
   trainee_count INTEGER NOT NULL CHECK (trainee_count >= 0),
-  Volunteer INTEGER NOT NULL CHECK (trainee_count >= 0),
-  created_at TIMESTAMP DEFAULT NOW(),
+  volunteer_count INTEGER NOT NULL CHECK (volunteer_count >= 0),
+  created_at TIMESTAMP DEFAULT NOW()
 );
+
+
+INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count) VALUES
+(1, '21/03/2026', 33, 3),
+(2, '21/03/2026', 23, 2),
+(3, '21/03/2026', 11, 4),
+(4, '21/03/2026', 15, 3),
+(5, '21/03/2026', 7, 2),
