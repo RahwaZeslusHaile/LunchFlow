@@ -4,6 +4,8 @@ import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
 import AdminInvitePage from "./components/AdminInvitePage";
 import VolunteerDashboard from "./components/VolunteerDashboard";
+import AttendanceSummary from "./components/AttendanceSummary";
+
 
 function App() {
   return (
@@ -13,6 +15,7 @@ function App() {
       <Route path="/login" element={<LoginForm />} />
       <Route path="/admin" element={<AdminInvitePage />} />
       <Route path="/volunteer" element={<VolunteerDashboard />} />
+      <Route path="/attendance" element={<AttendanceSummary />} />
     </Routes>
   );
 }
