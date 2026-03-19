@@ -112,4 +112,4 @@ INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count) 
 (2, '2026-03-21', 23, 2),
 (3, '2026-03-21', 11, 4),
 (4, '2026-03-21', 15, 3),
-(5, '2026-03-21', 7, 2),
+(5, '2026-03-21', 7, 2);
