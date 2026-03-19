@@ -92,3 +92,13 @@ INSERT INTO classes (name) VALUES
 ('Piscine'),
 ('SDC'),
 ('Launch');
+
+
+Create TABLE attendance (
+  attendance_id SERIAL PRIMARY KEY,
+  class_id INTEGER NOT NULL REFERENCES classes(class_id),
+  session_date DATE NOT NULL,
+  trainee_count INTEGER NOT NULL CHECK (trainee_count >= 0),
+  Volunteer INTEGER NOT NULL CHECK (trainee_count >= 0),
+  created_at TIMESTAMP DEFAULT NOW(),
+);
