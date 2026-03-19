@@ -70,15 +70,16 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
+  class_id INTEGER NOT NULL REFERENCES classes(class_id),
   quantity INTEGER NOT NULL CHECK (quantity >= 0),
   notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
-INSERT INTO leftover_food (menu_item_id, quantity, notes) VALUES
-(1, 10, 'Tortilla Wraps left from morning prep'),
-(3, 7, 'Salad Bowls leftover from yesterday lunch'),
-(4, 3, 'Coca-Cola cans leftover');
+INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
+(1, 1, 10, 'Tortilla Wraps left from morning prep'),
+(3, 2, 7, 'Salad Bowls leftover from yesterday lunch'),
+(4, 3, 3, 'Coca-Cola cans leftover');
 
 
 Create TABLE classes (
