@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import OrderManagement from "./OrderManagement";
+// import AttendanceSummary from "./AttendanceSummary";
+// import LeftoverManagement from "./LeftoverManagement";
+// import CreateMenu from "./CreateMenu";
 
 function AdminInvitePage() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -68,8 +72,15 @@ function AdminInvitePage() {
       setError("");
     }
   };
-
+const getBtnClass = (tab) =>
+  `px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm
+   ${
+     activeTab === tab
+       ? "bg-slate-900 text-white scale-105"
+       : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 hover:scale-105"
+   }`;
   return (
+    
     <main className="min-h-screen bg-gradient-to-b from-[#f4f1ea] to-[#e5e7eb] p-3 md:p-6">
       <div
         className="mx-auto w-full max-w-2xl min-h-[85vh] rounded-[2rem] bg-[#f9fafb] p-5 md:p-6 shadow-[0_20px_40px_rgba(15,23,42,0.12)]"
@@ -112,6 +123,32 @@ function AdminInvitePage() {
             </button>
           </div>
         </header>
+        {/* 🔘 BUTTONS */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <button onClick={() => setActiveTab("OrderManagement")} className={getBtnClass("OrderManagement")}>
+            Order Management
+          </button>
+
+          <button onClick={() => setActiveTab("AttendanceSummary")} className={getBtnClass("AttendanceSummary")}>
+            Attendance
+          </button>
+
+          <button onClick={() => setActiveTab("LeftoverManagement")} className={getBtnClass("LeftoverManagement")}>
+            Leftover
+          </button>
+
+          <button onClick={() => setActiveTab("CreateMenu")} className={getBtnClass("CreateMenu")}>
+            Create Menu
+          </button>
+        </div>
+
+          {/* 📦 COMPONENT DISPLAY */}
+          <div className="mt-6">
+            {activeTab === "OrderManagement" && <OrderManagement />}
+            {activeTab === "AttendanceSummary" && <AttendanceSummary />}
+            {activeTab === "LeftoverManagement" && <LeftoverManagement />}
+            {activeTab === "CreateMenu" && <CreateMenu />}
+          </div>
 
         {activeTab === "notifications" && (
           <section className="mt-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
