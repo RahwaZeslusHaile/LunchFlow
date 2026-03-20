@@ -14,7 +14,9 @@ function App() {
       <Route path="/signup" element={<SignupForm />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/admin" element={<AdminInvitePage />} />
+      <Route path="/volunteer" element={<VolunteerDashboard />} />
       <Route path="/Order" element={<OrderManagement />} />
+
     </Routes>
   );
 }
