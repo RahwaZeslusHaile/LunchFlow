@@ -84,7 +84,7 @@ function CreateMenu() {
     }
 
     const payload = {
-      name: input,
+      name: input.trim(),
       category_id: Number(selectedCategory),
       diet_id: Number(selectedDiet)
     };
@@ -95,7 +95,7 @@ function CreateMenu() {
         ...payload
       };
 
-      setList([...list, tempItem]);
+      setList(prev => [...prev, tempItem]);
       resetForm();
       return;
     }
@@ -113,7 +113,7 @@ function CreateMenu() {
 
       const data = await res.json();
 
-      setList([...list, {
+      setList(prev => [...prev, {
         id: data.menu_item_id,
         ...payload
       }]);
@@ -124,7 +124,7 @@ function CreateMenu() {
         ...payload
       };
 
-      setList([...list, tempItem]);
+      setList(prev => [...prev, tempItem]);
     }
 
     resetForm();
@@ -146,7 +146,7 @@ function CreateMenu() {
       } catch {}
     }
 
-    setList(list.filter(item => item.id !== id));
+    setList(prev => prev.filter(item => item.id !== id));  
   };
 
   return (
