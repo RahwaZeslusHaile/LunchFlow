@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import OrderManagement from "./OrderManagement";
+import AttendanceSummary from "./AttendanceSummary";
+import LeftoverManagement from "./LeftoverManagement";
+import CreateMenu from "./CreateMenu";
 
 function AdminInvitePage() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -112,6 +116,32 @@ function AdminInvitePage() {
             </button>
           </div>
         </header>
+         {/* 🔘 BUTTONS */}
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <button onClick={() => setActiveTab("OrderManagement")} className="btn">
+              Order Management
+            </button>
+
+            <button onClick={() => setActiveTab("AttendanceSummary")} className="btn">
+              Attendance
+            </button>
+
+            <button onClick={() => setActiveTab("LeftoverManagement")} className="btn">
+              Leftover
+            </button>
+
+            <button onClick={() => setActiveTab("CreateMenu")} className="btn">
+              Create Menu
+            </button>
+          </div>
+
+          {/* 📦 COMPONENT DISPLAY */}
+          <div className="mt-6">
+            {activeTab === "OrderManagement" && <OrderManagement />}
+            {activeTab === "AttendanceSummary" && <AttendanceSummary />}
+            {activeTab === "LeftoverManagement" && <LeftoverManagement />}
+            {activeTab === "CreateMenu" && <CreateMenu />}
+          </div>
 
         {activeTab === "notifications" && (
           <section className="mt-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
