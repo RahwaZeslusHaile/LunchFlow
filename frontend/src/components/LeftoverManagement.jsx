@@ -41,7 +41,8 @@ function LeftoverManagement() {
 
   const increaseQuantity = (id) => {
     setIsDirty(true);
-    setItems(items.map(item =>
+    setItems(prev =>
+      prev.map(item =>
       item.id === id
         ? { ...item, quantity: item.quantity + 1 }
         : item
@@ -50,7 +51,8 @@ function LeftoverManagement() {
 
   const decreaseQuantity = (id) => {
     setIsDirty(true);
-    setItems(items.map(item =>
+    setItems(prev =>
+      prev.map(item =>
       item.id === id
         ? { ...item, quantity: Math.max(0, item.quantity - 1) }
         : item
