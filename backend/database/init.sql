@@ -86,6 +86,7 @@ CREATE TABLE leftover_food (
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
   class_id INTEGER NOT NULL REFERENCES classes(class_id),
   quantity INTEGER NOT NULL CHECK (quantity >= 0),
+  leftover_date DATE NOT NULL DEFAULT CURRENT_DATE,
   notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
