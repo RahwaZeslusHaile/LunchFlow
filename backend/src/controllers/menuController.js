@@ -3,7 +3,7 @@ import {
   addCategory,
   fetchMenuItems,
   createMenuItem,
-  getDietaryRestrictions,
+  fetchDietaryRestrictions,
 } from "../services/menuService.js";
 
 function sendError(res, err) {
@@ -45,6 +45,16 @@ export async function createMenuItems(req, res) {
   try {
     const newMenuItem = await addMenuItems(req.body);
     res.json(newMenuItem);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+
+export async function getDietaryRestrictions(req, res) {
+  try {
+    const dietTypes = await fetchMenuItems();
+    res.json(dietTypes);
   } catch (err) {
     sendError(res, err);
   }
