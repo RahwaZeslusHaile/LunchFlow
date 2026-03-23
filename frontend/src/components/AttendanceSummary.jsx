@@ -8,15 +8,32 @@ function AttendanceSummary() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [classes, setClasses] = useState([]);
   const [isHalal, setIsHalal] = useState(false);
   const [halalCount, setHalalCount] = useState("");
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+  };
+
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await fetch("http://localhost:4000/classes");
+        const res = await fetch("/api/classes", {
+          headers: getAuthHeaders()
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to load classes");
+        }
+
         const data = await res.json();
         setClasses(data.length ? data : []);
       } catch {
@@ -74,34 +91,49 @@ function AttendanceSummary() {
       setError("No data to submit");
       return;
     }
-      // Add each classs to DB
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess("");
+
+    // Add each class to DB
     try {
       for (let item of items) {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-    await fetch("http://localhost:4000/attendance", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+        const response = await fetch("/api/attendance", {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            session_date: date,
             class_id: classObj.class_id,
             trainee_count: item.count,
-            volunteer_count: Number(volunteers) || 0
+            volunteer_count: Number(volunteers) || 0,
+            halal_count: item.halal
           })
-    });
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit attendance");
+        }
       }
 
       setSuccess("All data submitted successfully ");
-    setError("");
+      setError("");
 
       // reset
       setItems([]);
       setVolunteers("");
+      setCategory("");
+      setCount("");
+      setIsHalal(false);
+      setHalalCount("");
 
     } catch (err) {
-      setError("Error submitting data ");
+      setError("Error submitting attendance. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -215,9 +247,10 @@ function AttendanceSummary() {
 
           <button
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="w-full bg-black text-white py-2 rounded-lg"
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
 
         </div>
