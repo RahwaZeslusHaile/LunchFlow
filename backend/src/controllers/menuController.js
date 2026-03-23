@@ -1,6 +1,6 @@
 import {
   fetchCategories,
-  createCategory,
+  addCategory,
   getMenuItems,
   createMenuItem,
   getDietaryRestrictions,
@@ -18,6 +18,15 @@ export async function getCategories(req, res) {
   try {
     const categories = await fetchCategories();
     res.json(categories);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+export async function createCategories(req, res) {
+  try {
+    const newcategory = await addCategory(req.body.name);
+    res.json(newcategory);
   } catch (err) {
     sendError(res, err);
   }
