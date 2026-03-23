@@ -50,6 +50,7 @@ function AttendanceSummary() {
   }, []);
 
   const addItem = () => {
+    if (isSubmitting) return;
     if (!category) return setError("Select class");
     if (!count || Number(count) < 0) return setError("Enter valid number");
 
@@ -78,7 +79,7 @@ function AttendanceSummary() {
     setHalalCount("");
     setIsHalal(false);
     setError("");
-    setSuccess("Added ");
+    setSuccess("Added");
   };
 
   const handleSubmit = async () => {
@@ -89,6 +90,12 @@ function AttendanceSummary() {
 
     if (items.length === 0) {
       setError("No data to submit");
+      return;
+    }
+
+    const volunteerCount = Number(volunteers);
+    if (!Number.isFinite(volunteerCount) || volunteerCount < 0) {
+      setError("Enter valid volunteer number");
       return;
     }
 
@@ -108,17 +115,27 @@ function AttendanceSummary() {
             session_date: date,
             class_id: classObj.class_id,
             trainee_count: item.count,
-            volunteer_count: Number(volunteers) || 0,
+            volunteer_count: volunteerCount,
             halal_count: item.halal
           })
         });
 
         if (!response.ok) {
-          throw new Error("Failed to submit attendance");
+          const raw = await response.text();
+          let message = "Failed to submit attendance";
+
+          try {
+            const parsed = raw ? JSON.parse(raw) : null;
+            message = typeof parsed === "string" ? parsed : (parsed?.message || message);
+          } catch {
+            if (raw) message = raw;
+          }
+
+          throw new Error(message);
         }
       }
 
-      setSuccess("All data submitted successfully ");
+      setSuccess("All data submitted successfully");
       setError("");
 
       setItems([]);
@@ -129,7 +146,7 @@ function AttendanceSummary() {
       setHalalCount("");
 
     } catch (err) {
-      setError("Error submitting attendance. Please try again.");
+      setError(err.message || "Error submitting attendance. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -156,6 +173,11 @@ function AttendanceSummary() {
 
             setItems([]);
             setVolunteers("");
+            setCategory("");
+            setCount("");
+            setIsHalal(false);
+            setHalalCount("");
+            setIsSubmitting(false);
             setSuccess("");
             setError("");
           }} 
@@ -237,6 +259,7 @@ function AttendanceSummary() {
           {}
           <button
             onClick={addItem}
+            disabled={isSubmitting}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
           >
             Add
