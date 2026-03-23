@@ -1,7 +1,7 @@
 import {
   fetchCategories,
   addCategory,
-  getMenuItems,
+  fetchMenuItems,
   createMenuItem,
   getDietaryRestrictions,
 } from "../services/menuService.js";
@@ -27,6 +27,15 @@ export async function createCategories(req, res) {
   try {
     const newcategory = await addCategory(req.body.name);
     res.json(newcategory);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+export async function getMenuItems(req, res) {
+  try {
+    const menueItems = await fetchMenuItems();
+    res.json(menueItems);
   } catch (err) {
     sendError(res, err);
   }
