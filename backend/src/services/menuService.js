@@ -32,3 +32,11 @@ export async function createMenuItem(name, category_id, diet_id) {
   );
   return addNewMenuItem.rows[0];
 }
+
+
+export async function fetchDietaryRestrictions() {
+  const dietsInDB = await pool.query(
+"SELECT * FROM dietary_restrictions ORDER BY diet_id"
+  );
+  return dietsInDB.rows;
+}
