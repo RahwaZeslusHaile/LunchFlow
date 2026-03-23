@@ -40,3 +40,12 @@ export async function getMenuItems(req, res) {
     sendError(res, err);
   }
 }
+
+export async function createMenuItems(req, res) {
+  try {
+    const newMenuItem = await addMenuItems(req.body);
+    res.json(newMenuItem);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
