@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import healthRouter from './routes/health.js';
 import authRouter from "./routes/auth.js";
+import attendanceRouter from "./routes/attendance.js";
 
 
 const app = express();
@@ -18,5 +19,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/health', healthRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/attendance", attendanceRouter);
 
 export default app;
