@@ -53,7 +53,7 @@ export async function createMenuItems(req, res) {
 
 export async function getDietaryRestrictions(req, res) {
   try {
-    const dietTypes = await fetchMenuItems();
+    const dietTypes = await fetchDietaryRestrictions();
     res.json(dietTypes);
   } catch (err) {
     sendError(res, err);
