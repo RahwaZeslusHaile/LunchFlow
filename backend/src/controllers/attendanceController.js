@@ -9,3 +9,12 @@ function sendError(res, err) {
   }
   return res.status(500).json("Database error");
 }
+
+export async function attendanceController(req, res) {
+  try {
+    const result = await fetchAttendance(req.body);
+    return res.json(result);
+  } catch (err) {
+    return sendError(res, err);
+  }
+}
