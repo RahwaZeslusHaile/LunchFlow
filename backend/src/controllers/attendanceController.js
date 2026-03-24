@@ -12,7 +12,8 @@ function sendError(res, err) {
 
 export async function getAttendance(req, res) {
   try {
-    const result = await fetchAttendance();
+    const { date } = req.query;
+    const result = await fetchAttendance(date);
     return res.json(result);
   } catch (err) {
     return sendError(res, err);
