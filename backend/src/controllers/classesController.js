@@ -7,3 +7,12 @@ function sendError(res, err) {
   }
   return res.status(500).json("Database error");
 }
+
+export async function getClasses(req, res) {
+  try {
+    const result = await fetchClasses();
+    return res.json(result);
+  } catch (err) {
+    return sendError(res, err);
+  }
+}
