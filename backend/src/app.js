@@ -3,6 +3,7 @@ import express from 'express';
 import healthRouter from './routes/health.js';
 import authRouter from "./routes/auth.js";
 import attendanceRouter from "./routes/attendance.js";
+import classesRouter from "./routes/classes.js";
 
 
 const app = express();
@@ -20,5 +21,6 @@ app.get('/', (req, res) => {
 app.use('/api/health', healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/attendance", attendanceRouter);
+app.use("/api/classes", classesRouter);
 
 export default app;
