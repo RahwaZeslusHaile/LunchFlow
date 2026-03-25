@@ -41,7 +41,7 @@ export async function getMenuItems(req, res) {
   }
 }
 
-export async function createMenuItems(req, res) {
+export async function createMenuItem(req, res) {
   try {
     const newMenuItem = await addMenuItems(req.body);
     res.json(newMenuItem);
