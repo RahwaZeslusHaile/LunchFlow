@@ -27,11 +27,21 @@ function VolunteerAttendanceRequestPage() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
-    if (!user || user.roleId !== 2) {
+    if (!user) {
       const nextPath = secureToken
         ? `/volunteer/attendance?token=${encodeURIComponent(secureToken)}`
         : "/volunteer/attendance";
       navigate(`/login?next=${encodeURIComponent(nextPath)}`);
+      return;
+    }
+
+    if (user.roleId === 1) {
+      navigate("/admin");
+      return;
+    }
+
+    if (user.roleId !== 2) {
+      navigate("/login");
       return;
     }
 
