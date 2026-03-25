@@ -1,4 +1,5 @@
-import { addOrder, addOrderItems}  from "../services/orderService.js";
+import { addOrder, addOrderItems,getOrdersByDate}  from "../services/orderService.js";
+
 
 function sendError(res, err) {
   console.error(err);
@@ -33,6 +34,23 @@ export async function addItems(req, res) {
     });
 
  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+export async function fetchOrders(req, res) {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: "Date is required" });
+    }
+
+    const data = await getOrdersByDate(date);
+
+    res.json(data);
+
+  } catch (err) {
     sendError(res, err);
   }
 }
