@@ -8,15 +8,32 @@ function AttendanceSummary() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [classes, setClasses] = useState([]);
   const [isHalal, setIsHalal] = useState(false);
   const [halalCount, setHalalCount] = useState("");
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+  };
+
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await fetch("http://localhost:4000/classes");
+        const res = await fetch("/api/classes", {
+          headers: getAuthHeaders()
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to load classes");
+        }
+
         const data = await res.json();
         setClasses(data.length ? data : []);
       } catch {
@@ -33,6 +50,7 @@ function AttendanceSummary() {
   }, []);
 
   const addItem = () => {
+    if (isSubmitting) return;
     if (!category) return setError("Select class");
     if (!count || Number(count) < 0) return setError("Enter valid number");
 
@@ -61,7 +79,7 @@ function AttendanceSummary() {
     setHalalCount("");
     setIsHalal(false);
     setError("");
-    setSuccess("Added ");
+    setSuccess("Added");
   };
 
   const handleSubmit = async () => {
@@ -74,34 +92,63 @@ function AttendanceSummary() {
       setError("No data to submit");
       return;
     }
-      // Add each classs to DB
+
+    const volunteerCount = Number(volunteers);
+    if (!Number.isFinite(volunteerCount) || volunteerCount < 0) {
+      setError("Enter valid volunteer number");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess("");
+
     try {
       for (let item of items) {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-    await fetch("http://localhost:4000/attendance", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+        const response = await fetch("/api/attendance", {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            session_date: date,
             class_id: classObj.class_id,
             trainee_count: item.count,
-            volunteer_count: Number(volunteers) || 0
+            volunteer_count: volunteerCount,
+            halal_count: item.halal
           })
-    });
+        });
+
+        if (!response.ok) {
+          const raw = await response.text();
+          let message = "Failed to submit attendance";
+
+          try {
+            const parsed = raw ? JSON.parse(raw) : null;
+            message = typeof parsed === "string" ? parsed : (parsed?.message || message);
+          } catch {
+            if (raw) message = raw;
+          }
+
+          throw new Error(message);
+        }
       }
 
-      setSuccess("All data submitted successfully ");
-    setError("");
+      setSuccess("All data submitted successfully");
+      setError("");
 
-      // reset
       setItems([]);
       setVolunteers("");
+      setCategory("");
+      setCount("");
+      setIsHalal(false);
+      setHalalCount("");
 
     } catch (err) {
-      setError("Error submitting data ");
+      setError(err.message || "Error submitting attendance. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -117,26 +164,30 @@ function AttendanceSummary() {
           Attendance Summary
         </h2>
 
-        {/* date */}
+        {}
         <input
           type="date"
           value={date}
           onChange={(e) => {
             setDate(e.target.value);
 
-            // reset when date changes
             setItems([]);
             setVolunteers("");
+            setCategory("");
+            setCount("");
+            setIsHalal(false);
+            setHalalCount("");
+            setIsSubmitting(false);
             setSuccess("");
             setError("");
           }} 
          className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
 
-        {/* form */}
+        {}
         <div className="space-y-4">
 
-          {/* class */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Class</label>
             <select
@@ -153,7 +204,7 @@ function AttendanceSummary() {
             </select>
           </div>
 
-          {/* number */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Number</label>
             <input
@@ -165,7 +216,7 @@ function AttendanceSummary() {
             />
           </div>
 
-          {/* halal */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Halal</label>
 
@@ -193,7 +244,7 @@ function AttendanceSummary() {
             </div>
           </div>
 
-          {/* volunteers */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Volunteers</label>
             <input
@@ -205,9 +256,10 @@ function AttendanceSummary() {
             />
           </div>
 
-          {/* buttons */}
+          {}
           <button
             onClick={addItem}
+            disabled={isSubmitting}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
           >
             Add
@@ -215,9 +267,10 @@ function AttendanceSummary() {
 
           <button
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="w-full bg-black text-white py-2 rounded-lg"
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
 
         </div>
@@ -225,7 +278,7 @@ function AttendanceSummary() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        {/* preview */}
+        {}
         <div className="bg-gray-50 p-3 rounded-lg text-sm">
           <div>
             {classes.map((c) => {
