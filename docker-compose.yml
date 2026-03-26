@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=launch
     volumes:
-      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d launch"]
       interval: 5s
