@@ -25,7 +25,7 @@ export async function fetchMenuItems() {
   return dbStoredMenuItems.rows;
 }
 
-export async function createMenuItem(name, category_id, diet_id) {
+export async function createMenuItems(name, category_id, diet_id) {
   const addNewMenuItem = await pool.query(
     "INSERT INTO menu_items (name, category_id, diet_id) VALUES ($1, $2, $3) RETURNING *",
     [name, category_id, diet_id]
