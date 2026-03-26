@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderManagement from "./OrderManagement";
-// import AttendanceSummary from "./AttendanceSummary";
-// import LeftoverManagement from "./LeftoverManagement";
-// import CreateMenu from "./CreateMenu";
+import AttendanceSummary from "./AttendanceSummary";
+import LeftoverManagement from "./LeftoverManagement";
+import CreateMenu from "./CreateMenu";
 
 function AdminInvitePage() {
   const [activeTab, setActiveTab] = useState("dashboard");
