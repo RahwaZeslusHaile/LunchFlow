@@ -16,17 +16,11 @@ function AttendanceSummary() {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await fetch("http://localhost:4000/classes");
+        const res = await fetch("/api/classes");
         const data = await res.json();
         setClasses(data.length ? data : []);
       } catch {
-        setClasses([
-          { class_id: 1, name: "ITD" },
-          { class_id: 2, name: "ITP" },
-          { class_id: 3, name: "PISCINE" },
-          { class_id: 4, name: "SDC" },
-          { class_id: 5, name: "LAUNCH" }
-        ]);
+        setClasses([]);
       }
     };
     fetchClasses();
@@ -74,7 +68,6 @@ function AttendanceSummary() {
       setError("No data to submit");
       return;
     }
-      // Add each classs to DB
     try {
       for (let item of items) {
         const classObj = classes.find(c => c.name === item.category);
@@ -96,7 +89,7 @@ function AttendanceSummary() {
       setSuccess("All data submitted successfully ");
     setError("");
 
-      // reset
+      
       setItems([]);
       setVolunteers("");
 
@@ -117,14 +110,13 @@ function AttendanceSummary() {
           Attendance Summary
         </h2>
 
-        {/* date */}
+        {}
         <input
           type="date"
           value={date}
           onChange={(e) => {
             setDate(e.target.value);
 
-            // reset when date changes
             setItems([]);
             setVolunteers("");
             setSuccess("");
@@ -133,10 +125,10 @@ function AttendanceSummary() {
          className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
 
-        {/* form */}
+        {}
         <div className="space-y-4">
 
-          {/* class */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Class</label>
             <select
@@ -153,7 +145,7 @@ function AttendanceSummary() {
             </select>
           </div>
 
-          {/* number */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Number</label>
             <input
@@ -165,7 +157,7 @@ function AttendanceSummary() {
             />
           </div>
 
-          {/* halal */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Halal</label>
 
@@ -193,7 +185,7 @@ function AttendanceSummary() {
             </div>
           </div>
 
-          {/* volunteers */}
+          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Volunteers</label>
             <input
@@ -205,7 +197,7 @@ function AttendanceSummary() {
             />
           </div>
 
-          {/* buttons */}
+          {}
           <button
             onClick={addItem}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
@@ -225,7 +217,7 @@ function AttendanceSummary() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        {/* preview */}
+        {}
         <div className="bg-gray-50 p-3 rounded-lg text-sm">
           <div>
             {classes.map((c) => {
