@@ -1,0 +1,21 @@
+import {
+    fetchAttendance
+} from "../services/attendanceService.js";
+
+function sendError(res, err) {
+  console.error(err);
+  if (err.status) {
+    return res.status(err.status).json(err.message);
+  }
+  return res.status(500).json("Database error");
+}
+
+export async function getAttendance(req, res) {
+  try {
+    const { date } = req.query;
+    const result = await fetchAttendance(date);
+    return res.json(result);
+  } catch (err) {
+    return sendError(res, err);
+  }
+}
