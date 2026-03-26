@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   getCategories,
-  createCategory,
+  createCategories,
   getMenuItems,
   createMenuItem,
   getDietaryRestrictions,
@@ -10,6 +10,6 @@ import {
 const router = Router();
 
 router.get("/categories", getCategories);
-router.post("/categories", createCategory);
+router.post("/categories", createCategories);
 
 export default router;
