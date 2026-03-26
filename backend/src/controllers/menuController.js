@@ -43,7 +43,9 @@ export async function getMenuItems(req, res) {
 
 export async function createMenuItem(req, res) {
   try {
-    const newMenuItem = await createMenuItems(req.body);
+    // Fix: service expects separate arguments . 
+    const { name, category_id, diet_id } = req.body;
+    const newMenuItem = await createMenuItems(name, category_id, diet_id) 
     res.json(newMenuItem);
   } catch (err) {
     sendError(res, err);
