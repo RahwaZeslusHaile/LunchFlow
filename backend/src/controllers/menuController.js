@@ -2,7 +2,7 @@ import {
   fetchCategories,
   addCategory,
   fetchMenuItems,
-  createMenuItem,
+  createMenuItems,
   fetchDietaryRestrictions,
 } from "../services/menuService.js";
 
