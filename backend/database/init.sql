@@ -129,11 +129,12 @@ Create TABLE attendance_diet (
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
   order_date DATE NOT NULL,
-  attendance INTEGER NOT NULL
+  attendance INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE order_items (
-  id SERIAL PRIMARY KEY,
+  order_item_id SERIAL PRIMARY KEY,
   order_id INTEGER NOT NULL,
   menu_item_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL CHECK (quantity >= 0),

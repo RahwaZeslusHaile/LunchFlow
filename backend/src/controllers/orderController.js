@@ -1,4 +1,4 @@
-import { addOrder, addOrderItems,getOrdersByDate}  from "../services/orderService.js";
+import {createOrderWithItems,getOrdersByDate}  from "../services/orderService.js";
 
 
 function sendError(res, err) {
@@ -16,24 +16,19 @@ function sendError(res, err) {
 export async function addItems(req, res) {
   try {
     const { date, attendance, items } = req.body;
+
     if (!date || !attendance || !items || items.length === 0) {
-        return res.status(400).json({ message: "Invalid input" });
-        }
-    const newOrder = await addOrder(date, attendance);
-    const order_id = newOrder.order_id;
-    for (const item of items){
-        await addOrderItems(
-        order_id,
-        item.menu_item_id,
-        item.quantity
-      );
+      return res.status(400).json({ message: "Invalid input" });
     }
+
+    const order_id = await createOrderWithItems(date, attendance, items);
+
     res.json({
       message: "Order created successfully",
       order_id
     });
 
- } catch (err) {
+  } catch (err) {
     sendError(res, err);
   }
 }
