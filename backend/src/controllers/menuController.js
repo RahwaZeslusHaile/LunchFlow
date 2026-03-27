@@ -25,8 +25,8 @@ export async function getCategories(req, res) {
 
 export async function createCategories(req, res) {
   try {
-    const newcategory = await addCategory(req.body.name);
-    res.json(newcategory);
+    const newCategory = await addCategory(req.body.name);
+    res.json(newCategory);
   } catch (err) {
     sendError(res, err);
   }
@@ -34,8 +34,8 @@ export async function createCategories(req, res) {
 
 export async function getMenuItems(req, res) {
   try {
-    const menueItems = await fetchMenuItems();
-    res.json(menueItems);
+    const menuItems = await fetchMenuItems();
+    res.json(menuItems);
   } catch (err) {
     sendError(res, err);
   }
