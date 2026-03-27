@@ -121,4 +121,30 @@ Create TABLE attendance_diet (
   attendance_id INTEGER NOT NULL REFERENCES attendance(attendance_id) ON DELETE CASCADE,
   diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id),
   count INTEGER NOT NULL CHECK (count >= 0)
-)
+);
+
+
+
+-- Aida's change
+CREATE TABLE orders (
+  order_id SERIAL PRIMARY KEY,
+  order_date DATE NOT NULL,
+  attendance INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items (
+  order_item_id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT NULL,
+  menu_item_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL CHECK (quantity >= 0),
+
+  CONSTRAINT fk_order
+    FOREIGN KEY (order_id)
+    REFERENCES orders(order_id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_menu_item
+    FOREIGN KEY (menu_item_id)
+    REFERENCES menu_items(menu_item_id)
+);
