@@ -28,8 +28,17 @@ function CreateMenu() {
 
         ]);
 
-        if (!catRes.ok || !dietRes.ok || !menuRes.ok) throw new Error();
+        if (!catRes.ok) {
+          throw new Error("Failed to fetch categories");
+        }
 
+        if (!dietRes.ok) {
+          throw new Error("Failed to fetch diets");
+        }
+
+        if (!menuRes.ok) {
+          throw new Error("Failed to fetch menu items");
+        }
         const catData = await catRes.json();
         const dietData = await dietRes.json();
         const menuData = await menuRes.json();

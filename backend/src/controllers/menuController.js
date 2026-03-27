@@ -45,6 +45,11 @@ export async function createMenuItem(req, res) {
   try {
     // Fix: service expects separate arguments . 
     const { name, category_id, diet_id } = req.body;
+    if (!name || !category_id || !diet_id) {
+      return res.status(400).json({
+        error: "name, category_id and diet_id are required",
+      });
+    }
     const newMenuItem = await createMenuItems(name, category_id, diet_id) 
     res.json(newMenuItem);
   } catch (err) {
