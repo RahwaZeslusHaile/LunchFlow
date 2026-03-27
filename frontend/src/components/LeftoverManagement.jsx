@@ -26,6 +26,7 @@ function LeftoverManagement() {
         setItems(data || []);
       })
       .catch((err) => {
+        console.error(err);
         setError("Could not load menu items.");
         setItems([]);
       })
@@ -78,6 +79,7 @@ function LeftoverManagement() {
       setSuccess("Saved successfully");
       setIsDirty(false);
     } catch (err) {
+      console.error(err);
       setError("Could not save leftovers. Please try again later.");
     } finally {
       setLoading(false);
