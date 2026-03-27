@@ -5,35 +5,30 @@ function LeftoverManagement() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const [isDirty, setIsDirty] = useState(false);
 
-  const initialItems = [
-    { id: 1, name: "Chicken Curry", type: "Halal", quantity: 0 },
-    { id: 2, name: "Vegetable Pasta", type: "Veg", quantity: 0 },
-    { id: 3, name: "Naan Bread", type: "Bread", quantity: 0 },
-    { id: 4, name: "Chicken Curry", type: "Halal", quantity: 0 },
-    { id: 5, name: "Vegetable Pasta", type: "Veg", quantity: 0 },
-    { id: 6, name: "Naan Bread", type: "Bread", quantity: 0 }
-  ];
 
   useEffect(() => {
     if (!date) return;
 
     setLoading(true);
     setSuccess("");
-    setIsDirty(false); // reset when date changes
+    setIsDirty(false); 
 
-    fetch(`http://localhost:4000/menu?date=${date}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          setItems(data);
-        } else {
-          setItems(initialItems);
-        }
+    fetch(`/api/menu?date=${date}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch menu items");
+        return res.json();
       })
-      .catch(() => {
-        setItems(initialItems);
+      .then(data => {
+        setError("");
+        setItems(data || []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Could not load menu items.");
+        setItems([]);
       })
       .finally(() => setLoading(false));
 
@@ -61,29 +56,33 @@ function LeftoverManagement() {
 
   const handleSave = async () => {
     const filtered = items.filter(item => item.quantity > 0);
-
+    setError("");
+    setSuccess("");
+    setLoading(true);
     try {
-      await fetch("http://localhost:4000/leftovers", {
+      const res = await fetch("/api/leftovers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            date,
-            items: filtered.map(item => ({
+          date,
+          items: filtered.map(item => ({
             menu_item_id: item.id,
             quantity: item.quantity
           }))
         })
       });
-
+      if (!res.ok) {
+        throw new Error("Failed to save leftovers");
+      }
       setSuccess("Saved successfully");
       setIsDirty(false);
-
     } catch (err) {
-      console.log("Backend not ready");
-      setSuccess("Saved locally (backend later)");
-      setIsDirty(false);
+      console.error(err);
+      setError("Could not save leftovers. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,6 +160,12 @@ function LeftoverManagement() {
 
         </div>
 
+        {/* error */}
+        {error && (
+          <p className="text-red-600 text-sm text-center">
+            {error}
+          </p>
+        )}
         {/* success */}
         {success && (
           <p className="text-green-600 text-sm text-center">

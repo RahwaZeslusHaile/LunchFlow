@@ -6,6 +6,7 @@ import orderRouter from "./routes/order.js";
 import menuRouter from "./routes/menu.js";
 import attendanceRouter from "./routes/attendance.js";
 import classesRouter from "./routes/classes.js";
+import leftoversRouter from "./routes/leftovers.js";
 
 
 
@@ -27,5 +28,6 @@ app.use("/api/order", orderRouter);
 app.use("/api/menu", menuRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/classes", classesRouter);
+app.use("/api/leftovers", leftoversRouter);
 
 export default app;
