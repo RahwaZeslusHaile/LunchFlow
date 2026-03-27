@@ -25,8 +25,8 @@ export async function getCategories(req, res) {
 
 export async function createCategories(req, res) {
   try {
-    const newcategory = await addCategory(req.body.name);
-    res.json(newcategory);
+    const newCategory = await addCategory(req.body.name);
+    res.json(newCategory);
   } catch (err) {
     sendError(res, err);
   }
@@ -34,8 +34,8 @@ export async function createCategories(req, res) {
 
 export async function getMenuItems(req, res) {
   try {
-    const menueItems = await fetchMenuItems();
-    res.json(menueItems);
+    const menuItems = await fetchMenuItems();
+    res.json(menuItems);
   } catch (err) {
     sendError(res, err);
   }
@@ -43,7 +43,14 @@ export async function getMenuItems(req, res) {
 
 export async function createMenuItem(req, res) {
   try {
-    const newMenuItem = await createMenuItems(req.body);
+    // Fix: service expects separate arguments . 
+    const { name, category_id, diet_id } = req.body;
+    if (!name || !category_id || !diet_id) {
+      return res.status(400).json({
+        error: "name, category_id and diet_id are required",
+      });
+    }
+    const newMenuItem = await createMenuItems(name, category_id, diet_id) 
     res.json(newMenuItem);
   } catch (err) {
     sendError(res, err);

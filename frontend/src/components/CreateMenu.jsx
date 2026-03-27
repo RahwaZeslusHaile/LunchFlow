@@ -1,66 +1,56 @@
 import { useState, useEffect } from "react";
 
 function CreateMenu() {
-  const USE_API = false;
+
 
   const [error, setError] = useState("");
   const [input, setInput] = useState("");
-// will delete later
-  const fallbackCategories = [
-    { category_id: 1, name: "Bakery" },
-    { category_id: 2, name: "Chilled Meals" },
-    { category_id: 3, name: "Drinks" },
-    { category_id: 4, name: "Food Essentials" },
-    { category_id: 5, name: "Non-Food Essentials" },
-    { category_id: 6, name: "Snacks" }
-  ];
-// will delete later
+  
 
-  const fallbackDiets = [
-    { diet_id: 1, name: "Vegetarian" },
-    { diet_id: 2, name: "Non-Vegetarian" },
-    { diet_id: 3, name: "Halal" },
-    { diet_id: 4, name: "N/A" }
-  ];
 
   const [categories, setCategories] = useState([]);
   const [diets, setDiets] = useState([]);
-
+  const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDiet, setSelectedDiet] = useState("");
 
-// will delete later
-  const [list, setList] = useState([
-    { id: 1, name: "ham", category_id: 6, diet_id: 2 },
-    { id: 2, name: "bread", category_id: 1, diet_id: 1 }
-  ]);
 
-  // ✅ load categories + diets
+  // load categories + diets
   useEffect(() => {
     const loadData = async () => {
-      if (!USE_API) {
-        setCategories(fallbackCategories);
-        setDiets(fallbackDiets);
-        return;
-      }
+   
 
       try {
-        const [catRes, dietRes] = await Promise.all([
+        const [catRes, dietRes,menuRes] = await Promise.all([
           fetch("/api/menu/categories"),
-          fetch("/api/menu/diets")
+          fetch("/api/menu/dietary-restrictions"),
+          fetch("/api/menu/menu-items")
+
         ]);
 
-        if (!catRes.ok || !dietRes.ok) throw new Error();
+        if (!catRes.ok) {
+          throw new Error("Failed to fetch categories");
+        }
 
+        if (!dietRes.ok) {
+          throw new Error("Failed to fetch diets");
+        }
+
+        if (!menuRes.ok) {
+          throw new Error("Failed to fetch menu items");
+        }
         const catData = await catRes.json();
         const dietData = await dietRes.json();
+        const menuData = await menuRes.json();
 
-        setCategories(catData.length ? catData : fallbackCategories);
-        setDiets(dietData.length ? dietData : fallbackDiets);
+
+
+        setCategories(catData);
+        setDiets(dietData);
+        setMenuItems(menuData);
 
       } catch {
-        setCategories(fallbackCategories);
-        setDiets(fallbackDiets);
+          setError("Failed to load data");
       }
     };
 
@@ -89,19 +79,12 @@ function CreateMenu() {
       diet_id: Number(selectedDiet)
     };
 
-    if (!USE_API) {
-      const tempItem = {
-        id: Date.now(),
-        ...payload
-      };
+ 
 
-      setList(prev => [...prev, tempItem]);
-      resetForm();
-      return;
-    }
+  
 
     try {
-      const res = await fetch("/api/menu/items", {
+      const res = await fetch("/api/menu/menu-items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -112,22 +95,28 @@ function CreateMenu() {
       if (!res.ok) throw new Error();
 
       const data = await res.json();
+      
+        const categoryName = categories.find(
+          c => c.category_id === payload.category_id
+        )?.name;
 
-      setList(prev => [...prev, {
-        id: data.menu_item_id,
-        ...payload
+        const dietName = diets.find(
+          d => d.diet_id === payload.diet_id
+        )?.name;
+
+      setMenuItems(prev => [...prev, {
+        menu_item_id: data.menu_item_id,
+        name: payload.name,
+        category: categoryName,
+        diet: dietName
       }]);
-
+           resetForm();
     } catch (err) {
-      const tempItem = {
-        id: Date.now(),
-        ...payload
-      };
+      setError("Failed to add item");
 
-      setList(prev => [...prev, tempItem]);
     }
 
-    resetForm();
+ 
   };
 
   const resetForm = () => {
@@ -140,13 +129,13 @@ function CreateMenu() {
   const removeItem = async (id) => {
     if (!confirm("Are you sure?")) return;
 
-    if (USE_API) {
+    
       try {
-        await fetch(`/api/menu/${id}`, { method: "DELETE" });
+        await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
       } catch {}
-    }
+    
 
-    setList(prev => prev.filter(item => item.id !== id));  
+    setMenuItems(prev => prev.filter(item => item.menu_item_id !== id));  
   };
 
   return (
@@ -211,18 +200,16 @@ function CreateMenu() {
           Add
         </button>
 
-        {/* list */}
+        {/* list Of menu */}
         <ul className="space-y-2">
-          {list.map((item, i) => {
-            const categoryName =
-              categories.find(c => c.category_id === item.category_id)?.name;
+          {menuItems.map((item, i) => {
+            const categoryName = item.category;
 
-            const dietName =
-              diets.find(d => d.diet_id === item.diet_id)?.name;
+            const dietName = item.diet
 
             return (
               <li
-                key={item.id}
+                key={item.menu_item_id}
                 className="flex justify-between items-center border border-gray-300 rounded-lg px-3 py-2"
               >
                 <span>
@@ -230,7 +217,7 @@ function CreateMenu() {
                 </span>
 
                 <button
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.menu_item_id)}
                   className="border border-red-400 text-red-500 px-2 rounded hover:bg-red-500 hover:text-white transition"
                 >
                   X
