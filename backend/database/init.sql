@@ -90,6 +90,9 @@ CREATE TABLE leftover_food (
   notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
+ALTER TABLE leftover_food
+ADD CONSTRAINT unique_menuitem_class_date
+UNIQUE (menu_item_id, class_id, leftover_date);
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
 (1, 1, 10, 'Tortilla Wraps left from morning prep'),
@@ -124,8 +127,6 @@ Create TABLE attendance_diet (
 );
 
 
-
--- Aida's change
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
   order_date DATE NOT NULL,
