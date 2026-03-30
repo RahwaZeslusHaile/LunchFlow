@@ -23,9 +23,9 @@ import CreateMenu from "./CreateMenu";
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
   { id: "notifications", label: "Notifications", icon: <Bell size={20} /> },
-  { id: "OrderManagement", label: "Order Management", icon: <ShoppingCart size={20} /> },
   { id: "AttendanceSummary", label: "Attendance", icon: <Users size={20} /> },
   { id: "LeftoverManagement", label: "Leftover", icon: <Utensils size={20} /> },
+  { id: "OrderManagement", label: "Order Management", icon: <ShoppingCart size={20} /> },
   { id: "CreateMenu", label: "Create Menu", icon: <PlusCircle size={20} /> },
 ];
 
