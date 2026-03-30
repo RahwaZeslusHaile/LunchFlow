@@ -141,7 +141,7 @@ function AdminInvitePage() {
                     isActive
                       ? "bg-indigo-50 text-indigo-700 shadow-sm"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                  }`}
+                  } ${item.id === "MenuManagement" ? "mt-7" : ""}`}
                 >
                   <div
                     className={`${
