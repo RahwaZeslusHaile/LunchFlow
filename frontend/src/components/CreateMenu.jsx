@@ -142,7 +142,7 @@ function CreateMenu() {
     <main className="flex items-center justify-center min-h-screen bg-gray-200 p-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-6 space-y-4">
 
-        <h2 className="text-xl font-bold text-center">Create Menu</h2>
+        <h2 className="text-xl font-bold text-center">Create Menu Items</h2>
 
         {/* input */}
         <input
@@ -151,7 +151,7 @@ function CreateMenu() {
             setInput(e.target.value);
             setError("");
           }}
-          placeholder="Enter food..."
+          placeholder="Enter item"
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
 

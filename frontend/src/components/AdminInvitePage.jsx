@@ -206,7 +206,7 @@ function AdminInvitePage() {
                   "Dashboard"}
               </h1>
               <p className="mt-2 text-sm text-slate-500">
-                Manage your CYF Lunch operations efficiently.
+                Manage the CYF menu by adding or removing menu items.
               </p>
             </div>
 
