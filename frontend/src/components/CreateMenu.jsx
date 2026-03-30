@@ -141,8 +141,7 @@ function CreateMenu() {
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-200 p-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-6 space-y-4">
-
-        <h2 className="text-xl font-bold text-center">Create Menu</h2>
+        <h2 className="text-xl font-bold text-center">Create Menu Items</h2>
 
         {/* input */}
         <input
@@ -151,7 +150,7 @@ function CreateMenu() {
             setInput(e.target.value);
             setError("");
           }}
-          placeholder="Enter food..."
+          placeholder="Enter item"
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
 
@@ -165,7 +164,7 @@ function CreateMenu() {
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         >
           <option value="">Select category...</option>
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <option key={cat.category_id} value={cat.category_id}>
               {cat.name}
             </option>
@@ -182,7 +181,7 @@ function CreateMenu() {
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         >
           <option value="">Select diet...</option>
-          {diets.map(d => (
+          {diets.map((d) => (
             <option key={d.diet_id} value={d.diet_id}>
               {d.name}
             </option>
@@ -201,32 +200,33 @@ function CreateMenu() {
         </button>
 
         {/* list Of menu */}
-        <ul className="space-y-2">
-          {menuItems.map((item, i) => {
-            const categoryName = item.category;
+        <div className="max-h-64 overflow-y-auto space-y-2 border-t border-gray-200 pt-2 scrollbar scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <ul>
+            {menuItems.map((item, i) => {
+              const categoryName = item.category;
 
-            const dietName = item.diet
+              const dietName = item.diet;
 
-            return (
-              <li
-                key={item.menu_item_id}
-                className="flex justify-between items-center border border-gray-300 rounded-lg px-3 py-2"
-              >
-                <span>
-                  {i + 1} - {item.name} ({categoryName} - {dietName})
-                </span>
-
-                <button
-                  onClick={() => removeItem(item.menu_item_id)}
-                  className="border border-red-400 text-red-500 px-2 rounded hover:bg-red-500 hover:text-white transition"
+              return (
+                <li
+                  key={item.menu_item_id}
+                  className="flex justify-between items-center border border-gray-300 rounded-lg px-3 py-2"
                 >
-                  X
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+                  <span>
+                    {i + 1} - {item.name} ({categoryName} - {dietName})
+                  </span>
 
+                  <button
+                    onClick={() => removeItem(item.menu_item_id)}
+                    className="border border-red-400 text-red-500 px-2 rounded hover:bg-red-500 hover:text-white transition"
+                  >
+                    X
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </main>
   );
