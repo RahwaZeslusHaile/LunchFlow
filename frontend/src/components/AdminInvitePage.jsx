@@ -228,6 +228,14 @@ function AdminInvitePage() {
                     orders, manage attendance, handle leftovers, or generate new
                     volunteer invites.
                   </p>
+                  <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                    New Box
+                  </h3>
+                  <p className="text-slate-600">
+                   Status box
+                  </p>
+                </div>
                 </div>
               )}
               {activeTab === "PlaceOrder" && <OrderManagement />}
