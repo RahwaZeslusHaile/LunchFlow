@@ -19,6 +19,8 @@ import OrderManagement from "./OrderManagement";
 import AttendanceSummary from "./AttendanceSummary";
 import LeftoverManagement from "./LeftoverManagement";
 import CreateMenu from "./CreateMenu";
+import StatusCard from "./StatusCard";
+
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
@@ -230,7 +232,8 @@ function AdminInvitePage() {
                   </p>
                   <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold text-slate-800 mb-2">
-                    New Box
+                    New 
+                    <StatusCard/>
                   </h3>
                   <p className="text-slate-600">
                    Status box
