@@ -20,6 +20,8 @@ import AttendanceSummary from "./AttendanceSummary";
 import LeftoverManagement from "./LeftoverManagement";
 import CreateMenu from "./CreateMenu";
 import StatusCard from "./StatusCard";
+import CreateEvent from "./CreateEvent";
+
 
 
 const NAV_ITEMS = [
@@ -233,7 +235,15 @@ function AdminInvitePage() {
                   <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold text-slate-800 mb-2">
                     New 
-                    <StatusCard/>
+                    
+                      {/* Status */}
+                      <StatusCard/>
+
+                       {/* Add Event */}
+                      <CreateEvent/>
+
+                      {/* Event List */}
+                      {/* <EventList/> */}
                   </h3>
                   <p className="text-slate-600">
                    Status box

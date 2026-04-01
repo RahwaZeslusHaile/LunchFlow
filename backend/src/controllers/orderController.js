@@ -1,4 +1,4 @@
-import {createOrderWithItems,getOrdersByDate}  from "../services/orderService.js";
+import {createOrderWithItems,getOrdersByDate,createOrder}  from "../services/orderService.js";
 
 
 function sendError(res, err) {
@@ -44,6 +44,27 @@ export async function fetchOrders(req, res) {
     const data = await getOrdersByDate(date);
 
     res.json(data);
+
+  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+
+export async function createEvent(req, res) {
+  try {
+    const { order_date, attendance } = req.body;
+
+    if (!order_date || attendance == null)   { 
+    return res.status(400).json({ message: "Invalid input" });
+    }
+
+    const order_id = await createOrder(order_date, attendance);
+
+    res.json({
+      message: "Event created successfully",
+      order_id
+    });
 
   } catch (err) {
     sendError(res, err);

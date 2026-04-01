@@ -1,5 +1,5 @@
 import pool from "../db.js";
-
+// we need to edit createOrderWithItems function 
 export async function createOrderWithItems(date, attendance, items) {
   const client = await pool.connect();
 
@@ -37,6 +37,19 @@ export async function createOrderWithItems(date, attendance, items) {
     client.release();
   }
 }
+
+
+export async function createOrder(order_date, attendance) {
+  const result = await pool.query(
+    `INSERT INTO orders (order_date, attendance)
+     VALUES ($1, $2)
+     RETURNING order_id`,
+    [order_date, attendance]
+  );
+
+  return result.rows[0].order_id;
+}
+
 
 
 export async function getOrdersByDate(date) {
