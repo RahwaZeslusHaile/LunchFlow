@@ -36,6 +36,7 @@ function AdminInvitePage() {
   const [inviteLink, setInviteLink] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedForms, setSelectedForms] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,10 @@ function AdminInvitePage() {
       setError("Email is required");
       return;
     }
+    if (selectedForms.length === 0) {
+      setError("Select at least one form to assign");
+      return;
+    }
 
     setError("");
     setInviteLink("");
@@ -71,7 +76,7 @@ function AdminInvitePage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, forms: selectedForms }),
       });
 
       const data = await response.json();
@@ -81,8 +86,9 @@ function AdminInvitePage() {
         return;
       }
 
-      setInviteLink(`${window.location.origin}/signup?token=${data.token}`);
+      setInviteLink("");
       setEmail("");
+      setSelectedForms([]);
     } catch (err) {
       console.error(err);
       setError("Server error, please try again");
@@ -269,6 +275,34 @@ function AdminInvitePage() {
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-5 py-4 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 shadow-sm"
                       />
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 ml-1">
+                        Assign Forms
+                      </label>
+                      <div className="flex gap-4 flex-wrap">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("attendance")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "attendance"] : f.filter(x => x !== "attendance"))}
+                          /> Attendance
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("leftover")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "leftover"] : f.filter(x => x !== "leftover"))}
+                          /> Leftover Management
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("order")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "order"] : f.filter(x => x !== "order"))}
+                          /> Order Management
+                        </label>
+                      </div>
+                    </div>
                     {error && (
                       <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600 border border-red-100 flex items-center gap-2">
                         <X size={16} />
@@ -284,48 +318,17 @@ function AdminInvitePage() {
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-400 border-t-white" />
                       ) : (
                         <>
-                          Generate Fast Link
-                          <ChevronRight
-                            size={18}
-                            className="transition-transform group-hover:translate-x-1"
-                          />
+                          Send Invite
+                          <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
                         </>
                       )}
                     </button>
                   </form>
-                  {inviteLink && (
-                    <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-2xl border border-emerald-200 bg-emerald-50 p-1 font-mono text-sm relative overflow-hidden shadow-sm">
-                      <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
-                      <div className="p-5 pl-7">
-                        <div className="flex items-center gap-3 mb-4">
-                          <CheckCircle2
-                            size={24}
-                            className="text-emerald-500"
-                          />
-                          <h3 className="font-semibold text-emerald-900 text-base font-sans">
-                            Invite Link Ready
-                          </h3>
-                        </div>
-                        <div className="rounded-xl border border-emerald-100 bg-white p-4 shadow-sm">
-                          <p className="text-emerald-800 break-all mb-4 leading-relaxed">
-                            {inviteLink}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigator.clipboard.writeText(inviteLink)
-                            }
-                            className="flex items-center gap-2 rounded-lg bg-emerald-100 px-4 py-2.5 font-sans font-semibold text-emerald-700 transition hover:bg-emerald-200 hover:text-emerald-800"
-                          >
-                            <Copy size={16} />
-                            Copy to Clipboard
-                          </button>
-                        </div>
-                        <p className="mt-4 font-sans text-xs font-medium text-emerald-700/80 flex items-center gap-1.5">
-                          <Bell size={14} />
-                          Valid for 7 days. Single use only.
-                        </p>
-                      </div>
+                  {/* Invite link is now hidden; show a simple confirmation if needed */}
+                  {inviteLink === "" && !loading && !error && (
+                    <div className="mt-8 text-green-700 font-semibold flex items-center gap-2">
+                      <CheckCircle2 size={20} />
+                      Invitation sent successfully!
                     </div>
                   )}
                 </section>
