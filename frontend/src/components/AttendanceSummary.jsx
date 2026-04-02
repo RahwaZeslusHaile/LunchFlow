@@ -73,7 +73,7 @@ function AttendanceSummary() {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-    await fetch("http://localhost:4000/attendance", {
+    await fetch("api/attendance", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
