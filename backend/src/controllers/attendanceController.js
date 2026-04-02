@@ -12,8 +12,7 @@ function sendError(res, err) {
 
 export async function getAttendance(req, res) {
   try {
-    const { date } = req.query;
-    const result = await fetchAttendance(date);
+    const result = await fetchAttendance();
     return res.json(result);
   } catch (err) {
     return sendError(res, err);
@@ -30,7 +29,7 @@ export async function createAttendance(req, res) {
 
     const newAttendance = await insertAttendance({ class_id, trainee_count, volunteer_count });
     return res.status(201).json(newAttendance);
-    
+
   } catch (err) {
     return sendError(res, err);
   }
