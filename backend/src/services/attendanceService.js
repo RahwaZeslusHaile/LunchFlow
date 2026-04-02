@@ -32,3 +32,20 @@ export async function fetchAttendance(date) {
     total
   };
 }
+
+
+export async function insertAttendance({
+  class_id,
+  trainee_count,
+  volunteer_count
+}) {
+  const result = await pool.query(
+    `
+    INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count)
+    VALUES ($1, CURRENT_DATE, $2, $3)
+    RETURNING *
+    `,
+    [class_id, trainee_count, volunteer_count]
+  );
+  return result.rows[0];
+}
