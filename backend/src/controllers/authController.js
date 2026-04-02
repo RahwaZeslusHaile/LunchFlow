@@ -3,6 +3,7 @@ import {
   login,
   signup,
   validateInvite,
+  getUserForms,
 } from "../services/authService.js";
 
 function sendError(res, err) {
@@ -35,8 +36,18 @@ export async function createInviteController(req, res) {
   try {
     const result = await createVolunteerInvite({
       email: req.body.email,
+      forms: req.body.forms,
       createdBy: req.user.userId,
     });
+    return res.json(result);
+  } catch (err) {
+    return sendError(res, err);
+  }
+}
+
+export async function getUserFormsController(req, res) {
+  try {
+    const result = await getUserForms(req.user.userId);
     return res.json(result);
   } catch (err) {
     return sendError(res, err);

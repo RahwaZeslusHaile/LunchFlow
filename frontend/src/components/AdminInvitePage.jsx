@@ -37,6 +37,7 @@ function AdminInvitePage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedForms, setSelectedForms] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +67,7 @@ function AdminInvitePage() {
 
     setError("");
     setInviteLink("");
+    setShowSuccess(false);
     setLoading(true);
 
     try {
@@ -89,6 +91,7 @@ function AdminInvitePage() {
       setInviteLink("");
       setEmail("");
       setSelectedForms([]);
+      setShowSuccess(true);
     } catch (err) {
       console.error(err);
       setError("Server error, please try again");
@@ -99,9 +102,8 @@ function AdminInvitePage() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    if (error) {
-      setError("");
-    }
+    if (error) setError("");
+    if (showSuccess) setShowSuccess(false);
   };
 
   return (
@@ -324,9 +326,9 @@ function AdminInvitePage() {
                       )}
                     </button>
                   </form>
-                  {/* Invite link is now hidden; show a simple confirmation if needed */}
-                  {inviteLink === "" && !loading && !error && (
-                    <div className="mt-8 text-green-700 font-semibold flex items-center gap-2">
+                  {}
+                  {showSuccess && !loading && !error && (
+                    <div className="mt-8 text-green-700 font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
                       <CheckCircle2 size={20} />
                       Invitation sent successfully!
                     </div>

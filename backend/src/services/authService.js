@@ -8,7 +8,9 @@ import {
   findUserByEmail,
   markInviteAsUsed,
   validateInviteToken,
+  findFormsByUserId,
 } from "../models/authModel.js";
+import { sendVolunteerInvite } from "./mailService.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
 
@@ -50,7 +52,7 @@ export async function signup({ token, password, confirmPass }) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await createUser(invite.email, hashedPassword, 2);
+  await createUser(invite.email, hashedPassword, 2, invite.forms || []);
   await markInviteAsUsed(invite.invite_id);
 
   return { message: "Account created successfully" };
@@ -82,7 +84,7 @@ export async function login({ userName, password }) {
   };
 }
 
-export async function createVolunteerInvite({ email, createdBy }) {
+export async function createVolunteerInvite({ email, createdBy, forms = [] }) {
   if (!email || !email.trim()) {
     throw serviceError(400, "Email is required");
   }
@@ -94,9 +96,25 @@ export async function createVolunteerInvite({ email, createdBy }) {
 
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  await createInvite(email, token, expiresAt, createdBy);
+  
+  await createInvite(email, token, expiresAt, createdBy, forms);
+  
+  let emailSent = true;
+  try {
+    await sendVolunteerInvite(email, token, forms);
+  } catch (err) {
+    emailSent = false;
+    console.error("Failed to send email:", err);
+  }
 
-  return { message: "Invite created", token };
+  return { message: emailSent 
+              ? "Invite created and email sent" 
+              : "Invite created but email failed to send", token };
+}
+
+export async function getUserForms(userId) {
+  const forms = await findFormsByUserId(userId);
+  return { forms: forms || [] };
 }
 
 export async function validateInvite(token) {
