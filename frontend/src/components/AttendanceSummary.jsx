@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 function AttendanceSummary() {
-  const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
   const [count, setCount] = useState("");
   const [volunteers, setVolunteers] = useState("");
@@ -59,10 +58,6 @@ function AttendanceSummary() {
   };
 
   const handleSubmit = async () => {
-    if (!date) {
-      setError("Please select a date");
-      return;
-    }
 
     if (items.length === 0) {
       setError("No data to submit");
@@ -111,19 +106,6 @@ function AttendanceSummary() {
         </h2>
 
         {}
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => {
-            setDate(e.target.value);
-
-            setItems([]);
-            setVolunteers("");
-            setSuccess("");
-            setError("");
-          }} 
-         className="w-full border border-gray-300 rounded-lg px-3 py-2"
-        />
 
         {}
         <div className="space-y-4">
