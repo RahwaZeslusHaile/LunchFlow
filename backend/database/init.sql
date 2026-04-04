@@ -128,10 +128,12 @@ Create TABLE attendance_diet (
 -- Aida's change
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
+  assigned_admin INTEGER REFERENCES account(account_id), 
   order_date DATE NOT NULL,
   attendance INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- INSERT INTO orders (assigned_admin,order_date, attendance)VALUES  (1,'2026-04-04',20)
 
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
@@ -148,3 +150,15 @@ CREATE TABLE order_items (
     FOREIGN KEY (menu_item_id)
     REFERENCES menu_items(menu_item_id)
 );
+
+CREATE TABLE event_steps(
+  step_id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT null REFERENCES orders (order_id) on DELETE CASCADE,
+  step_order INTEGER NOT Null,
+  assigned_admin INTEGER REFERENCES account(account_id), 
+  assigned_volunteer INTEGER REFERENCES account(account_id),    
+  step_status         VARCHAR(50) DEFAULT 'pending'
+
+
+);
+-- INSERT INTO event_steps (order_id, step_order,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')

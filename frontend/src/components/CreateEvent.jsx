@@ -2,34 +2,43 @@ import { useState } from "react";
 
 function CreateEvent() {
   const [date, setDate] = useState("");
-
+  let responseData
   const handleCreate = async() => {
     if (!date) return alert("Please select a date");
     console.log("Event created for:", date);
-    const payload = {
+    const eventPayload = {
       order_date: date,
-      attendance:0
+      attendance:0,
+      assigned_admin:1
+
       
     };
-    try{
-const res = await fetch("http://localhost:4000/api/order/event", {  
+    try {
+      const res = await fetch("http://localhost:4000/api/order/event", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(eventPayload)
       });
+
       if (!res.ok) throw new Error("Failed to create event");
-      const data = await res.json();
-      console.log("Response:", data);
 
+      const responseData = await res.json();
+      console.log("Response:", responseData);
+
+      const resStepEvent = await fetch(`http://localhost:4000/api/eventStep/${responseData.order_id}`);
+      const dataStepEvent = await resStepEvent.json();
+
+      console.log(dataStepEvent);
+      
+
+    } catch (err) {
+      console.error(err);
     }
-     catch (err) {
-        console.error(err);
-    }
 
-  };
-
+  }//end of CreateEvent
+ 
   return (
     <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 p-6 shadow-sm max-w-md">
       <h3 className="text-lg font-semibold text-slate-800 mb-2">

@@ -21,6 +21,8 @@ import LeftoverManagement from "./LeftoverManagement";
 import CreateMenu from "./CreateMenu";
 import StatusCard from "./StatusCard";
 import CreateEvent from "./CreateEvent";
+import OrderHistory from "./OrderHistory";
+
 
 
 
@@ -43,7 +45,9 @@ function AdminInvitePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+  
     const user = JSON.parse(localStorage.getItem("user") || "null");
+      // console.log("user email",user.email) I need it for more INFO
     if (!user || user.roleId !== 1) {
       navigate("/login");
     }
@@ -243,11 +247,9 @@ function AdminInvitePage() {
                       <CreateEvent/>
 
                       {/* Event List */}
-                      {/* <EventList/> */}
+                      <OrderHistory/>
                   </h3>
-                  <p className="text-slate-600">
-                   Status box
-                  </p>
+
                 </div>
                 </div>
               )}
