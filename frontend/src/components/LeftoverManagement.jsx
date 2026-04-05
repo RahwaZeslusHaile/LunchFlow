@@ -67,7 +67,6 @@ function LeftoverManagement() {
         body: JSON.stringify({
           items: filtered.map(item => ({
             menu_item_id: item.menu_item_id,
-            class_id: item.class_id,    
             quantity: item.quantity,
             leftover_date: new Date().toISOString().split("T")[0],
             notes: ""
