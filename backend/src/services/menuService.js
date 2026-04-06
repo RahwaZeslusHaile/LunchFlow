@@ -40,3 +40,16 @@ export async function fetchDietaryRestrictions() {
   );
   return dietsInDB.rows;
 }
+
+
+export async function deleteMenuItem(id) {
+  const result = await pool.query(
+    "DELETE FROM menu_items WHERE menu_item_id = $1 RETURNING *",
+    [id]
+  );
+
+  if (result.rowCount === 0) {
+    throw { status: 404, message: "Menu item not found" };
+  }
+  return result.rows[0];
+}
