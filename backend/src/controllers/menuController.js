@@ -50,8 +50,8 @@ export async function createMenuItem(req, res) {
         error: "name, category_id and diet_id are required",
       });
     }
-    const newMenuItem = await createMenuItems(name, category_id, diet_id) 
-    res.json(newMenuItem);
+    const newMenuItem = await createMenuItems(name, category_id, diet_id);
+    res.status(201).json(newMenuItem);
   } catch (err) {
     sendError(res, err);
   }
