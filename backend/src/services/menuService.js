@@ -42,7 +42,7 @@ export async function fetchDietaryRestrictions() {
 }
 
 
-export async function deleteMenuItem(id) {
+export async function deleteMenuItemById(id) {
   const result = await pool.query(
     "DELETE FROM menu_items WHERE menu_item_id = $1 RETURNING *",
     [id]
