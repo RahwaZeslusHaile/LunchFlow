@@ -131,11 +131,16 @@ function CreateMenu() {
 
     
       try {
-        await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
-      } catch {}
-    
+        const res = await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
 
-    setMenuItems(prev => prev.filter(item => item.menu_item_id !== id));  
+        if (!res.ok) throw new Error();
+
+        setMenuItems((prev) => prev.filter((item) => item.menu_item_id !== id));
+
+      } catch {
+        setError("Failed to delete item");
+      }
+      
   };
 
   return (
