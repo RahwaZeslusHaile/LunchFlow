@@ -5,6 +5,7 @@ import {
   getMenuItems,
   createMenuItem,
   getDietaryRestrictions,
+  deleteMenuItem,
 } from "../controllers/menuController.js";
 
 const router = Router();
