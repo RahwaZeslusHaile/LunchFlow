@@ -22,9 +22,9 @@ function CreateMenu() {
 
       try {
         const [catRes, dietRes, menuRes] = await Promise.all([
-          fetch("http://localhost:4000/api/menu/categories"),
-          fetch("http://localhost:4000/api/menu/dietary-restrictions"),
-          fetch("http://localhost:4000/api/menu/menu-items"),
+          fetch("/api/menu/categories"),
+          fetch("/api/menu/dietary-restrictions"),
+          fetch("/api/menu/menu-items"),
         ]);
 
         if (!catRes.ok) {

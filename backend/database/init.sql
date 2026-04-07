@@ -34,6 +34,7 @@ INSERT INTO menu_categories (name) VALUES
 ('Fresh Produce'),
 ('Snacks'),
 ('Sweet Treats'),
+('Drinks'),
 ('Non-Food Essentials'),
 ('Food Essentials');
 
