@@ -38,6 +38,8 @@ function AdminInvitePage() {
   const [loading, setLoading] = useState(false);
   const [selectedForms, setSelectedForms] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [invitesHistory, setInvitesHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +54,31 @@ function AdminInvitePage() {
     localStorage.removeItem("user");
     navigate("/login");
   };
+
+  const fetchInvites = async () => {
+    try {
+      setLoadingHistory(true);
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/auth/invite/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInvitesHistory(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "InviteVolunteers") {
+      fetchInvites();
+    }
+  }, [activeTab]);
+
 
   const handleInvite = async (e) => {
     e.preventDefault();
@@ -92,6 +119,7 @@ function AdminInvitePage() {
       setEmail("");
       setSelectedForms([]);
       setShowSuccess(true);
+      fetchInvites();
     } catch (err) {
       console.error(err);
       setError("Server error, please try again");
@@ -244,6 +272,7 @@ function AdminInvitePage() {
               {activeTab === "MenuManagement" && <CreateMenu />}
 
               {activeTab === "InviteVolunteers" && (
+                <div className="space-y-8">
                 <section className="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl overflow-hidden shadow-xl shadow-slate-200/50 p-8 max-w-2xl">
                   <div className="mb-8 flex items-center gap-5">
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-inner">
@@ -334,6 +363,57 @@ function AdminInvitePage() {
                     </div>
                   )}
                 </section>
+
+                <section className="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl overflow-hidden shadow-xl shadow-slate-200/50 p-8 max-w-4xl">
+                  <div className="mb-6 flex items-center gap-4">
+                     <h2 className="text-xl font-bold text-slate-800">Invite History</h2>
+                  </div>
+                  <div className="overflow-x-auto max-h-[400px] overflow-y-auto rounded-xl border border-slate-100">
+                    <table className="w-full text-left text-sm text-slate-600 relative">
+                      <thead className="bg-slate-50 text-slate-500 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Email</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Assigned Forms</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Status</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Expires At</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {loadingHistory ? (
+                          <tr><td colSpan="4" className="text-center py-6 text-slate-400">Loading...</td></tr>
+                        ) : invitesHistory.length === 0 ? (
+                          <tr><td colSpan="4" className="text-center py-6 text-slate-400">No invites found.</td></tr>
+                        ) : invitesHistory.map(invite => {
+                          const isExpired = new Date(invite.expires_at) < new Date();
+                          let statusLabel = invite.used ? "Active" : isExpired ? "Expired" : "Pending";
+                          let statusColor = invite.used ? "bg-green-100 text-green-800" : isExpired ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800";
+
+                          return (
+                          <tr key={invite.invite_id} className="hover:bg-slate-50/50 transition">
+                            <td className="px-4 py-3 font-medium text-slate-700">{invite.email}</td>
+                            <td className="px-4 py-3">
+                               <div className="flex gap-1 flex-wrap">
+                                 {(invite.forms || []).map(f => (
+                                   <span key={f} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 capitalize">{f}</span>
+                                 ))}
+                                 {(!invite.forms || invite.forms.length === 0) && <span className="text-slate-400 text-xs">None</span>}
+                               </div>
+                            </td>
+                            <td className="px-4 py-3">
+                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusColor}`}>
+                                 {statusLabel}
+                               </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                              {new Date(invite.expires_at).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        )})}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+                </div>
               )}
             </div>
           </div>

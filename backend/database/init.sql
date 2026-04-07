@@ -19,7 +19,8 @@ CREATE TABLE invites (
   token      TEXT    NOT NULL UNIQUE,
   used       BOOLEAN NOT NULL DEFAULT FALSE,
   expires_at TIMESTAMP NOT NULL,
-  created_by INTEGER REFERENCES account(account_id)
+  created_by INTEGER REFERENCES account(account_id),
+  forms      JSONB
 );
 
 Create TABLE menu_categories (

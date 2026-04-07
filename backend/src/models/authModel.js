@@ -44,3 +44,10 @@ export async function validateInviteToken(token) {
   );
   return result.rows[0];
 }
+
+export async function getAllInvites() {
+  const result = await pool.query(
+    "SELECT invite_id, email, used, expires_at, forms FROM invites ORDER BY expires_at DESC"
+  );
+  return result.rows;
+}

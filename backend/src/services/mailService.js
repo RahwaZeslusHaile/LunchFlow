@@ -17,12 +17,10 @@ export async function sendVolunteerInvite(email, token, forms) {
   const getBadgeStyle = (form) => {
     switch (form.toLowerCase()) {
       case 'leftover':
-      case 'leftover management':
         return 'background-color: #f0fdf4; color: #166534; border: 1px solid #bcf0da;';
       case 'attendance':
         return 'background-color: #f0f9ff; color: #075985; border: 1px solid #bae6fd;';
       case 'order':
-      case 'order management':
         return 'background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca;';
       default:
         return 'background-color: #f8fafc; color: #475569; border: 1px solid #e2e8f0;';

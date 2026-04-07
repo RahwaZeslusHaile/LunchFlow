@@ -4,6 +4,7 @@ import {
   signup,
   validateInvite,
   getUserForms,
+  getAllInvites,
 } from "../services/authService.js";
 
 function sendError(res, err) {
@@ -57,6 +58,15 @@ export async function getUserFormsController(req, res) {
 export async function validateInviteController(req, res) {
   try {
     const result = await validateInvite(req.params.token);
+    return res.json(result);
+  } catch (err) {
+    return sendError(res, err);
+  }
+}
+
+export async function getAllInvitesController(req, res) {
+  try {
+    const result = await getAllInvites();
     return res.json(result);
   } catch (err) {
     return sendError(res, err);

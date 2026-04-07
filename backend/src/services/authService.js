@@ -9,6 +9,7 @@ import {
   markInviteAsUsed,
   validateInviteToken,
   findFormsByUserId,
+  getAllInvites as getAllInvitesModel,
 } from "../models/authModel.js";
 import { sendVolunteerInvite } from "./mailService.js";
 
@@ -128,4 +129,9 @@ export async function validateInvite(token) {
 
 export function verifyJwt(token) {
   return jwt.verify(token, JWT_SECRET);
+}
+
+export async function getAllInvites() {
+  const invites = await getAllInvitesModel();
+  return invites;
 }
