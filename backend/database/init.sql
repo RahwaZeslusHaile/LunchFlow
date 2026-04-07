@@ -67,6 +67,8 @@ INSERT INTO menu_items (name, category_id, diet_id) VALUES
 ('Bananas', 6, 1),
 ('Biscuits', 6, 1);
 
+ALTER TABLE menu_items ADD COLUMN quantity INT DEFAULT 1;
+
 
 Create TABLE classes (
   class_id SERIAL PRIMARY KEY,
