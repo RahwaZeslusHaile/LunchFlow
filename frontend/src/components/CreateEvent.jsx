@@ -2,7 +2,6 @@ import { useState } from "react";
 
 function CreateEvent() {
   const [date, setDate] = useState("");
-  let responseData
   const handleCreate = async() => {
     if (!date) return alert("Please select a date");
     console.log("Event created for:", date);
@@ -14,7 +13,7 @@ function CreateEvent() {
       
     };
     try {
-      const res = await fetch("http://localhost:4000/api/order/event", {
+      const res = await fetch("/api/order/event", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -27,8 +26,13 @@ function CreateEvent() {
       const responseData = await res.json();
       console.log("Response:", responseData);
 
-      const resStepEvent = await fetch(`http://localhost:4000/api/eventStep/${responseData.order_id}`);
+      const resStepEvent = await fetch(`/api/eventStep/${responseData.order_id}`);
+            if (!resStepEvent.ok) {
+        const text = await resStepEvent.text();
+        throw new Error(`Failed to fetch steps: ${text}`);
+      }
       const dataStepEvent = await resStepEvent.json();
+
 
       console.log(dataStepEvent);
       

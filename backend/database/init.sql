@@ -153,12 +153,16 @@ CREATE TABLE order_items (
 
 CREATE TABLE event_steps(
   step_id SERIAL PRIMARY KEY,
-  order_id INTEGER NOT null REFERENCES orders (order_id) on DELETE CASCADE,
-  step_order INTEGER NOT Null,
+  order_id INTEGER NOT NULL REFERENCES orders (order_id) ON DELETE CASCADE,
+  step_position INTEGER NOT NULL,
   assigned_admin INTEGER REFERENCES account(account_id), 
   assigned_volunteer INTEGER REFERENCES account(account_id),    
-  step_status         VARCHAR(50) DEFAULT 'pending'
+  step_status VARCHAR(50) DEFAULT 'pending',
+  
+  CONSTRAINT check_step_status
+  CHECK (step_status IN ('pending', 'in_progress', 'done')),
 
-
+  CONSTRAINT unique_step_position
+  UNIQUE (order_id, step_position)
 );
--- INSERT INTO event_steps (order_id, step_order,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')
+-- INSERT INTO event_steps (order_id,step_position,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')

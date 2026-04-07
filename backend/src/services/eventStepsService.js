@@ -1,12 +1,12 @@
 import pool from "../db.js";
 
-export async function createEventStep(order_id, step_order, assigned_admin) {
+export async function createEventStep(order_id, step_position, assigned_admin) {
   const result = await pool.query(
     `INSERT INTO event_steps 
-     (order_id, step_order, assigned_admin)
+     (order_id,step_position, assigned_admin)
      VALUES ($1, $2, $3)
      RETURNING *`,
-    [order_id, step_order, assigned_admin]
+    [order_id,step_position, assigned_admin]
   );
 
   return result.rows[0];
@@ -25,7 +25,7 @@ export async function createEventStep(order_id, step_order, assigned_admin) {
 export async function getLatestEventSteps() {
   const result = await pool.query(
     `SELECT 
-       es.step_order,
+       es.step_position,
        es.step_status,
        a.email,
        o.order_date
