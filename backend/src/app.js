@@ -7,6 +7,7 @@ import menuRouter from "./routes/menu.js";
 import attendanceRouter from "./routes/attendance.js";
 import classesRouter from "./routes/classes.js";
 import leftoversRouter from "./routes/leftovers.js";
+import eventStepRouter from "./routes/eventStep.js";
 
 
 
@@ -29,5 +30,6 @@ app.use("/api/menu", menuRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/classes", classesRouter);
 app.use("/api/leftovers", leftoversRouter);
+app.use("/api/eventStep", eventStepRouter);
 
 export default app;

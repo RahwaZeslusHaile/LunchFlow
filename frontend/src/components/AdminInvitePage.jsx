@@ -19,6 +19,12 @@ import OrderManagement from "./OrderManagement";
 import AttendanceSummary from "./AttendanceSummary";
 import LeftoverManagement from "./LeftoverManagement";
 import CreateMenu from "./CreateMenu";
+import StatusCard from "./StatusCard";
+import CreateEvent from "./CreateEvent";
+import OrderHistory from "./OrderHistory";
+
+
+
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
@@ -40,7 +46,9 @@ function AdminInvitePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+  
     const user = JSON.parse(localStorage.getItem("user") || "null");
+      // console.log("user email",user.email) I need it for more INFO
     if (!user || user.roleId !== 1) {
       navigate("/login");
     }
@@ -234,6 +242,21 @@ function AdminInvitePage() {
                     orders, manage attendance, handle leftovers, or generate new
                     volunteer invites.
                   </p>
+                  <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                    New 
+                    
+                      {/* Status */}
+                      <StatusCard/>
+
+                       {/* Add Event */}
+                      <CreateEvent/>
+
+                      {/* Event List */}
+                      <OrderHistory/>
+                  </h3>
+
+                </div>
                 </div>
               )}
               {activeTab === "PlaceOrder" && <OrderManagement />}
