@@ -26,11 +26,21 @@ export async function fetchMenuItems() {
 }
 
 export async function createMenuItems(name, category_id, diet_id) {
-  const addNewMenuItem = await pool.query(
-    "INSERT INTO menu_items (name, category_id, diet_id) VALUES ($1, $2, $3) RETURNING *",
-    [name, category_id, diet_id]
-  );
-  return addNewMenuItem.rows[0];
+  try {
+    const addNewMenuItem = await pool.query(
+      `INSERT INTO menu_items (name, category_id, diet_id, quantity)
+      VALUES ($1, $2, $3, 1)
+      ON CONFLICT (name, category_id, diet_id)
+      DO UPDATE SET quantity = menu_items.quantity + 1
+      RETURNING *`,
+      [name, category_id, diet_id]
+    );
+    return addNewMenuItem.rows[0];
+    } catch (err) {
+    console.error("DB insert error:", err);
+    throw { status: 500, message: "Failed to insert menu item" };
+}
+
 }
 
 
