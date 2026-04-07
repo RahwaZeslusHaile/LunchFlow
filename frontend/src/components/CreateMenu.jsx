@@ -21,11 +21,10 @@ function CreateMenu() {
    
 
       try {
-        const [catRes, dietRes,menuRes] = await Promise.all([
+        const [catRes, dietRes, menuRes] = await Promise.all([
           fetch("/api/menu/categories"),
           fetch("/api/menu/dietary-restrictions"),
-          fetch("/api/menu/menu-items")
-
+          fetch("/api/menu/menu-items"),
         ]);
 
         if (!catRes.ok) {
@@ -80,37 +79,56 @@ function CreateMenu() {
     };
 
  
-
-  
-
     try {
-      const res = await fetch("/api/menu/menu-items", {
+      const res = await fetch("http://localhost:4000/api/menu/menu-items", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error();
 
-      const data = await res.json();
-      
-        const categoryName = categories.find(
-          c => c.category_id === payload.category_id
-        )?.name;
+      const newItem = await res.json();
 
-        const dietName = diets.find(
-          d => d.diet_id === payload.diet_id
-        )?.name;
+      const categoryName = categories.find(c => c.category_id === newItem.category_id)?.name;
+      const dietName = diets.find(d => d.diet_id === newItem.diet_id)?.name;
 
-      setMenuItems(prev => [...prev, {
-        menu_item_id: data.menu_item_id,
-        name: payload.name,
-        category: categoryName,
-        diet: dietName
-      }]);
-           resetForm();
+      setMenuItems((prev) => {
+        const index = prev.findIndex(
+          (item) =>
+            item.name === newItem.name &&
+            item.category === categoryName &&
+            item.diet === dietName
+        );
+
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            quantity: newItem.quantity
+          };
+          return updated;
+        } else {
+          return [
+            ...prev,
+            {
+              menu_item_id: newItem.menu_item_id,
+              name: newItem.name,
+              category: categoryName,
+              diet: dietName,
+              quantity: newItem.quantity
+
+            }
+          ];
+
+        }
+
+      })
+
+      resetForm();
+
     } catch (err) {
       setError("Failed to add item");
 
@@ -131,11 +149,16 @@ function CreateMenu() {
 
     
       try {
-        await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
-      } catch {}
-    
+        const res = await fetch(`http://localhost:4000/api/menu/menu-items/${id}`, { method: "DELETE" });
 
-    setMenuItems(prev => prev.filter(item => item.menu_item_id !== id));  
+        if (!res.ok) throw new Error();
+
+        setMenuItems((prev) => prev.filter((item) => item.menu_item_id !== id));
+
+      } catch {
+        setError("Failed to delete item");
+      }
+      
   };
 
   return (
@@ -213,7 +236,7 @@ function CreateMenu() {
                   className="flex justify-between items-center border border-gray-300 rounded-lg px-3 py-2"
                 >
                   <span>
-                    {i + 1} - {item.name} ({categoryName} - {dietName})
+                    {i + 1} - {item.name} ({categoryName} - {dietName}) x {item.quantity}
                   </span>
 
                   <button

@@ -30,12 +30,15 @@ Create TABLE menu_categories (
 );
 
 INSERT INTO menu_categories (name) VALUES
-('Bakery'),
-('Chilled Meals'),
+('Bakery & Bases'),
+('Fillings'),
+('Fresh Produce'),
+('Snacks'),
+('Sweet Treats'),
 ('Drinks'),
-('Food Essentials'),
 ('Non-Food Essentials'),
-('Snacks');
+('Food Essentials');
+
 
 
 Create TABLE dietary_restrictions (
@@ -52,21 +55,22 @@ Create TABLE menu_items (
   menu_item_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   category_id INTEGER REFERENCES menu_categories(category_id) ON DELETE CASCADE,
-  diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id)
+  diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id),
+  quantity INTEGER NOT NULL DEFAULT 1,
+  CONSTRAINT unique_menu_item UNIQUE (name, category_id, diet_id)
 );
 
-INSERT INTO menu_items (name, category_id, diet_id) VALUES
-('Tortilla Wraps', 1, 1),
-('Falafels', 2, 1),
-('Salad Bowl', 2, 1),
-('Coca-Cola', 3, 4),
-('Water', 3, 4),
-('Coffee', 4, 4),
-('Green Tea', 4, 4),
-('Paper Towels', 5, 4),
-('Crisps', 6, 1),
-('Bananas', 6, 1),
-('Biscuits', 6, 1);
+
+
+INSERT INTO menu_items (name, category_id, diet_id, quantity) VALUES
+('Sainsburys Plain Tortilla Wraps', 1, 1, 1),
+('Sainsburys Falafels', 2, 1, 1),
+('Ground Coffee', 4, 4, 1),
+('Green Tea', 4, 4, 1),
+('Paper Towels', 5, 4, 1),
+('Large Bunches of Bananas', 6, 1, 1),
+('Packs of Assorted Biscuit Packs', 6, 1, 1);
+
 
 
 Create TABLE classes (
@@ -93,9 +97,9 @@ CREATE TABLE leftover_food (
 );
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
-(1, 1, 10, 'Tortilla Wraps left from morning prep'),
-(3, 2, 7, 'Salad Bowls leftover from yesterday lunch'),
-(4, 3, 3, 'Coca-Cola cans leftover');
+(1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
+(3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch'),
+
 
 
 

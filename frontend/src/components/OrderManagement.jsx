@@ -21,27 +21,88 @@ function OrderManagement() {
 
   const categories = [
     "All",
-    "Bakery",
-    "Chilled Meals",
+    "Bakery & Bases",
+    "Fillings",
+    "Fresh Produce",
+    "Snacks",
+    "Sweet Treats",
     "Drinks",
-    "Food Essentials",
     "Non-Food Essentials",
-    "Snacks"
+    "Food Essentials",
   ];
 
   const fallbackMenu = [
-    { id: 1, name: "Bread", category: "Bakery" },
-    { id: 2, name: "Croissant", category: "Bakery" },
-    { id: 3, name: "Ready Pasta", category: "Chilled Meals" },
-    { id: 4, name: "Salad Box", category: "Chilled Meals" },
-    { id: 5, name: "Coke", category: "Drinks" },
-    { id: 6, name: "Orange Juice", category: "Drinks" },
-    { id: 7, name: "Flour", category: "Food Essentials" },
-    { id: 8, name: "Sugar", category: "Food Essentials" },
-    { id: 9, name: "Toilet Paper", category: "Non-Food Essentials" },
-    { id: 10, name: "Soap", category: "Non-Food Essentials" },
-    { id: 11, name: "Chips", category: "Snacks" },
-    { id: 12, name: "Chocolate", category: "Snacks" }
+    {
+      id: 1,
+      name: "Sainsburys Plain Tortilla Wraps",
+      category: "Bakery & Bases",
+    },
+    { id: 2, name: "Packs of pita bread", category: "Bakery & Bases" },
+    {
+      id: 3,
+      name: "Sainsburys Cooked Chicken Breast Chunks",
+      category: "Fillings",
+    },
+    {
+      id: 4,
+      name: "Humza Signature Hot & Spicy Chicken Wings 600g",
+      category: "Fillings",
+    },
+    { id: 5, name: "Sainsburys Falafels", category: "Fillings" },
+    { id: 6, name: "Plant Pioneers (Vegan) Ham", category: "Fillings" },
+    { id: 7, name: "Sainsburys Hummus", category: "Fillings" },
+    { id: 8, name: "Sainsburys Creamy Coleslaw", category: "Fillings" },
+    { id: 9, name: "Greek Feta Block", category: "Fillings" },
+    { id: 10, name: "Soap", category: "Fresh Produce" },
+    { id: 11, name: "Chips", category: "Fresh Produce" },
+    { id: 12, name: "Large Cucumbers", category: "Fresh Produce" },
+    {
+      id: 13,
+      name: "Packs of Small Ripe & Ready Avocados",
+      category: "Fresh Produce",
+    },
+    { id: 14, name: "Lemons", category: "Fresh Produce" },
+    { id: 15, name: "cheese grated", category: "Fresh Produce" },
+    { id: 16, name: "Bags of Baby Spinach", category: "Fresh Produce" },
+    { id: 17, name: "Mixed Leaf Salad", category: "Fresh Produce" },
+    { id: 18, name: "Punnets Cherry Tomatoes", category: "Snacks" },
+    {
+      id: 19,
+      name: "Large Bags of Tortilla Chips (Salted)",
+      category: "Snacks",
+    },
+    { id: 20, name: "Large Bags of Sea Salt  Crisps", category: "Snacks" },
+    { id: 21, name: "Jars of Salsa (Cool and Hot)", category: "Snacks" },
+    {
+      id: 22,
+      name: "Packs of Assorted Biscuit Packs",
+      category: "Sweet Treats",
+    },
+    { id: 23, name: "Large Bunches of Bananas", category: "Sweet Treats" },
+    {
+      id: 24,
+      name: "Punnets of Seedless Grapes (Red & Green)",
+      category: "Sweet Treats",
+    },
+    {
+      id: 25,
+      name: "Bags of Tangerines or Satsumas",
+      category: "Sweet Treats",
+    },
+    {
+      id: 26,
+      name: "Sainsburys 100% Pure Orange/Apple Juice (1L Cartons)",
+      category: "Drinks",
+    },
+    { id: 27, name: "Coca cola", category: "Drinks" },
+    { id: 28, name: "Fanta", category: "Drinks" },
+    { id: 29, name: "Sainsburys British Bottled Still Spring Water 5L Bottles", category: "Drinks" },
+    { id: 30, name: "Semi-Skimmed Milk", category: "Drinks" },
+    { id: 31, name: "Paper Towels", category: "Non-Food Essentials" },
+    { id: 32, name: "Minky All Purpose Microfibre Cloths (6 pack)", category: "Non-Food Essentials" },
+    { id: 33, name: "BRITA Marella 3.5L XL Water Filter Jug - White", category: "Non-Food Essentials" },
+    { id: 34, name: "Ground Coffee", category: "Food Essentials" },
+
   ];
 
   useEffect(() => {
