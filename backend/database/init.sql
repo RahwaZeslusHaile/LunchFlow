@@ -29,12 +29,14 @@ Create TABLE menu_categories (
 );
 
 INSERT INTO menu_categories (name) VALUES
-('Bakery'),
-('Chilled Meals'),
-('Drinks'),
-('Food Essentials'),
+('Bakery & Bases'),
+('Fillings'),
+('Fresh Produce'),
+('Snacks'),
+('Sweet Treats'),
 ('Non-Food Essentials'),
-('Snacks');
+('Food Essentials');
+
 
 
 Create TABLE dietary_restrictions (
@@ -59,17 +61,13 @@ Create TABLE menu_items (
 
 
 INSERT INTO menu_items (name, category_id, diet_id, quantity) VALUES
-('Tortilla Wraps', 1, 1, 1),
-('Falafels', 2, 1, 1),
-('Salad Bowl', 2, 1, 1),
-('Coca-Cola', 3, 4, 1),
-('Water', 3, 4, 1),
-('Coffee', 4, 4, 1),
+('Sainsburys Plain Tortilla Wraps', 1, 1, 1),
+('Sainsburys Falafels', 2, 1, 1),
+('Ground Coffee', 4, 4, 1),
 ('Green Tea', 4, 4, 1),
 ('Paper Towels', 5, 4, 1),
-('Crisps', 6, 1, 1),
-('Bananas', 6, 1, 1),
-('Biscuits', 6, 1, 1);
+('Large Bunches of Bananas', 6, 1, 1),
+('Packs of Assorted Biscuit Packs', 6, 1, 1);
 
 
 
@@ -97,9 +95,9 @@ CREATE TABLE leftover_food (
 );
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
-(1, 1, 10, 'Tortilla Wraps left from morning prep'),
-(3, 2, 7, 'Salad Bowls leftover from yesterday lunch'),
-(4, 3, 3, 'Coca-Cola cans leftover');
+(1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
+(3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch'),
+
 
 
 
