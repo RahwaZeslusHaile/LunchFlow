@@ -95,15 +95,37 @@ function CreateMenu() {
       const categoryName = categories.find(c => c.category_id === newItem.category_id)?.name;
       const dietName = diets.find(d => d.diet_id === newItem.diet_id)?.name;
 
-      setMenuItems((prev) => [
-        ...prev,
-        {
-          menu_item_id: newItem.menu_item_id,
-          name: newItem.name,
-          category: categoryName,
-          diet: dietName
+      setMenuItems((prev) => {
+        const index = prev.findIndex(
+          (item) =>
+            item.name === newItem.name &&
+            item.category === categoryName &&
+            item.diet === dietName
+        );
+
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            quantity: newItem.quantity
+          };
+          return updated;
+        } else {
+          return [
+            ...prev,
+            {
+              menu_item_id: newItem.menu_item_id,
+              name: newItem.name,
+              category: categoryName,
+              diet: dietName,
+              quantity: newItem.quantity
+
+            }
+          ];
+
         }
-      ]);
+
+      })
 
       resetForm();
 
@@ -214,7 +236,7 @@ function CreateMenu() {
                   className="flex justify-between items-center border border-gray-300 rounded-lg px-3 py-2"
                 >
                   <span>
-                    {i + 1} - {item.name} ({categoryName} - {dietName})
+                    {i + 1} - {item.name} ({categoryName} - {dietName}) x {item.quantity}
                   </span>
 
                   <button
