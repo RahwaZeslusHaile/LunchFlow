@@ -13,10 +13,29 @@ export async function createEventStep(order_id, step_order, assigned_admin) {
 }
 
 
-export async function getEventStep(order_id) {
-   const dbStoredEventStep = await pool.query("SELECT * FROM event_steps where order_id=$1",[order_id]);
+// export async function getEventStep(order_id) {
+//    const dbStoredEventStep = await pool.query("SELECT * FROM event_steps where order_id=$1",[order_id]);
 
 
-  return dbStoredEventStep.rows;
+//   return dbStoredEventStep.rows;
     
+// }
+
+
+export async function getLatestEventSteps() {
+  const result = await pool.query(
+    `SELECT 
+       es.step_order,
+       es.step_status,
+       a.email,
+       o.order_date
+     FROM event_steps es
+     LEFT JOIN account a ON es.assigned_admin = a.account_id
+     JOIN orders o ON es.order_id = o.order_id
+     WHERE es.order_id = (
+       SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1
+     )`
+  );
+
+  return result.rows;
 }
