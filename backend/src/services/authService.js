@@ -12,6 +12,7 @@ import {
   getAllInvites as getAllInvitesModel,
 } from "../models/authModel.js";
 import { sendVolunteerInvite } from "./mailService.js";
+import { updateStepStatus } from "./eventStepsService.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
 
@@ -53,7 +54,7 @@ export async function signup({ token, password, confirmPass }) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await createUser(invite.email, hashedPassword, 2, invite.forms || []);
+  await createUser(invite.email, hashedPassword, 2, invite.forms || [], invite.name);
   await markInviteAsUsed(invite.invite_id);
 
   return { message: "Account created successfully" };
@@ -85,21 +86,32 @@ export async function login({ userName, password }) {
   };
 }
 
-export async function createVolunteerInvite({ email, createdBy, forms = [] }) {
+export async function createVolunteerInvite({ email, name, createdBy, forms = [] }) {
   if (!email || !email.trim()) {
     throw serviceError(400, "Email is required");
   }
 
   const existing = await findUserByEmail(email);
   if (existing) {
-    throw serviceError(400, "An account with this email already exists");
+    const { updateUserForms } = await import("../models/authModel.js");
+    await updateUserForms(email, forms);
+    
+    if (forms.includes("attendance")) await updateStepStatus(1, "in_progress");
+    if (forms.includes("leftover")) await updateStepStatus(2, "in_progress");
+    if (forms.includes("order")) await updateStepStatus(3, "in_progress");
+
+    return { message: "Volunteer already has an account. Their assigned forms have been updated.", existing: true };
   }
 
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   
-  await createInvite(email, token, expiresAt, createdBy, forms);
+  await createInvite(email, token, expiresAt, createdBy, forms, name);
   
+  if (forms.includes("attendance")) await updateStepStatus(1, "in_progress");
+  if (forms.includes("leftover")) await updateStepStatus(2, "in_progress");
+  if (forms.includes("order")) await updateStepStatus(3, "in_progress");
+
   let emailSent = true;
   try {
     await sendVolunteerInvite(email, token, forms);
@@ -124,7 +136,7 @@ export async function validateInvite(token) {
     throw serviceError(400, "Invite link is invalid or has expired");
   }
 
-  return { email: invite.email };
+  return { email: invite.email, name: invite.name };
 }
 
 export function verifyJwt(token) {

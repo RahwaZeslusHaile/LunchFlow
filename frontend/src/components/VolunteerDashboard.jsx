@@ -58,7 +58,16 @@ function VolunteerDashboard() {
     })
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data) => {
-        setAssignedForms(data.forms || []);
+        let forms = data.forms || [];
+        if (typeof forms === "string") {
+          try {
+            forms = JSON.parse(forms);
+          } catch (e) {
+            console.error("Failed to parse forms string:", e);
+            forms = [];
+          }
+        }
+        setAssignedForms(Array.isArray(forms) ? forms : []);
         setLoading(false);
       })
       .catch(() => {

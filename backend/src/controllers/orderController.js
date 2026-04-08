@@ -21,7 +21,13 @@ export async function addItems(req, res) {
       return res.status(400).json({ message: "Invalid input" });
     }
 
-    const order_id = await createOrderWithItems(date, attendance, items);
+    const order_id = await createOrderWithItems(
+      date, 
+      attendance, 
+      items, 
+      req.user.userId, 
+      req.user.email
+    );
 
     res.json({
       message: "Order created successfully",

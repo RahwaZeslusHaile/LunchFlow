@@ -7,7 +7,9 @@ CREATE TABLE account (
   account_id SERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
   pass TEXT NOT NULL,
-  role_id INTEGER NOT NULL REFERENCES roles(roles_id)
+  role_id INTEGER NOT NULL REFERENCES roles(roles_id),
+  name TEXT,
+  forms JSONB
 );
 
 INSERT INTO roles (position) VALUES ('Admin');
@@ -170,4 +172,12 @@ CREATE TABLE event_steps(
   CONSTRAINT unique_step_position
   UNIQUE (order_id, step_position)
 );
--- INSERT INTO event_steps (order_id,step_position,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')
+
+CREATE TABLE form_submissions (
+  submission_id SERIAL PRIMARY KEY,
+  account_id INTEGER REFERENCES account(account_id),
+  email TEXT,
+  form_type TEXT, -- 'attendance', 'leftover', 'order'
+  submission_data JSONB,
+  submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

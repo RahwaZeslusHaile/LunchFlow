@@ -1,4 +1,6 @@
 import pool from "../db.js";
+import { updateStepStatus } from "./eventStepsService.js";
+import { recordSubmission } from "./reportService.js";
 
 export async function fetchAttendance() {
   let query = `
@@ -29,7 +31,9 @@ export async function fetchAttendance() {
 export async function insertAttendance({
   class_id,
   trainee_count,
-  volunteer_count
+  volunteer_count,
+  userId,
+  email
 }) {
   const result = await pool.query(
     `
@@ -39,5 +43,10 @@ export async function insertAttendance({
     `,
     [class_id, trainee_count, volunteer_count]
   );
+
+  await updateStepStatus(1, "done");
+  
+  await recordSubmission(userId, email, "attendance", { class_id, trainee_count, volunteer_count });
+
   return result.rows[0];
 }
