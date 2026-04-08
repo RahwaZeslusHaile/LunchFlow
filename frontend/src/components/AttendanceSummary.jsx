@@ -77,7 +77,7 @@ function AttendanceSummary() {
       body: JSON.stringify({
             class_id: classObj.class_id,
             trainee_count: item.count,
-            volunteer_count: Number(volunteers) || 0
+            volunteer_count: item.volunteers || 0
           })
     });
       }
