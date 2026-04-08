@@ -131,7 +131,7 @@ function AttendanceSummary() {
 
           {}
           <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Number</label>
+            <label className="text-sm text-gray-600">Trainees Count</label>
             <input
               type="number"
               min="0"
@@ -171,7 +171,7 @@ function AttendanceSummary() {
 
           {}
           <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Volunteers</label>
+            <label className="text-sm text-gray-600">Volunteers Count</label>
             <input
               type="number"
               min="0"
