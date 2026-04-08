@@ -86,7 +86,7 @@ function AttendanceSummary() {
 
       
       setItems([]);
-      setVolunteers("");
+      setVolunteersInput("");
 
     } catch (err) {
       setError("Error submitting data ");
