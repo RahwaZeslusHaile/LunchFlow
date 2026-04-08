@@ -99,6 +99,8 @@ function AttendanceSummary() {
     0 
   );
 
+  const volunteerTotal = items.reduce((sum, i) => sum + (i.volunteers || 0), 0);
+
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow space-y-5">
@@ -206,13 +208,16 @@ function AttendanceSummary() {
               return (
                 <span key={c.class_id}>
                   {c.name} {item ? item.count : 0}
-                  {item && item.volunteers ? ` | VOL ${item.volunteers}` : ""} |{" "}
+                  {item && item.volunteers
+                    ? ` | VOL ${item.volunteers}`
+                    : ""} |{" "}
                 </span>
               );
-
             })}
           </div>
-
+          <div className="text-center font-bold mt-2">
+            Total Volunteers: {volunteerTotal}
+          </div>
           <div className="text-center font-bold mt-2">
             Total: {previewTotal}
           </div>
