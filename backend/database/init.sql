@@ -98,7 +98,7 @@ CREATE TABLE leftover_food (
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
 (1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
-(3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch'),
+(3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch');
 
 
 
