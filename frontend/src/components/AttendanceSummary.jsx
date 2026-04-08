@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 function AttendanceSummary() {
   const [category, setCategory] = useState("");
   const [count, setCount] = useState("");
+  const [volunteers, setVolunteers] = useState("");
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -35,7 +36,7 @@ function AttendanceSummary() {
     const newItem = {
       category,
       count: Number(count),
-      halal: isHalal ? Number(halalCount) : 0
+      halal: isHalal ? Number(halalCount) : 0,
       volunteers: Number(volunteers) || 0,
     };
 
