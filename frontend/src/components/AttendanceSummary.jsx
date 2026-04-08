@@ -214,11 +214,11 @@ function AttendanceSummary() {
               );
             })}
           </div>
-          <div className="text-center font-bold mt-2">
+          <div className="text-center font-bold mt-4">
             Total Volunteers: {volunteerTotal}
           </div>
           <div className="text-center font-bold mt-2">
-            Total: {previewTotal}
+            Total Attendees: {previewTotal}
           </div>
           <div className="text-sm text-gray-500 text-center mt-4">
             <span className="mr-4">T = Trainees</span>
