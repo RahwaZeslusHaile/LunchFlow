@@ -202,15 +202,14 @@ function AttendanceSummary() {
 
         {}
         <div className="bg-gray-50 p-3 rounded-lg text-sm">
-          <div>
+          <div className="flex flex-wrap gap-4">
             {classes.map((c) => {
               const item = items.find((x) => x.category === c.name);
+              const traineeCount = item ? item.count : 0;
+              const volunteerCount = item ? item.volunteers : 0;
               return (
                 <span key={c.class_id}>
-                  {c.name} {item ? item.count : 0}
-                  {item && item.volunteers
-                    ? ` | VOL ${item.volunteers}`
-                    : ""} |{" "}
+                  {c.name}: T={traineeCount}, V={volunteerCount}
                 </span>
               );
             })}
