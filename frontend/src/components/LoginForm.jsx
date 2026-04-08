@@ -42,6 +42,9 @@ function LoginForm() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      if (data.user.forms) {
+        localStorage.setItem("forms", JSON.stringify(data.user.forms));
+      }
 
       if (data.user.roleId === 1) {
         navigate("/admin");

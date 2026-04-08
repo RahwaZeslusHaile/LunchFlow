@@ -1,6 +1,6 @@
 import pool from "../db.js";
 
-export async function fetchAttendance(date) {
+export async function fetchAttendance() {
   let query = `
     SELECT
       a.attendance_id,
@@ -10,18 +10,10 @@ export async function fetchAttendance(date) {
       a.volunteer_count
     FROM attendance a
     JOIN classes c ON a.class_id = c.class_id
+    ORDER BY a.attendance_id
   `;
 
-  const values = [];
-
-  if (date) {
-    query += ` WHERE a.session_date = $1`;
-    values.push(date);
-  }
-
-  query += ` ORDER BY a.attendance_id`;
-
-  const storedAttendanceData = await pool.query(query, values);
+  const storedAttendanceData = await pool.query(query);
 
   const total = storedAttendanceData.rows.reduce(
     (sum, row) => sum + row.trainee_count + row.volunteer_count,
@@ -31,4 +23,21 @@ export async function fetchAttendance(date) {
     data: storedAttendanceData.rows,
     total
   };
+}
+
+
+export async function insertAttendance({
+  class_id,
+  trainee_count,
+  volunteer_count
+}) {
+  const result = await pool.query(
+    `
+    INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count)
+    VALUES ($1, CURRENT_DATE, $2, $3)
+    RETURNING *
+    `,
+    [class_id, trainee_count, volunteer_count]
+  );
+  return result.rows[0];
 }

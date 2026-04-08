@@ -19,7 +19,8 @@ CREATE TABLE invites (
   token      TEXT    NOT NULL UNIQUE,
   used       BOOLEAN NOT NULL DEFAULT FALSE,
   expires_at TIMESTAMP NOT NULL,
-  created_by INTEGER REFERENCES account(account_id)
+  created_by INTEGER REFERENCES account(account_id),
+  forms      JSONB
 );
 
 Create TABLE menu_categories (
@@ -29,12 +30,15 @@ Create TABLE menu_categories (
 );
 
 INSERT INTO menu_categories (name) VALUES
-('Bakery'),
-('Chilled Meals'),
+('Bakery & Bases'),
+('Fillings'),
+('Fresh Produce'),
+('Snacks'),
+('Sweet Treats'),
 ('Drinks'),
-('Food Essentials'),
 ('Non-Food Essentials'),
-('Snacks');
+('Food Essentials');
+
 
 
 Create TABLE dietary_restrictions (
@@ -51,21 +55,22 @@ Create TABLE menu_items (
   menu_item_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   category_id INTEGER REFERENCES menu_categories(category_id) ON DELETE CASCADE,
-  diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id)
+  diet_id INTEGER NOT NULL REFERENCES dietary_restrictions(diet_id),
+  quantity INTEGER NOT NULL DEFAULT 1,
+  CONSTRAINT unique_menu_item UNIQUE (name, category_id, diet_id)
 );
 
-INSERT INTO menu_items (name, category_id, diet_id) VALUES
-('Tortilla Wraps', 1, 1),
-('Falafels', 2, 1),
-('Salad Bowl', 2, 1),
-('Coca-Cola', 3, 4),
-('Water', 3, 4),
-('Coffee', 4, 4),
-('Green Tea', 4, 4),
-('Paper Towels', 5, 4),
-('Crisps', 6, 1),
-('Bananas', 6, 1),
-('Biscuits', 6, 1);
+
+
+INSERT INTO menu_items (name, category_id, diet_id, quantity) VALUES
+('Sainsburys Plain Tortilla Wraps', 1, 1, 1),
+('Sainsburys Falafels', 2, 1, 1),
+('Ground Coffee', 4, 4, 1),
+('Green Tea', 4, 4, 1),
+('Paper Towels', 5, 4, 1),
+('Large Bunches of Bananas', 6, 1, 1),
+('Packs of Assorted Biscuit Packs', 6, 1, 1);
+
 
 
 Create TABLE classes (
@@ -128,10 +133,12 @@ Create TABLE attendance_diet (
 
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
+  assigned_admin INTEGER REFERENCES account(account_id), 
   order_date DATE NOT NULL,
   attendance INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- INSERT INTO orders (assigned_admin,order_date, attendance)VALUES  (1,'2026-04-04',20)
 
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
@@ -148,3 +155,19 @@ CREATE TABLE order_items (
     FOREIGN KEY (menu_item_id)
     REFERENCES menu_items(menu_item_id)
 );
+
+CREATE TABLE event_steps(
+  step_id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT NULL REFERENCES orders (order_id) ON DELETE CASCADE,
+  step_position INTEGER NOT NULL,
+  assigned_admin INTEGER REFERENCES account(account_id), 
+  assigned_volunteer INTEGER REFERENCES account(account_id),    
+  step_status VARCHAR(50) DEFAULT 'pending',
+  
+  CONSTRAINT check_step_status
+  CHECK (step_status IN ('pending', 'in_progress', 'done')),
+
+  CONSTRAINT unique_step_position
+  UNIQUE (order_id, step_position)
+);
+-- INSERT INTO event_steps (order_id,step_position,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')

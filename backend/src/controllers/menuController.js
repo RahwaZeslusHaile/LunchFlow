@@ -4,6 +4,7 @@ import {
   fetchMenuItems,
   createMenuItems,
   fetchDietaryRestrictions,
+  deleteMenuItemById,
 } from "../services/menuService.js";
 
 function sendError(res, err) {
@@ -50,8 +51,8 @@ export async function createMenuItem(req, res) {
         error: "name, category_id and diet_id are required",
       });
     }
-    const newMenuItem = await createMenuItems(name, category_id, diet_id) 
-    res.json(newMenuItem);
+    const newMenuItem = await createMenuItems(name, category_id, diet_id);
+    res.status(201).json(newMenuItem);
   } catch (err) {
     sendError(res, err);
   }
@@ -62,6 +63,18 @@ export async function getDietaryRestrictions(req, res) {
   try {
     const dietTypes = await fetchDietaryRestrictions();
     res.json(dietTypes);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
+
+export async function deleteMenuItem(req, res) {
+  try {
+    const { id } = req.params;
+
+    await deleteMenuItemById(id);
+
+    res.status(204).send();
   } catch (err) {
     sendError(res, err);
   }

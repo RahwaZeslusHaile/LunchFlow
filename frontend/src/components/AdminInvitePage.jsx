@@ -19,14 +19,20 @@ import OrderManagement from "./OrderManagement";
 import AttendanceSummary from "./AttendanceSummary";
 import LeftoverManagement from "./LeftoverManagement";
 import CreateMenu from "./CreateMenu";
+import StatusCard from "./StatusCard";
+import CreateEvent from "./CreateEvent";
+import OrderHistory from "./OrderHistory";
+
+
+
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
-  { id: "notifications", label: "Notifications", icon: <Bell size={20} /> },
-  { id: "OrderManagement", label: "Order Management", icon: <ShoppingCart size={20} /> },
+  { id: "InviteVolunteers", label: "Invite Volunteers", icon: <Bell size={20} /> },
   { id: "AttendanceSummary", label: "Attendance", icon: <Users size={20} /> },
   { id: "LeftoverManagement", label: "Leftover", icon: <Utensils size={20} /> },
-  { id: "CreateMenu", label: "Create Menu", icon: <PlusCircle size={20} /> },
+  { id: "PlaceOrder", label: "Place Order", icon: <ShoppingCart size={20} /> },
+  { id: "MenuManagement", label: "Menu Management", icon: <PlusCircle size={20} /> },
 ];
 
 function AdminInvitePage() {
@@ -36,10 +42,16 @@ function AdminInvitePage() {
   const [inviteLink, setInviteLink] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedForms, setSelectedForms] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [invitesHistory, setInvitesHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+  
     const user = JSON.parse(localStorage.getItem("user") || "null");
+      // console.log("user email",user.email) I need it for more INFO
     if (!user || user.roleId !== 1) {
       navigate("/login");
     }
@@ -51,6 +63,31 @@ function AdminInvitePage() {
     navigate("/login");
   };
 
+  const fetchInvites = async () => {
+    try {
+      setLoadingHistory(true);
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/auth/invite/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInvitesHistory(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "InviteVolunteers") {
+      fetchInvites();
+    }
+  }, [activeTab]);
+
+
   const handleInvite = async (e) => {
     e.preventDefault();
 
@@ -58,9 +95,14 @@ function AdminInvitePage() {
       setError("Email is required");
       return;
     }
+    if (selectedForms.length === 0) {
+      setError("Select at least one form to assign");
+      return;
+    }
 
     setError("");
     setInviteLink("");
+    setShowSuccess(false);
     setLoading(true);
 
     try {
@@ -71,7 +113,7 @@ function AdminInvitePage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, forms: selectedForms }),
       });
 
       const data = await response.json();
@@ -81,8 +123,11 @@ function AdminInvitePage() {
         return;
       }
 
-      setInviteLink(`${window.location.origin}/signup?token=${data.token}`);
+      setInviteLink("");
       setEmail("");
+      setSelectedForms([]);
+      setShowSuccess(true);
+      fetchInvites();
     } catch (err) {
       console.error(err);
       setError("Server error, please try again");
@@ -93,9 +138,8 @@ function AdminInvitePage() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    if (error) {
-      setError("");
-    }
+    if (error) setError("");
+    if (showSuccess) setShowSuccess(false);
   };
 
   return (
@@ -111,7 +155,9 @@ function AdminInvitePage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shadow-indigo-500/30">
               <Utensils size={20} />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-800">LunchFlow</span>
+            <span className="text-xl font-bold tracking-tight text-slate-800">
+              LunchFlow
+            </span>
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
@@ -139,17 +185,24 @@ function AdminInvitePage() {
                     isActive
                       ? "bg-indigo-50 text-indigo-700 shadow-sm"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                  }`}
+                  } ${item.id === "MenuManagement" ? "mt-7" : ""}`}
                 >
                   <div
                     className={`${
-                      isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"
+                      isActive
+                        ? "text-indigo-600"
+                        : "text-slate-400 group-hover:text-slate-600"
                     } transition-colors`}
                   >
                     {item.icon}
                   </div>
                   {item.label}
-                  {isActive && <ChevronRight size={16} className="ml-auto text-indigo-400" />}
+                  {isActive && (
+                    <ChevronRight
+                      size={16}
+                      className="ml-auto text-indigo-400"
+                    />
+                  )}
                 </button>
               );
             })}
@@ -174,10 +227,10 @@ function AdminInvitePage() {
         {/* Mobile Header overlay */}
         <header className="flex h-20 items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-md px-6 md:hidden z-40 relative">
           <div className="flex items-center gap-3">
-             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md">
-                <Utensils size={16} />
-             </div>
-             <span className="text-lg font-bold text-slate-800">LunchFlow</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md">
+              <Utensils size={16} />
+            </div>
+            <span className="text-lg font-bold text-slate-800">LunchFlow</span>
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(true)}
@@ -193,10 +246,11 @@ function AdminInvitePage() {
             {/* Header / Title */}
             <div className="mb-8 hidden md:block animate-in fade-in slide-in-from-top-4 duration-500">
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                {NAV_ITEMS.find((nav) => nav.id === activeTab)?.label || "Dashboard"}
+                {NAV_ITEMS.find((nav) => nav.id === activeTab)?.label ||
+                  "Dashboard"}
               </h1>
               <p className="mt-2 text-sm text-slate-500">
-                Manage your CYF Lunch operations efficiently.
+                Manage the CYF menu by adding or removing menu items.
               </p>
             </div>
 
@@ -204,37 +258,65 @@ function AdminInvitePage() {
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {activeTab === "dashboard" && (
                 <div className="rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-8 shadow-sm">
-                   <div className="flex items-center gap-4 mb-4">
-                     <div className="h-12 w-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                        <LayoutDashboard size={24} />
-                     </div>
-                     <h2 className="text-2xl font-bold text-slate-800">Welcome back, Admin</h2>
-                   </div>
-                   <p className="text-slate-600 max-w-xl">
-                     Here is your central hub for managing the LunchFlow operations. Select any tool from the sidebar to review orders, manage attendance, handle leftovers, or generate new volunteer invites.
-                   </p>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600">
+                      <LayoutDashboard size={24} />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-800">
+                      Welcome back, Admin
+                    </h2>
+                  </div>
+                  <p className="text-slate-600 max-w-xl">
+                    Here is your central hub for managing the LunchFlow
+                    operations. Select any tool from the sidebar to review
+                    orders, manage attendance, handle leftovers, or generate new
+                    volunteer invites.
+                  </p>
+                  <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                    New 
+                    
+                      {/* Status */}
+                      <StatusCard/>
+
+                       {/* Add Event */}
+                      <CreateEvent/>
+
+                      {/* Event List */}
+                      <OrderHistory/>
+                  </h3>
+
+                </div>
                 </div>
               )}
-              {activeTab === "OrderManagement" && <OrderManagement />}
+              {activeTab === "PlaceOrder" && <OrderManagement />}
               {activeTab === "AttendanceSummary" && <AttendanceSummary />}
               {activeTab === "LeftoverManagement" && <LeftoverManagement />}
-              {activeTab === "CreateMenu" && <CreateMenu />}
-              
-              {activeTab === "notifications" && (
+              {activeTab === "MenuManagement" && <CreateMenu />}
+
+              {activeTab === "InviteVolunteers" && (
+                <div className="space-y-8">
                 <section className="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl overflow-hidden shadow-xl shadow-slate-200/50 p-8 max-w-2xl">
                   <div className="mb-8 flex items-center gap-5">
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-inner">
                       <Users size={28} />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-800">Generate Volunteer Invite</h2>
-                      <p className="mt-1 text-sm text-slate-500">Create a secure link to onboard new volunteers.</p>
+                      <h2 className="text-2xl font-bold text-slate-800">
+                        Generate Volunteer Invite
+                      </h2>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Create a secure link to onboard new volunteers.
+                      </p>
                     </div>
                   </div>
 
                   <form onSubmit={handleInvite} className="space-y-6">
                     <div className="space-y-2">
-                      <label htmlFor="inviteEmail" className="text-sm font-semibold text-slate-700 ml-1">
+                      <label
+                        htmlFor="inviteEmail"
+                        className="text-sm font-semibold text-slate-700 ml-1"
+                      >
                         Volunteer Email Address
                       </label>
                       <input
@@ -246,6 +328,34 @@ function AdminInvitePage() {
                         required
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-5 py-4 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 shadow-sm"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 ml-1">
+                        Assign Forms
+                      </label>
+                      <div className="flex gap-4 flex-wrap">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("attendance")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "attendance"] : f.filter(x => x !== "attendance"))}
+                          /> Attendance
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("leftover")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "leftover"] : f.filter(x => x !== "leftover"))}
+                          /> Leftover Management
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedForms.includes("order")}
+                            onChange={e => setSelectedForms(f => e.target.checked ? [...f, "order"] : f.filter(x => x !== "order"))}
+                          /> Order Management
+                        </label>
+                      </div>
                     </div>
                     {error && (
                       <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600 border border-red-100 flex items-center gap-2">
@@ -262,39 +372,71 @@ function AdminInvitePage() {
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-400 border-t-white" />
                       ) : (
                         <>
-                          Generate Fast Link
+                          Send Invite
                           <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
                         </>
                       )}
                     </button>
                   </form>
-                  {inviteLink && (
-                    <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-2xl border border-emerald-200 bg-emerald-50 p-1 font-mono text-sm relative overflow-hidden shadow-sm">
-                      <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
-                      <div className="p-5 pl-7">
-                        <div className="flex items-center gap-3 mb-4">
-                          <CheckCircle2 size={24} className="text-emerald-500" />
-                          <h3 className="font-semibold text-emerald-900 text-base font-sans">Invite Link Ready</h3>
-                        </div>
-                        <div className="rounded-xl border border-emerald-100 bg-white p-4 shadow-sm">
-                           <p className="text-emerald-800 break-all mb-4 leading-relaxed">{inviteLink}</p>
-                           <button
-                            type="button"
-                            onClick={() => navigator.clipboard.writeText(inviteLink)}
-                            className="flex items-center gap-2 rounded-lg bg-emerald-100 px-4 py-2.5 font-sans font-semibold text-emerald-700 transition hover:bg-emerald-200 hover:text-emerald-800"
-                          >
-                            <Copy size={16} />
-                            Copy to Clipboard
-                          </button>
-                        </div>
-                        <p className="mt-4 font-sans text-xs font-medium text-emerald-700/80 flex items-center gap-1.5">
-                          <Bell size={14} />
-                          Valid for 7 days. Single use only.
-                        </p>
-                      </div>
+                  {}
+                  {showSuccess && !loading && !error && (
+                    <div className="mt-8 text-green-700 font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <CheckCircle2 size={20} />
+                      Invitation sent successfully!
                     </div>
                   )}
                 </section>
+
+                <section className="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl overflow-hidden shadow-xl shadow-slate-200/50 p-8 max-w-4xl">
+                  <div className="mb-6 flex items-center gap-4">
+                     <h2 className="text-xl font-bold text-slate-800">Invite History</h2>
+                  </div>
+                  <div className="overflow-x-auto max-h-[400px] overflow-y-auto rounded-xl border border-slate-100">
+                    <table className="w-full text-left text-sm text-slate-600 relative">
+                      <thead className="bg-slate-50 text-slate-500 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Email</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Assigned Forms</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Status</th>
+                          <th className="px-4 py-3 font-medium bg-slate-50">Expires At</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {loadingHistory ? (
+                          <tr><td colSpan="4" className="text-center py-6 text-slate-400">Loading...</td></tr>
+                        ) : invitesHistory.length === 0 ? (
+                          <tr><td colSpan="4" className="text-center py-6 text-slate-400">No invites found.</td></tr>
+                        ) : invitesHistory.map(invite => {
+                          const isExpired = new Date(invite.expires_at) < new Date();
+                          let statusLabel = invite.used ? "Active" : isExpired ? "Expired" : "Pending";
+                          let statusColor = invite.used ? "bg-green-100 text-green-800" : isExpired ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800";
+
+                          return (
+                          <tr key={invite.invite_id} className="hover:bg-slate-50/50 transition">
+                            <td className="px-4 py-3 font-medium text-slate-700">{invite.email}</td>
+                            <td className="px-4 py-3">
+                               <div className="flex gap-1 flex-wrap">
+                                 {(invite.forms || []).map(f => (
+                                   <span key={f} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 capitalize">{f}</span>
+                                 ))}
+                                 {(!invite.forms || invite.forms.length === 0) && <span className="text-slate-400 text-xs">None</span>}
+                               </div>
+                            </td>
+                            <td className="px-4 py-3">
+                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusColor}`}>
+                                 {statusLabel}
+                               </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                              {new Date(invite.expires_at).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        )})}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+                </div>
               )}
             </div>
           </div>
@@ -303,7 +445,7 @@ function AdminInvitePage() {
 
       {}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm md:hidden transition-opacity"
           onClick={() => setIsMobileMenuOpen(false)}
         />
