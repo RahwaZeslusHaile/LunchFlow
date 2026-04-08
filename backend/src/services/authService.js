@@ -10,8 +10,9 @@ import {
   validateInviteToken,
   findFormsByUserId,
   getAllInvites as getAllInvitesModel,
+  updateUserForms,
 } from "../models/authModel.js";
-import { sendVolunteerInvite } from "./mailService.js";
+import { sendVolunteerInvite, sendVolunteerUpdateNotification } from "./mailService.js";
 import { updateStepStatus } from "./eventStepsService.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
@@ -93,36 +94,50 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
 
   const existing = await findUserByEmail(email);
   if (existing) {
-    const { updateUserForms } = await import("../models/authModel.js");
     await updateUserForms(email, forms);
     
-    if (forms.includes("attendance")) await updateStepStatus(1, "in_progress");
-    if (forms.includes("leftover")) await updateStepStatus(2, "in_progress");
-    if (forms.includes("order")) await updateStepStatus(3, "in_progress");
+    const logToken = `updated_${crypto.randomBytes(16).toString("hex")}`;
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await createInvite(email, logToken, expiresAt, createdBy, forms, name || existing.name);
+    
+    const newInvite = await findActiveInviteByToken(logToken);
+    if (newInvite) {
+      await markInviteAsUsed(newInvite.invite_id);
+    }
 
-    return { message: "Volunteer already has an account. Their assigned forms have been updated.", existing: true };
+    if (forms.includes("attendance")) await updateStepStatus(2, "in_progress");
+    if (forms.includes("leftover")) await updateStepStatus(3, "in_progress");
+    if (forms.includes("order")) await updateStepStatus(4, "in_progress");
+
+    try {
+      await sendVolunteerUpdateNotification(email, forms);
+    } catch (err) {
+      console.error("Failed to send update notification:", err);
+      return { message: "Volunteer forms updated, but notification email failed to send.", existing: true };
+    }
+
+    return { message: "Volunteer already has an account. Their assigned forms have been updated and they have been notified.", existing: true };
   }
 
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   
+  console.log(`Creating volunteer invite for email: ${email}, name: ${name}, forms: ${forms}`);
+  
   await createInvite(email, token, expiresAt, createdBy, forms, name);
   
-  if (forms.includes("attendance")) await updateStepStatus(1, "in_progress");
-  if (forms.includes("leftover")) await updateStepStatus(2, "in_progress");
-  if (forms.includes("order")) await updateStepStatus(3, "in_progress");
+  if (forms.includes("attendance")) await updateStepStatus(2, "in_progress");
+  if (forms.includes("leftover")) await updateStepStatus(3, "in_progress");
+  if (forms.includes("order")) await updateStepStatus(4, "in_progress");
 
-  let emailSent = true;
   try {
     await sendVolunteerInvite(email, token, forms);
   } catch (err) {
-    emailSent = false;
     console.error("Failed to send email:", err);
+    throw serviceError(500, `Invite created but email failed to send: ${err.message}`);
   }
 
-  return { message: emailSent 
-              ? "Invite created and email sent" 
-              : "Invite created but email failed to send", token };
+  return { message: "Invite created and email sent", token };
 }
 
 export async function getUserForms(userId) {

@@ -9,18 +9,19 @@ export function requireAuth(req, res, next) {
   try {
     const token = authHeader.split(" ")[1];
     req.user = verifyJwt(token);
-    console.log("Authenticated User:", req.user);
+    console.log(`[AUTH] User Authenticated: ID=${req.user.userId}, Email=${req.user.email}, Role=${req.user.roleId}`);
     return next();
   } catch (err) {
-    console.error("Auth Error:", err.message);
+    console.error(`[AUTH] Failed to verify token: ${err.message}`);
     return res.status(401).json("Invalid or expired token");
   }
 }
 
 export function requireAdmin(req, res, next) {
-  console.log("Checking Admin Access for:", req.user);
-  if (!req.user || Number(req.user.roleId) !== 1) {
-    console.log("Access Denied: Not an admin (roleId:", req.user?.roleId, ")");
+  const roleId = Number(req.user?.roleId);
+  console.log(`[AUTH] Checking Admin Access. Required: 1, Found: ${roleId}`);
+  if (!req.user || roleId !== 1) {
+    console.warn(`[AUTH] Access Denied for user ${req.user?.email} (Role: ${roleId})`);
     return res.status(403).json("Admin access required");
   }
   return next();
