@@ -220,6 +220,10 @@ function AttendanceSummary() {
           <div className="text-center font-bold mt-2">
             Total: {previewTotal}
           </div>
+          <div className="text-sm text-gray-500 text-center mt-4">
+            <span className="mr-4">T = Trainees</span>
+            <span>V = Volunteers</span>
+          </div>
         </div>
       </div>
     </main>
