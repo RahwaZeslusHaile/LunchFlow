@@ -202,15 +202,6 @@ function AttendanceSummary() {
           <div>
             {classes.map((c) => {
               const item = items.find((x) => x.category === c.name);
-
-              return (
-                <span key={c.class_id}>
-                  {c.name} {item ? item.count : 0} |{" "}
-                </span>
-              );
-            })}
-            {classes.map((c) => {
-              const item = items.find((x) => x.category === c.name);
               return (
                 <span key={c.class_id}>
                   {c.name} {item ? item.count : 0}
