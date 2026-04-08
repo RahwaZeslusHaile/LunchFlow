@@ -55,6 +55,7 @@ function AttendanceSummary() {
     setIsHalal(false);
     setError("");
     setSuccess("Added ");
+    setVolunteersInput("");
   };
 
   const handleSubmit = async () => {
