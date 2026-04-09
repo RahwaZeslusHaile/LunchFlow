@@ -1,3 +1,9 @@
+async function updateStepsFromForms(forms, order_id, volunteer_id) {
+  if (!order_id) return;
+  if (forms.includes("attendance")) await updateSingleStep(order_id, 1, "in_progress", volunteer_id);
+  if (forms.includes("leftover")) await updateSingleStep(order_id, 2, "in_progress", volunteer_id);
+  if (forms.includes("order")) await updateSingleStep(order_id, 3, "in_progress", volunteer_id);
+}
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -13,7 +19,8 @@ import {
   updateUserForms,
 } from "../models/authModel.js";
 import { sendVolunteerInvite, sendVolunteerUpdateNotification } from "./mailService.js";
-import { updateStepStatus } from "./eventStepsService.js";
+import { updateSingleStep } from "./eventStepsService.js";
+import pool from "../db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
 
@@ -105,9 +112,9 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
       await markInviteAsUsed(newInvite.invite_id);
     }
 
-    if (forms.includes("attendance")) await updateStepStatus(2, "in_progress");
-    if (forms.includes("leftover")) await updateStepStatus(3, "in_progress");
-    if (forms.includes("order")) await updateStepStatus(4, "in_progress");
+    const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
+    const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
+    await updateStepsFromForms(forms, order_id, createdBy);
 
     try {
       await sendVolunteerUpdateNotification(email, forms);
@@ -126,9 +133,9 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
   
   await createInvite(email, token, expiresAt, createdBy, forms, name);
   
-  if (forms.includes("attendance")) await updateStepStatus(2, "in_progress");
-  if (forms.includes("leftover")) await updateStepStatus(3, "in_progress");
-  if (forms.includes("order")) await updateStepStatus(4, "in_progress");
+  const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
+  const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
+  await updateStepsFromForms(forms, order_id, createdBy);
 
   try {
     await sendVolunteerInvite(email, token, forms);

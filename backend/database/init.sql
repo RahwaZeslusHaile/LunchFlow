@@ -22,7 +22,8 @@ CREATE TABLE invites (
   used       BOOLEAN NOT NULL DEFAULT FALSE,
   expires_at TIMESTAMP NOT NULL,
   created_by INTEGER REFERENCES account(account_id),
-  forms      JSONB
+  forms      JSONB,
+  name       TEXT
 );
 
 Create TABLE menu_categories (
@@ -99,11 +100,11 @@ CREATE TABLE leftover_food (
 );
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
-(1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
-(3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch'),
+  (1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
+  (3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch');
 
-
-
+ALTER TABLE leftover_food
+  ADD CONSTRAINT unique_leftover UNIQUE (menu_item_id, class_id, leftover_date);
 
 Create TABLE attendance (
   attendance_id SERIAL PRIMARY KEY,
@@ -130,9 +131,6 @@ Create TABLE attendance_diet (
   count INTEGER NOT NULL CHECK (count >= 0)
 );
 
-
-
--- Aida's change
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
   assigned_admin INTEGER REFERENCES account(account_id), 
@@ -140,7 +138,6 @@ CREATE TABLE orders (
   attendance INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- INSERT INTO orders (assigned_admin,order_date, attendance)VALUES  (1,'2026-04-04',20)
 
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
@@ -177,7 +174,7 @@ CREATE TABLE form_submissions (
   submission_id SERIAL PRIMARY KEY,
   account_id INTEGER REFERENCES account(account_id),
   email TEXT,
-  form_type TEXT, -- 'attendance', 'leftover', 'order'
+  form_type TEXT,
   submission_data JSONB,
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

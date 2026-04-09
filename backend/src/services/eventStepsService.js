@@ -1,5 +1,14 @@
 import pool from "../db.js";
 
+export async function updateSingleStep(order_id, step_position, step_status, volunteer_id) {
+  await pool.query(
+    `UPDATE event_steps
+     SET step_status = $1, assigned_volunteer = $4
+     WHERE order_id = $2 AND step_position = $3`,
+    [step_status, order_id, step_position, volunteer_id]
+  );
+}
+
 export async function createEventStep(order_id, step_position, assigned_admin) {
   const result = await pool.query(
     `INSERT INTO event_steps 
@@ -11,16 +20,6 @@ export async function createEventStep(order_id, step_position, assigned_admin) {
 
   return result.rows[0];
 }
-
-
-// export async function getEventStep(order_id) {
-//    const dbStoredEventStep = await pool.query("SELECT * FROM event_steps where order_id=$1",[order_id]);
-
-
-//   return dbStoredEventStep.rows;
-    
-// }
-
 
 export async function getLatestEventSteps() {
   const result = await pool.query(

@@ -1,5 +1,5 @@
 import pool from "../db.js";
-import { updateStepStatus } from "./eventStepsService.js";
+import { updateSingleStep } from "./eventStepsService.js";
 import { recordSubmission } from "./reportService.js";
 
 export async function fetchAttendance() {
@@ -44,7 +44,11 @@ export async function insertAttendance({
     [class_id, trainee_count, volunteer_count]
   );
 
-  await updateStepStatus(1, "done");
+  const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
+  const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
+  if (order_id) {
+    await updateSingleStep(order_id, 1, "done", userId);
+  }
   
   await recordSubmission(userId, email, "attendance", { class_id, trainee_count, volunteer_count });
 
