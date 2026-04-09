@@ -92,12 +92,14 @@ INSERT INTO classes (name) VALUES
 CREATE TABLE leftover_food (
   leftover_id SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
-  class_id INTEGER NOT NULL REFERENCES classes(class_id),
   quantity INTEGER NOT NULL CHECK (quantity >= 0),
   leftover_date DATE NOT NULL DEFAULT CURRENT_DATE,
   notes TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
+ALTER TABLE leftover_food
+ADD CONSTRAINT unique_menuitem_date
+UNIQUE (menu_item_id, leftover_date);
 
 INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
   (1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
