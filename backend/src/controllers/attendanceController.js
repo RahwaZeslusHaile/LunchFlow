@@ -27,7 +27,13 @@ export async function createAttendance(req, res) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const newAttendance = await insertAttendance({ class_id, trainee_count, volunteer_count });
+    const newAttendance = await insertAttendance({ 
+      class_id, 
+      trainee_count, 
+      volunteer_count, 
+      userId: req.user.userId, 
+      email: req.user.email 
+    });
     return res.status(201).json(newAttendance);
 
   } catch (err) {

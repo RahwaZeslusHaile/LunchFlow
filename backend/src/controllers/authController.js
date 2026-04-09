@@ -37,6 +37,7 @@ export async function createInviteController(req, res) {
   try {
     const result = await createVolunteerInvite({
       email: req.body.email,
+      name: req.body.name,
       forms: req.body.forms,
       createdBy: req.user.userId,
     });
@@ -57,9 +58,11 @@ export async function getUserFormsController(req, res) {
 
 export async function validateInviteController(req, res) {
   try {
+    console.log("Validating invite token:", req.params.token);
     const result = await validateInvite(req.params.token);
     return res.json(result);
   } catch (err) {
+    console.error("Invite validation error:", err.message);
     return sendError(res, err);
   }
 }

@@ -1,6 +1,8 @@
 import pool from "../db.js";
+import { updateStepStatus } from "./eventStepsService.js";
+import { recordSubmission } from "./reportService.js";
 
-export async function saveLeftoversService(menu_items) {
+export async function saveLeftoversService(date, items, userId, email) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -19,6 +21,11 @@ export async function saveLeftoversService(menu_items) {
         item.notes || null]);
     }
     await client.query("COMMIT");
+
+    await updateStepStatus(2, "done");
+    
+    await recordSubmission(userId, email, "leftover", { date, items });
+
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;

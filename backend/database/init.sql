@@ -7,7 +7,9 @@ CREATE TABLE account (
   account_id SERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
   pass TEXT NOT NULL,
-  role_id INTEGER NOT NULL REFERENCES roles(roles_id)
+  role_id INTEGER NOT NULL REFERENCES roles(roles_id),
+  name TEXT,
+  forms JSONB
 );
 
 INSERT INTO roles (position) VALUES ('Admin');
@@ -20,7 +22,8 @@ CREATE TABLE invites (
   used       BOOLEAN NOT NULL DEFAULT FALSE,
   expires_at TIMESTAMP NOT NULL,
   created_by INTEGER REFERENCES account(account_id),
-  forms      JSONB
+  forms      JSONB,
+  name       TEXT
 );
 
 Create TABLE menu_categories (
@@ -98,12 +101,12 @@ ALTER TABLE leftover_food
 ADD CONSTRAINT unique_menuitem_date
 UNIQUE (menu_item_id, leftover_date);
 
-INSERT INTO leftover_food (menu_item_id, quantity, notes) VALUES
-(1, 10, 'Tortilla Wraps left from morning prep'),
-(3, 7, 'Salad Bowls leftover from yesterday lunch'),
-(4, 3, 'Coca-Cola cans leftover');
+INSERT INTO leftover_food (menu_item_id, class_id, quantity, notes) VALUES
+  (1, 1, 10, 'Sainsburys Plain Tortilla Wraps left from morning prep'),
+  (3, 2, 7, 'Sainsburys Falafels leftover from yesterday lunch');
 
-
+ALTER TABLE leftover_food
+  ADD CONSTRAINT unique_leftover UNIQUE (menu_item_id, class_id, leftover_date);
 
 Create TABLE attendance (
   attendance_id SERIAL PRIMARY KEY,
@@ -130,7 +133,6 @@ Create TABLE attendance_diet (
   count INTEGER NOT NULL CHECK (count >= 0)
 );
 
-
 CREATE TABLE orders (
   order_id SERIAL PRIMARY KEY,
   assigned_admin INTEGER REFERENCES account(account_id), 
@@ -138,7 +140,6 @@ CREATE TABLE orders (
   attendance INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- INSERT INTO orders (assigned_admin,order_date, attendance)VALUES  (1,'2026-04-04',20)
 
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
@@ -170,4 +171,12 @@ CREATE TABLE event_steps(
   CONSTRAINT unique_step_position
   UNIQUE (order_id, step_position)
 );
--- INSERT INTO event_steps (order_id,step_position,assigned_admin,assigned_volunteer,step_status)VALUES  (1,1,1,2,'pending')
+
+CREATE TABLE form_submissions (
+  submission_id SERIAL PRIMARY KEY,
+  account_id INTEGER REFERENCES account(account_id),
+  email TEXT,
+  form_type TEXT,
+  submission_data JSONB,
+  submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

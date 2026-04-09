@@ -6,6 +6,7 @@ function SignupForm() {
   const [confirmPass, setConfirmPass] = useState("");
   const [error, setError] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
+  const [volunteerName, setVolunteerName] = useState("");
   const [tokenValid, setTokenValid] = useState(null); 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -23,6 +24,7 @@ function SignupForm() {
       })
       .then((data) => {
         setInviteEmail(data.email);
+        setVolunteerName(data.name || "");
         setTokenValid(true);
       })
       .catch(() => setTokenValid(false));
@@ -93,6 +95,16 @@ function SignupForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-slate-700">Name</label>
+            <input
+              type="text"
+              value={volunteerName}
+              disabled
+              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-slate-50 text-slate-500 cursor-not-allowed"
+            />
+          </div>
+
           <div className="space-y-1">
             <label className="text-sm font-semibold text-slate-700">Email</label>
             <input

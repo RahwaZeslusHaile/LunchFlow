@@ -6,7 +6,7 @@ export async function saveLeftovers(req, res) {
     if (!Array.isArray(items)) {
       return res.status(400).json({ error: "Missing items" });
     }
-    await saveLeftoversService(items);
+    await saveLeftoversService(date, items, req.user.userId, req.user.email);
     res.status(201).json({ message: "Leftovers saved" });
   } catch (err) {
     res.status(500).json({ error: err.message || "Failed to save leftovers" });
