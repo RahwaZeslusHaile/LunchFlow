@@ -206,8 +206,9 @@ function OrderManagement() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          date: new Date().toISOString().split("T")[0],
           attendance,
-          items: filteredItems,
+          items: filteredItems
         }),
       });
 
