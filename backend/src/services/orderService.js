@@ -1,7 +1,7 @@
 import pool from "../db.js";
-import { createEventStep } from "./eventStepsService.js";
+import { createEventStep, updateSingleStep } from "./eventStepsService.js";
+import { recordSubmission } from "./reportService.js";
 
-// We need to edit createOrderWithItems function 
 export async function createOrderWithItems(date, attendance, items) {
   const client = await pool.connect();
 
@@ -39,6 +39,45 @@ export async function createOrderWithItems(date, attendance, items) {
     client.release();
   }
 }
+
+
+export async function updateOrderWithItems(order_id, attendance, items, userId, email) {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    await client.query(
+      `UPDATE orders SET attendance = $1 WHERE order_id = $2`,
+      [attendance, order_id]
+    );
+
+    await client.query(`DELETE FROM order_items WHERE order_id = $1`, [order_id]);
+
+    for (const item of items) {
+      await client.query(
+        `INSERT INTO order_items (order_id, menu_item_id, quantity)
+         VALUES ($1, $2, $3)`,
+        [order_id, item.menu_item_id, item.quantity]
+      );
+    }
+
+    await updateSingleStep(order_id, 3, "done", userId);
+
+    await recordSubmission(userId, email, "order", { order_id, attendance, items }, order_id);
+
+    await client.query("COMMIT");
+    return order_id;
+
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Error in updateOrderWithItems:", err);
+    throw new Error("Failed to update order items");
+  } finally {
+    client.release();
+  }
+}
+
 export async function createOrderWithSteps(order_date, attendance,assigned_admin) {
   const order_id = await createOrder(order_date, attendance);
 
@@ -59,9 +98,6 @@ export async function createOrder(order_date, attendance) {
 
   return result.rows[0].order_id;
 }
-
-
-
 export async function getOrdersByDate(date) {
   const result = await pool.query(
     `
@@ -87,4 +123,14 @@ export async function getOrdersByDate(date) {
   );
 
   return result.rows;
+}
+
+export async function getLatestOrder() {
+  const result = await pool.query(
+    `SELECT order_id, order_date, attendance 
+     FROM orders 
+     ORDER BY created_at DESC 
+     LIMIT 1`
+  );
+  return result.rows[0];
 }

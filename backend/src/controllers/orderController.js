@@ -1,5 +1,16 @@
-import {createOrderWithItems,getOrdersByDate,createOrder,createOrderWithSteps}  from "../services/orderService.js";
+import {updateOrderWithItems, getOrdersByDate, createOrder, createOrderWithSteps, getLatestOrder}  from "../services/orderService.js";
 
+export async function getActiveOrder(req, res) {
+  try {
+    const order = await getLatestOrder();
+    if (!order) {
+      return res.status(404).json({ message: "No active event found" });
+    }
+    res.json(order);
+  } catch (err) {
+    sendError(res, err);
+  }
+}
 
 function sendError(res, err) {
   console.error(err);
@@ -11,27 +22,29 @@ function sendError(res, err) {
   return res.status(500).json({ message: "Database error" });
 }
 
-
-
 export async function addItems(req, res) {
   try {
-    const { date, attendance, items } = req.body;
+    const { order_id, attendance, items } = req.body;
 
-    if (!date || !attendance || !items || items.length === 0) {
+    if (!order_id || attendance == null || !items || items.length === 0) {
       return res.status(400).json({ message: "Invalid input" });
     }
 
-    const order_id = await createOrderWithItems(
-      date, 
-      attendance, 
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized: user not found" });
+    }
+
+    const updatedOrderId = await updateOrderWithItems(
+      order_id, 
+      Number(attendance), 
       items, 
       req.user.userId, 
       req.user.email
     );
 
     res.json({
-      message: "Order created successfully",
-      order_id
+      message: "Order updated successfully",
+      order_id: updatedOrderId
     });
 
   } catch (err) {
