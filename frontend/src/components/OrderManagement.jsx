@@ -116,9 +116,11 @@ function OrderManagement() {
     setCanDownload(false);
 
     // attendance
-    fetch(`http://localhost:4000/attendance?date=${date}`)
-      .then(res => res.json())
-      .then(data => {
+    fetch("http://localhost:4000/api/order/active")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Active order:", data);
+
         const total = data?.total || fallbackAttendance;
         setAttendance(total);
 
@@ -128,7 +130,7 @@ function OrderManagement() {
         setDietStats({
           halal,
           veg,
-          other: total - (halal + veg)
+          other: total - (halal + veg),
         });
       })
       .catch(() => {
@@ -136,7 +138,7 @@ function OrderManagement() {
         setDietStats({
           halal: 30,
           veg: 10,
-          other: fallbackAttendance - 40
+          other: fallbackAttendance - 40,
         });
       });
 
@@ -170,7 +172,7 @@ function OrderManagement() {
 
     setOrder(result);
 
-  }, [date, selectedCategory]);
+  }, [selectedCategory]);
 
   const increase = (id) => {
     setIsDirty(true);
