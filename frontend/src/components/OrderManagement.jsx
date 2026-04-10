@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+const API_BASE = "http://localhost:4000";
+
 function OrderManagement() {
   const fallbackAttendance = 100;
 
@@ -111,7 +113,7 @@ function OrderManagement() {
 
 
     // attendance
-    fetch("http://localhost:4000/api/order/active")
+    fetch(`${API_BASE}/api/order/active`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Active order:", data);
