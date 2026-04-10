@@ -32,10 +32,10 @@ export async function markInviteAsUsed(inviteId) {
   await pool.query("UPDATE invites SET used = TRUE WHERE invite_id = $1", [inviteId]);
 }
 
-export async function createInvite(email, token, expiresAt, createdBy, forms = [], name = null) {
+export async function createInvite(email, token, expiresAt, createdBy, forms = [], name = null, order_id = null) {
   await pool.query(
-    "INSERT INTO invites (email, token, expires_at, created_by, forms, name) VALUES ($1, $2, $3, $4, $5, $6)",
-    [email, token, expiresAt, createdBy, JSON.stringify(forms), name]
+    "INSERT INTO invites (email, token, expires_at, created_by, forms, name, order_id) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+    [email, token, expiresAt, createdBy, JSON.stringify(forms), name, order_id]
   );
 }
 
@@ -50,7 +50,7 @@ export async function findFormsByUserId(userId) {
 
 export async function validateInviteToken(token) {
   const result = await pool.query(
-    "SELECT email, forms, name FROM invites WHERE token = $1 AND used = FALSE AND expires_at > NOW()",
+    "SELECT email, forms, name, order_id FROM invites WHERE token = $1 AND used = FALSE AND expires_at > NOW()",
     [token]
   );
   const row = result.rows[0];
@@ -62,7 +62,7 @@ export async function validateInviteToken(token) {
 
 export async function getAllInvites() {
   const result = await pool.query(
-    "SELECT invite_id, email, name, used, expires_at, forms FROM invites ORDER BY expires_at DESC"
+    "SELECT invite_id, email, name, used, expires_at, forms, order_id FROM invites ORDER BY expires_at DESC"
   );
   return result.rows.map(row => {
     if (typeof row.forms === 'string') {

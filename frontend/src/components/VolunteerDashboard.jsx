@@ -38,6 +38,13 @@ const FORM_CONFIG = {
   },
 };
 
+const STEP_TO_FORM = { 1: "attendance", 2: "leftover", 3: "order" };
+
+function getFormName(f) {
+  if (typeof f === "object" && f !== null) return STEP_TO_FORM[f.step_position];
+  return f;
+}
+
 function VolunteerDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -95,7 +102,7 @@ function VolunteerDashboard() {
       icon: <LayoutDashboard size={20} />,
     },
     ...assignedForms
-      .map((f) => FORM_CONFIG[f])
+      .map((f) => FORM_CONFIG[getFormName(f)])
       .filter(Boolean),
   ];
 
@@ -112,6 +119,8 @@ function VolunteerDashboard() {
     );
   }
 
+  const activeFormObj = assignedForms.find(f => getFormName(f) === activeTab);
+  const orderIdForActiveTab = typeof activeFormObj === 'object' ? activeFormObj.order_id : undefined;
   const ActiveComponent =
     activeTab !== "dashboard" && FORM_CONFIG[activeTab]?.component;
 
@@ -275,7 +284,7 @@ function VolunteerDashboard() {
                 {assignedForms.length > 0 && (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {assignedForms.map((f) => {
-                      const config = FORM_CONFIG[f];
+                      const config = FORM_CONFIG[getFormName(f)];
                       if (!config) return null;
                       return (
                         <button
@@ -322,7 +331,7 @@ function VolunteerDashboard() {
             {}
             {ActiveComponent && (
               <div className="rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 md:p-8 shadow-sm">
-                <ActiveComponent />
+                <ActiveComponent order_id={orderIdForActiveTab} />
               </div>
             )}
           </div>

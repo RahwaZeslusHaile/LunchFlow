@@ -62,8 +62,12 @@ export async function signup({ token, password, confirmPass }) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await createUser(invite.email, hashedPassword, 2, invite.forms || [], invite.name);
+  const newUser = await createUser(invite.email, hashedPassword, 2, invite.forms || [], invite.name);
   await markInviteAsUsed(invite.invite_id);
+
+  if (invite.order_id && newUser?.account_id) {
+    await updateStepsFromForms(invite.forms || [], invite.order_id, newUser.account_id);
+  }
 
   return { message: "Account created successfully" };
 }
@@ -94,7 +98,7 @@ export async function login({ userName, password }) {
   };
 }
 
-export async function createVolunteerInvite({ email, name, createdBy, forms = [] }) {
+export async function createVolunteerInvite({ email, name, createdBy, forms = [], order_id = null }) {
   if (!email || !email.trim()) {
     throw serviceError(400, "Email is required");
   }
@@ -105,15 +109,13 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
     
     const logToken = `updated_${crypto.randomBytes(16).toString("hex")}`;
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await createInvite(email, logToken, expiresAt, createdBy, forms, name || existing.name);
+    await createInvite(email, logToken, expiresAt, createdBy, forms, name || existing.name, order_id);
     
     const newInvite = await findActiveInviteByToken(logToken);
     if (newInvite) {
       await markInviteAsUsed(newInvite.invite_id);
     }
 
-    const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
-    const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
     await updateStepsFromForms(forms, order_id, createdBy);
 
     try {
@@ -129,12 +131,9 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   
-  console.log(`Creating volunteer invite for email: ${email}, name: ${name}, forms: ${forms}`);
+  console.log(`Creating volunteer invite for email: ${email}, name: ${name}, forms: ${forms}, order_id: ${order_id}`);
   
-  await createInvite(email, token, expiresAt, createdBy, forms, name);
-  
-  const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
-  const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
+  await createInvite(email, token, expiresAt, createdBy, forms, name, order_id);
   await updateStepsFromForms(forms, order_id, createdBy);
 
   try {
@@ -148,8 +147,51 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
 }
 
 export async function getUserForms(userId) {
-  const forms = await findFormsByUserId(userId);
-  return { forms: forms || [] };
+  const userResult = await pool.query(
+    `SELECT email FROM account WHERE account_id = $1`,
+    [userId]
+  );
+  const userEmail = userResult.rows[0]?.email;
+  if (!userEmail) return { forms: [] };
+
+  const inviteResult = await pool.query(
+    `SELECT order_id, forms
+     FROM invites
+     WHERE email = $1 AND used = TRUE
+     ORDER BY expires_at DESC
+     LIMIT 1`,
+    [userEmail]
+  );
+
+  if (!inviteResult.rows.length) return { forms: [] };
+
+  const { order_id, forms: rawForms } = inviteResult.rows[0];
+  const forms = typeof rawForms === "string"
+    ? JSON.parse(rawForms)
+    : rawForms || [];
+
+  if (!order_id || !forms.length) return { forms: [] };
+
+  const FORM_TO_STEP = { attendance: 1, leftover: 2, order: 3 };
+
+  const stepsResult = await pool.query(
+    `SELECT step_position, step_status FROM event_steps WHERE order_id = $1`,
+    [order_id]
+  );
+  const stepsMap = {};
+  stepsResult.rows.forEach((s) => {
+    stepsMap[s.step_position] = s.step_status;
+  });
+
+  const stepRows = forms
+    .filter((f) => FORM_TO_STEP[f] != null)
+    .map((f) => ({
+      order_id,
+      step_position: FORM_TO_STEP[f],
+      step_status: stepsMap[FORM_TO_STEP[f]] || "pending",
+    }));
+
+  return { forms: stepRows };
 }
 
 export async function validateInvite(token) {

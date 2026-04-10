@@ -38,3 +38,21 @@ export async function getLatestEventSteps() {
 
   return result.rows;
 }
+
+export async function getEventStepsByOrderId(order_id) {
+  const result = await pool.query(
+    `SELECT 
+       es.step_position,
+       es.step_status,
+       a.email,
+       o.order_date
+     FROM event_steps es
+     LEFT JOIN account a ON es.assigned_admin = a.account_id
+     JOIN orders o ON es.order_id = o.order_id
+     WHERE es.order_id = $1
+     ORDER BY es.step_position`,
+    [order_id]
+  );
+
+  return result.rows;
+}
