@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function AttendanceSummary() {
+function AttendanceSummary({ order_id }) {
   const [category, setCategory] = useState("");
   const [count, setCount] = useState("");
   const [items, setItems] = useState([]);
@@ -69,15 +69,19 @@ function AttendanceSummary() {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-    await fetch("api/attendance", {
+    await fetch("/api/attendance", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(localStorage.getItem("token") && {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }),
       },
       body: JSON.stringify({
         class_id: classObj.class_id,
         trainee_count: item.count,
         volunteer_count: item.volunteers,
+        order_id
       }),
     });
       }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function LeftoverManagement() {
+function LeftoverManagement({ order_id }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -70,18 +70,20 @@ function LeftoverManagement() {
             quantity: item.quantity,
             leftover_date: new Date().toISOString().split("T")[0],
             notes: ""
-          }))
+          })),
+          order_id
         })
       });
       if (!res.ok) {
-        throw new Error("Failed to save leftovers");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || `Server error ${res.status}`);
       }
       setSuccess("Saved successfully");
       setIsDirty(false);
       setItems(prev => prev.map(item => ({ ...item, quantity: 0 })));
     } catch (err) {
       console.error(err);
-      setError("Could not save leftovers. Please try again later.");
+      setError(err.message || "Could not save leftovers. Please try again later.");
     } finally {
       setLoading(false);
     }

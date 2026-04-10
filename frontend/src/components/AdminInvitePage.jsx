@@ -46,16 +46,34 @@ function AdminInvitePage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [invitesHistory, setInvitesHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [selectedOrderId, setSelectedOrderId] = useState("");
+  const [adminOrderId, setAdminOrderId] = useState(null);
+  const [activeEventDate, setActiveEventDate] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-  
     const user = JSON.parse(localStorage.getItem("user") || "null");
-      // console.log("user email",user.email) I need it for more INFO
     if (!user || user.roleId !== 1) {
       navigate("/login");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (activeTab === "InviteVolunteers") {
+      const token = localStorage.getItem("token");
+      fetch("/api/order", { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => setOrders(Array.isArray(data) ? data : []))
+        .catch(() => setOrders([]));
+    }
+  }, [activeTab]);
+
+  const handleEventCreated = (order_id, date) => {
+    setAdminOrderId(order_id);
+    setActiveEventDate(date);
+    setSelectedOrderId(String(order_id)); 
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -99,6 +117,10 @@ function AdminInvitePage() {
       setError("Select at least one form to assign");
       return;
     }
+    if (!selectedOrderId) {
+      setError("Select an event (order) to assign");
+      return;
+    }
 
     setError("");
     setInviteLink("");
@@ -113,7 +135,7 @@ function AdminInvitePage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email, forms: selectedForms }),
+        body: JSON.stringify({ email, forms: selectedForms, order_id: selectedOrderId }),
       });
 
       const data = await response.json();
@@ -126,6 +148,7 @@ function AdminInvitePage() {
       setInviteLink("");
       setEmail("");
       setSelectedForms([]);
+      setSelectedOrderId("");
       setShowSuccess(true);
       fetchInvites();
     } catch (err) {
@@ -279,8 +302,8 @@ function AdminInvitePage() {
                       {/* Status */}
                       <StatusCard/>
 
-                       {/* Add Event */}
-                      <CreateEvent/>
+                       {/* Add Event — wires order_id to all tabs on creation */}
+                      <CreateEvent onEventCreated={handleEventCreated}/>
 
                       {/* Event List */}
                       <OrderHistory/>
@@ -289,9 +312,48 @@ function AdminInvitePage() {
                 </div>
                 </div>
               )}
+              {/* ── Active event banner — shown on all form tabs ── */}
+              {(activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement" || activeTab === "PlaceOrder") && (
+                <div className={`mb-4 flex items-center gap-3 rounded-2xl border px-5 py-3 ${
+                  adminOrderId
+                    ? "border-emerald-100 bg-emerald-50/60"
+                    : "border-amber-100 bg-amber-50/60"
+                }`}>
+                  {adminOrderId ? (
+                    <>
+                      <span className="text-sm font-semibold text-emerald-700">Active event:</span>
+                      <span className="text-sm text-emerald-800 font-mono">
+                        {activeEventDate || `ID ${adminOrderId}`}
+                      </span>
+                      <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-medium">
+                        order #{adminOrderId}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-sm font-medium text-amber-700">
+                      ⚠️ No active event — go to Dashboard and create an event first.
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* ── Place Order ── */}
               {activeTab === "PlaceOrder" && <OrderManagement />}
-              {activeTab === "AttendanceSummary" && <AttendanceSummary />}
-              {activeTab === "LeftoverManagement" && <LeftoverManagement />}
+
+              {/* ── Attendance & Leftover: auto-use the active order_id ── */}
+              {(activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement") && (
+                adminOrderId ? (
+                  <>
+                    {activeTab === "AttendanceSummary" && <AttendanceSummary order_id={adminOrderId} />}
+                    {activeTab === "LeftoverManagement" && <LeftoverManagement order_id={adminOrderId} />}
+                  </>
+                ) : (
+                  <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-400">
+                    <p className="text-sm font-medium">Create an event on the Dashboard tab first.</p>
+                  </div>
+                )
+              )}
+
               {activeTab === "MenuManagement" && <CreateMenu />}
 
               {activeTab === "InviteVolunteers" && (
@@ -313,6 +375,22 @@ function AdminInvitePage() {
 
                   <form onSubmit={handleInvite} className="space-y-6">
                     <div className="space-y-2">
+
+                      {/* Active event — auto-set when admin creates event on Dashboard */}
+                      {selectedOrderId ? (
+                        <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
+                          <span className="text-sm font-semibold text-emerald-700">Event:</span>
+                          <span className="text-sm text-emerald-800 font-mono">{activeEventDate || `Order #${selectedOrderId}`}</span>
+                          <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">order #{selectedOrderId}</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 mb-2">
+                          <span className="text-sm font-medium text-amber-700">
+                            ⚠️ No active event — create an event on the Dashboard first.
+                          </span>
+                        </div>
+                      )}
+
                       <label
                         htmlFor="inviteEmail"
                         className="text-sm font-semibold text-slate-700 ml-1"
@@ -329,6 +407,7 @@ function AdminInvitePage() {
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-5 py-4 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 shadow-sm"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-700 ml-1">
                         Assign Forms

@@ -1,10 +1,10 @@
 import pool from "../db.js";
 
-export async function recordSubmission(accountId, email, formType, submissionData) {
+export async function recordSubmission(accountId, email, formType, submissionData, order_id = null) {
   await pool.query(
-    `INSERT INTO form_submissions (account_id, email, form_type, submission_data)
-     VALUES ($1, $2, $3, $4)`,
-    [accountId, email, formType, JSON.stringify(submissionData)]
+    `INSERT INTO form_submissions (account_id, email, form_type, submission_data, order_id)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [accountId, email, formType, JSON.stringify(submissionData), order_id]
   );
 }
 

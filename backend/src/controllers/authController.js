@@ -1,11 +1,5 @@
-import {
-  createVolunteerInvite,
-  login,
-  signup,
-  validateInvite,
-  getUserForms,
-  getAllInvites,
-} from "../services/authService.js";
+
+import { createVolunteerInvite, login, signup, validateInvite, getUserForms, getAllInvites } from "../services/authService.js";
 
 function sendError(res, err) {
   console.error(err);
@@ -40,6 +34,7 @@ export async function createInviteController(req, res) {
       name: req.body.name,
       forms: req.body.forms,
       createdBy: req.user.userId,
+      order_id: req.body.order_id,
     });
     return res.json(result);
   } catch (err) {

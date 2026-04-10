@@ -33,24 +33,23 @@ export async function insertAttendance({
   trainee_count,
   volunteer_count,
   userId,
-  email
+  email,
+  order_id
 }) {
+  if (!order_id) {
+    throw new Error("order_id is required for attendance");
+  }
   const result = await pool.query(
     `
-    INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count)
-    VALUES ($1, CURRENT_DATE, $2, $3)
+    INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count, order_id)
+    VALUES ($1, CURRENT_DATE, $2, $3, $4)
     RETURNING *
     `,
-    [class_id, trainee_count, volunteer_count]
+    [class_id, trainee_count, volunteer_count, order_id]
   );
 
-  const orderRes = await pool.query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
-  const order_id = orderRes.rows.length > 0 ? orderRes.rows[0].order_id : null;
-  if (order_id) {
-    await updateSingleStep(order_id, 1, "done", userId);
-  }
-  
-  await recordSubmission(userId, email, "attendance", { class_id, trainee_count, volunteer_count });
+  await updateSingleStep(order_id, 1, "done", userId);
+  await recordSubmission(userId, email, "attendance", { class_id, trainee_count, volunteer_count, order_id });
 
   return result.rows[0];
 }
