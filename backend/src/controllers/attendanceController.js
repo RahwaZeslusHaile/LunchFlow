@@ -1,4 +1,4 @@
-import { fetchAttendance, insertAttendance } from "../services/attendanceService.js";
+import { fetchAttendance, insertAttendance, getAttendanceStatsByOrderId } from "../services/attendanceService.js";
 
 function sendError(res, err) {
   console.error(err);
@@ -21,7 +21,7 @@ export async function getAttendance(req, res) {
 
 export async function createAttendance(req, res) {
   try {
-    const { class_id, trainee_count, volunteer_count, order_id } = req.body;
+    const { class_id, trainee_count, volunteer_count, halal_count, veg_count, order_id } = req.body;
 
     if (
       !class_id ||
@@ -43,6 +43,8 @@ export async function createAttendance(req, res) {
       class_id,
       trainee_count,
       volunteer_count,
+      halal_count: Number(halal_count) || 0,
+      veg_count: Number(veg_count) || 0,
       userId: req.user.userId,
       email: req.user.email,
       order_id,
@@ -51,5 +53,18 @@ export async function createAttendance(req, res) {
     return res.status(201).json(newAttendance);
   } catch (err) {
     return sendError(res, err);
+  }
+}
+
+export async function getAttendanceStats(req, res) {
+  try {
+    const { order_id } = req.params;
+    if (!order_id) {
+      return res.status(400).json({ message: "order_id is required" });
+    }
+    const stats = await getAttendanceStatsByOrderId(order_id);
+    res.json(stats);
+  } catch (err) {
+    sendError(res, err);
   }
 }

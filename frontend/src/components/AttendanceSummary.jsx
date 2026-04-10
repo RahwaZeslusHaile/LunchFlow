@@ -10,6 +10,8 @@ function AttendanceSummary({ order_id }) {
   const [classes, setClasses] = useState([]);
   const [isHalal, setIsHalal] = useState(false);
   const [halalCount, setHalalCount] = useState("");
+  const [isVeg, setIsVeg] = useState(false);
+  const [vegCount, setVegCount] = useState("");
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -32,10 +34,15 @@ function AttendanceSummary({ order_id }) {
       return setError("Halal count cannot be greater than total number");
     }
 
+    if (isVeg && Number(vegCount) > Number(count)) {
+      return setError("Vegetarian count cannot be greater than total number");
+    }
+
     const newItem = {
       category,
       count: Number(count),
       halal: isHalal ? Number(halalCount) : 0,
+      veg: isVeg ? Number(vegCount) : 0,
       volunteers: Number(volunteersInput) || 0,
     };
 
@@ -53,13 +60,14 @@ function AttendanceSummary({ order_id }) {
     setCount("");
     setHalalCount("");
     setIsHalal(false);
+    setVegCount("");
+    setIsVeg(false);
     setError("");
     setSuccess("Added ");
     setVolunteersInput("");
   };
 
   const handleSubmit = async () => {
-
     if (items.length === 0) {
       setError("No data to submit");
       return;
@@ -69,27 +77,27 @@ function AttendanceSummary({ order_id }) {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-    await fetch("/api/attendance", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(localStorage.getItem("token") && {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }),
-      },
-      body: JSON.stringify({
-        class_id: classObj.class_id,
-        trainee_count: item.count,
-        volunteer_count: item.volunteers,
-        order_id
-      }),
-    });
+        await fetch("/api/attendance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(localStorage.getItem("token") && {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }),
+          },
+          body: JSON.stringify({
+            class_id: classObj.class_id,
+            trainee_count: item.count,
+            volunteer_count: item.volunteers,
+            halal_count: item.halal,
+            veg_count: item.veg,
+            order_id
+          }),
+        });
       }
 
       setSuccess("All data submitted successfully ");
-    setError("");
-
-      
+      setError("");
       setItems([]);
       setVolunteersInput("");
 
@@ -99,9 +107,7 @@ function AttendanceSummary({ order_id }) {
   };
 
   const previewTotal =
-    items.reduce((sum, i) => sum + i.count + (i.volunteers || 0),
-    0 
-  );
+    items.reduce((sum, i) => sum + i.count + (i.volunteers || 0), 0);
 
   const volunteerTotal = items.reduce((sum, i) => sum + (i.volunteers || 0), 0);
 
@@ -110,11 +116,7 @@ function AttendanceSummary({ order_id }) {
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow space-y-5">
         <h2 className="text-lg font-bold text-center">Attendance Summary</h2>
 
-        {}
-
-        {}
         <div className="space-y-4">
-          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Class</label>
             <select
@@ -122,18 +124,13 @@ function AttendanceSummary({ order_id }) {
               onChange={(e) => setCategory(e.target.value)}
               className="col-span-2 border border-gray-300 rounded-lg px-3 py-2"
             >
-              <option value="" disabled>
-                Select
-              </option>
+              <option value="" disabled>Select</option>
               {classes.map((c) => (
-                <option key={c.class_id} value={c.name}>
-                  {c.name}
-                </option>
+                <option key={c.class_id} value={c.name}>{c.name}</option>
               ))}
             </select>
           </div>
 
-          {}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Trainees Count</label>
             <input
@@ -145,10 +142,9 @@ function AttendanceSummary({ order_id }) {
             />
           </div>
 
-          {}
+          {/* Halal Input */}
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Halal</label>
-
             <div className="flex items-center gap-2 col-span-2">
               <input
                 type="checkbox"
@@ -158,7 +154,6 @@ function AttendanceSummary({ order_id }) {
                   setHalalCount("");
                 }}
               />
-
               <input
                 type="number"
                 min="0"
@@ -166,14 +161,35 @@ function AttendanceSummary({ order_id }) {
                 disabled={!isHalal}
                 onChange={(e) => setHalalCount(e.target.value)}
                 placeholder="Number"
-                className={`w-full border border-gray-300 rounded-lg px-3 py-2 ${
-                  !isHalal && "bg-gray-100 text-gray-400"
-                }`}
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 ${!isHalal && "bg-gray-100 text-gray-400"}`}
               />
             </div>
           </div>
 
-          {}
+          {/* Vegetarian Input */}
+          <div className="grid grid-cols-3 items-center gap-2">
+            <label className="text-sm text-gray-600">Vegetarian</label>
+            <div className="flex items-center gap-2 col-span-2">
+              <input
+                type="checkbox"
+                checked={isVeg}
+                onChange={(e) => {
+                  setIsVeg(e.target.checked);
+                  setVegCount("");
+                }}
+              />
+              <input
+                type="number"
+                min="0"
+                value={vegCount}
+                disabled={!isVeg}
+                onChange={(e) => setVegCount(e.target.value)}
+                placeholder="Number"
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 ${!isVeg && "bg-gray-100 text-gray-400"}`}
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-3 items-center gap-2">
             <label className="text-sm text-gray-600">Volunteers Count</label>
             <input
@@ -185,7 +201,6 @@ function AttendanceSummary({ order_id }) {
             />
           </div>
 
-          {}
           <button
             onClick={addItem}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
@@ -201,10 +216,9 @@ function AttendanceSummary({ order_id }) {
           </button>
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-600 text-sm">{success}</p>}
+        {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+        {success && <p className="text-green-600 text-sm font-medium">{success}</p>}
 
-        {}
         <div className="bg-gray-50 p-3 rounded-lg text-sm">
           <div className="flex flex-wrap gap-4">
             {classes.map((c) => {
