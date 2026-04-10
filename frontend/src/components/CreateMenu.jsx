@@ -1,0 +1,199 @@
+import { useState, useEffect } from "react";
+
+function CreateMenu() {
+  const [error, setError] = useState("");
+  const [input, setInput] = useState("");
+  
+  const [categories, setCategories] = useState([]);
+  const [diets, setDiets] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedDiet, setSelectedDiet] = useState("");
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const headers = {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        };
+
+        const [catRes, dietRes, menuRes] = await Promise.all([
+          fetch("/api/menu/categories", { headers }),
+          fetch("/api/menu/dietary-restrictions", { headers }),
+          fetch("/api/menu/menu-items", { headers }),
+        ]);
+
+        if (!catRes.ok || !dietRes.ok || !menuRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const catData = await catRes.json();
+        const dietData = await dietRes.json();
+        const menuData = await menuRes.json();
+
+        setCategories(catData);
+        setDiets(dietData);
+        setMenuItems(menuData);
+
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load data");
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const addItem = async () => {
+    if (!input.trim()) return setError("Food name is required");
+    if (!selectedCategory) return setError("Please select a category");
+    if (!selectedDiet) return setError("Please select a diet");
+
+    const payload = {
+      name: input.trim(),
+      category_id: Number(selectedCategory),
+      diet_id: Number(selectedDiet)
+    };
+
+    try {
+      const res = await fetch("/api/menu/menu-items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error();
+
+      const newItem = await res.json();
+      const categoryName = categories.find(c => c.category_id === newItem.category_id)?.name;
+      const dietName = diets.find(d => d.diet_id === newItem.diet_id)?.name;
+
+      setMenuItems((prev) => {
+        const index = prev.findIndex(item => 
+          item.name === newItem.name && 
+          item.category === categoryName && 
+          item.diet === dietName
+        );
+
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], quantity: newItem.quantity };
+          return updated;
+        } else {
+          return [...prev, {
+            menu_item_id: newItem.menu_item_id,
+            name: newItem.name,
+            category: categoryName,
+            diet: dietName,
+            quantity: newItem.quantity
+          }];
+        }
+      });
+
+      resetForm();
+    } catch (err) {
+      setError("Failed to add item");
+    }
+  };
+
+  const resetForm = () => {
+    setInput("");
+    setSelectedCategory("");
+    setSelectedDiet("");
+    setError("");
+  };
+
+  const removeItem = async (id) => {
+    if (!confirm("Are you sure?")) return;
+
+    try {
+      const res = await fetch(`/api/menu/menu-items/${id}`, { 
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      if (!res.ok) throw new Error();
+      setMenuItems((prev) => prev.filter((item) => item.menu_item_id !== id));
+    } catch {
+      setError("Failed to delete item");
+    }
+  };
+
+  return (
+    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <h2 className="text-2xl font-extrabold text-center text-gray-800 mb-2 tracking-tight">Create Menu Items</h2>
+
+        <input
+          value={input}
+          onChange={(e) => { setInput(e.target.value); setError(""); }}
+          placeholder="Enter item"
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400 text-gray-700 shadow-sm"
+        />
+
+        <select
+          value={selectedCategory}
+          onChange={(e) => { setSelectedCategory(e.target.value); setError(""); }}
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition text-gray-700 shadow-sm"
+        >
+          <option value="">Select category...</option>
+          {categories.map((cat) => (
+            <option key={cat.category_id} value={cat.category_id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={selectedDiet}
+          onChange={(e) => { setSelectedDiet(e.target.value); setError(""); }}
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition text-gray-700 shadow-sm"
+        >
+          <option value="">Select diet...</option>
+          {diets.map((d) => (
+            <option key={d.diet_id} value={d.diet_id}>{d.name}</option>
+          ))}
+        </select>
+
+        {error && <p className="text-red-500 text-sm font-medium text-center">{error}</p>}
+
+        <button
+          onClick={addItem}
+          className="w-full bg-blue-600 text-white rounded-xl py-4 font-semibold shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        >
+          Add
+        </button>
+
+        <div className="max-h-64 overflow-y-auto space-y-2 border-t border-gray-200 pt-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <ul>
+            {menuItems.map((item, i) => (
+              <li
+                key={item.menu_item_id}
+                className="flex justify-between items-center border border-gray-200 rounded-xl px-4 py-2 bg-gray-50 shadow-sm hover:shadow-md transition mb-2"
+              >
+                <div className="text-left text-sm text-gray-700">
+                  <span className="font-bold underline mr-1">{i + 1}</span> - <span className="font-bold">{item.name}</span>
+                  <div className="flex gap-2 mt-1">
+                    <span className="px-2 py-0.5 text-[10px] bg-blue-100 text-blue-700 rounded-full font-bold uppercase">{item.category}</span>
+                    <span className="px-2 py-0.5 text-[10px] bg-green-100 text-green-700 rounded-full font-bold uppercase">{item.diet}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => removeItem(item.menu_item_id)}
+                  className="border border-red-300 text-red-500 px-3 py-1 rounded-lg hover:bg-red-500 hover:text-white transition font-bold shadow-sm"
+                >
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default CreateMenu;
