@@ -110,11 +110,6 @@ function OrderManagement() {
     setCanDownload(false);
 
 
-
-    setIsDirty(false);
-    setSuccess("");
-    setCanDownload(false);
-
     // attendance
     fetch("http://localhost:4000/api/order/active")
       .then((res) => res.json())
@@ -250,7 +245,7 @@ ${filteredItems.map((i) => `${i.name}: ${i.quantity}`).join("\n")}
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `order-${date || "no-date"}.txt`;
+    a.download = `order-${new Date().toISOString()}.txt`;
     a.click();
 
     URL.revokeObjectURL(url);
