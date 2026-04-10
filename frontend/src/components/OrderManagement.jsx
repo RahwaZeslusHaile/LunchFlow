@@ -202,7 +202,7 @@ function OrderManagement() {
       }));
 
     try {
-      const res = await fetch("http://localhost:4000/api/order/", {
+      const res = await fetch(`${API_BASE}/api/order/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +210,7 @@ function OrderManagement() {
         body: JSON.stringify({
           date: new Date().toISOString().split("T")[0],
           attendance,
-          items: filteredItems
+          items: filteredItems,
         }),
       });
 
