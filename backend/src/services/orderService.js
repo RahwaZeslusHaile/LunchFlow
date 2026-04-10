@@ -79,7 +79,7 @@ export async function updateOrderWithItems(order_id, attendance, items, userId, 
 }
 
 export async function createOrderWithSteps(order_date, attendance,assigned_admin) {
-  const order_id = await createOrder(order_date, attendance);
+  const order_id = await createOrder(order_date, attendance,assigned_admin);
 
   for (let i = 1; i <= 3; i++) {
     await createEventStep(order_id, i,assigned_admin);
@@ -88,12 +88,13 @@ export async function createOrderWithSteps(order_date, attendance,assigned_admin
   return order_id;
 }
 
-export async function createOrder(order_date, attendance) {
+
+export async function createOrder(order_date, attendance, assigned_admin) {
   const result = await pool.query(
-    `INSERT INTO orders (order_date, attendance)
-     VALUES ($1, $2)
+    `INSERT INTO orders (order_date, attendance, assigned_admin)
+     VALUES ($1, $2, $3)
      RETURNING order_id`,
-    [order_date, attendance]
+    [order_date, attendance, assigned_admin]
   );
 
   return result.rows[0].order_id;
@@ -125,6 +126,12 @@ export async function getOrdersByDate(date) {
   return result.rows;
 }
 
+export async function deleteOrderById(order_id) {
+  await pool.query(
+    "DELETE FROM orders WHERE order_id = $1",
+    [order_id]
+  );
+
 export async function getLatestOrder() {
   const result = await pool.query(
     `SELECT order_id, order_date, attendance 
@@ -133,4 +140,5 @@ export async function getLatestOrder() {
      LIMIT 1`
   );
   return result.rows[0];
+
 }

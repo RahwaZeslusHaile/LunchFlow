@@ -50,6 +50,7 @@ function AdminInvitePage() {
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [adminOrderId, setAdminOrderId] = useState(null);
   const [activeEventDate, setActiveEventDate] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,6 +74,7 @@ function AdminInvitePage() {
     setAdminOrderId(order_id);
     setActiveEventDate(date);
     setSelectedOrderId(String(order_id)); 
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleLogout = () => {
@@ -296,18 +298,17 @@ function AdminInvitePage() {
                     volunteer invites.
                   </p>
                   <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
-                    New 
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2"> </h3>
+                     
                     
-                      {/* Status */}
-                      <StatusCard/>
-
-                       {/* Add Event — wires order_id to all tabs on creation */}
-                      <CreateEvent onEventCreated={handleEventCreated}/>
+                     {/* Add Event */}
+                      <CreateEvent onEventCreated={handleEventCreated} />
+                    <StatusCard eventId={adminOrderId} date={activeEventDate} />
+                      
 
                       {/* Event List */}
-                      <OrderHistory/>
-                  </h3>
+                      <OrderHistory refreshKey={refreshKey} />
+                 
 
                 </div>
                 </div>

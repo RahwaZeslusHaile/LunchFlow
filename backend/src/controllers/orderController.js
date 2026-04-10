@@ -1,3 +1,4 @@
+
 import {updateOrderWithItems, getOrdersByDate, createOrder, createOrderWithSteps, getLatestOrder}  from "../services/orderService.js";
 
 export async function getActiveOrder(req, res) {
@@ -87,5 +88,21 @@ export async function createEvent(req, res) {
 
   } catch (err) {
     sendError(res, err);
+  }
+}
+
+
+// Delete order record
+
+export async function deleteOrder(req, res) {
+  try {
+    const { id } = req.params;
+
+    await deleteOrderById(id);
+
+    res.json({ message: "Order deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error deleting order" });
   }
 }

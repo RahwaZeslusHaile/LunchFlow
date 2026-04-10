@@ -8,6 +8,8 @@ import attendanceRouter from "./routes/attendance.js";
 import classesRouter from "./routes/classes.js";
 import leftoversRouter from "./routes/leftovers.js";
 import eventStepRouter from "./routes/eventStep.js";
+import orderHistoryRouter from "./routes/orderHistory.js";
+
 
 
 
@@ -31,5 +33,5 @@ app.use("/api/attendance", attendanceRouter);
 app.use("/api/classes", classesRouter);
 app.use("/api/leftovers", leftoversRouter);
 app.use("/api/eventStep", eventStepRouter);
-
+app.use("/api/latest", orderHistoryRouter);
 export default app;
