@@ -188,7 +188,7 @@ export async function getUserForms(userId) {
     .map((f) => ({
       order_id,
       step_position: FORM_TO_STEP[f],
-      step_status: stepsMap[FORM_TO_STEP[f]] || "pending",
+      step_status: stepsMap[FORM_TO_STEP[f]] || "in_progress",
     }));
 
   return { forms: stepRows };
