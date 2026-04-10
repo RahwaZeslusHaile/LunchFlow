@@ -36,3 +36,13 @@ export async function saveLeftoversService(date, items, userId, email, order_id)
     client.release();
   }
 }
+
+export async function getLeftoversByOrderId(order_id) {
+  const result = await pool.query(
+    `SELECT menu_item_id, quantity 
+     FROM leftover_food 
+     WHERE order_id = $1`,
+    [order_id]
+  );
+  return result.rows;
+}

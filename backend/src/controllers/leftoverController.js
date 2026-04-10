@@ -1,4 +1,17 @@
-import { saveLeftoversService } from "../services/leftoverService.js";
+import { saveLeftoversService, getLeftoversByOrderId } from "../services/leftoverService.js";
+
+export async function getLeftovers(req, res) {
+  try {
+    const { order_id } = req.params;
+    if (!order_id) {
+      return res.status(400).json({ error: "Missing order_id" });
+    }
+    const leftovers = await getLeftoversByOrderId(order_id);
+    res.json(leftovers);
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Failed to fetch leftovers" });
+  }
+}
 
 export async function saveLeftovers(req, res) {
   try {

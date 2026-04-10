@@ -80,7 +80,7 @@ function CreateMenu() {
 
  
     try {
-      const res = await fetch("http://localhost:4000/api/menu/menu-items", {
+      const res = await fetch("/api/menu/menu-items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ function CreateMenu() {
 
     
       try {
-        const res = await fetch(`http://localhost:4000/api/menu/menu-items/${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
 
         if (!res.ok) throw new Error();
 
@@ -201,7 +201,7 @@ function CreateMenu() {
             setSelectedDiet(e.target.value);
             setError("");
           }}
-          className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition text-gray-700 shadow-sm"
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition text-gray-700 shadow-sm"
         >
           <option value="">Select diet...</option>
           {diets.map((d) => (
