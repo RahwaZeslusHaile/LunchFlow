@@ -7,8 +7,11 @@ import {
   getDietaryRestrictions,
   deleteMenuItem,
 } from "../controllers/menuController.js";
+import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+router.use(requireAuth);
 
 router.get("/categories", getCategories);
 router.post("/categories", createCategories);
