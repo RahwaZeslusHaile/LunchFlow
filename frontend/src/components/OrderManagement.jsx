@@ -198,6 +198,23 @@ function OrderManagement() {
     const data = await res.json();
     return data;
   };
+
+  const createOrderEvent = async (order_date, attendance, assigned_admin) => {
+    const res = await fetch(`${API_BASE}/api/order/event`, {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        order_date,
+        attendance,
+        assigned_admin,
+      }),
+    });
+    const data = await res.json();
+    return data;
+  
+  };
   
 
 
