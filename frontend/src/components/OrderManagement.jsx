@@ -200,15 +200,15 @@ function OrderManagement() {
       }));
 
     try {
-      const res = await fetch("http://localhost:4000/orders", {
+      const res = await fetch("http://localhost:4000/api/order/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           attendance,
-          items: filteredItems
-        })
+          items: filteredItems,
+        }),
       });
 
       const data = await res.json();
