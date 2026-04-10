@@ -193,6 +193,15 @@ function OrderManagement() {
     );
   };
 
+  const getOrdersByDate = async (date) => {
+    const res = await fetch(`${API_BASE}/api/order/?date=${date}`);
+    const data = await res.json();
+    return data;
+  };
+  
+
+
+
   const handleSubmit = async () => {
     const filteredItems = order
       .filter(item => item.quantity > 0)
