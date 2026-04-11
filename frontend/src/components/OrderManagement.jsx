@@ -575,7 +575,9 @@ function OrderManagement() {
         setIsDirty(false);
         setCanDownload(true);
       } else {
-        throw new Error("Failed to save order");
+            const data = await res.json();
+          console.log("BACKEND ERROR:", data);
+          throw new Error(data.message || "Failed to save order");
       }
 
     } catch (err) {

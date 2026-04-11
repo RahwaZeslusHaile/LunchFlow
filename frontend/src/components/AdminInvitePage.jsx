@@ -60,15 +60,31 @@ function AdminInvitePage() {
     }
   }, [navigate]);
 
-  useEffect(() => {
-    if (activeTab === "InviteVolunteers") {
-      const token = localStorage.getItem("token");
-      fetch("/api/order", { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => setOrders(Array.isArray(data) ? data : []))
-        .catch(() => setOrders([]));
-    }
-  }, [activeTab]);
+//   useEffect(() => {
+//     if (activeTab === "InviteVolunteers") {
+//       const token = localStorage.getItem("token");
+//       // fetch("/api/order", { headers: { Authorization: `Bearer ${token}` } })
+//       fetch(`/api/order?date=${activeEventDate}`, {
+//   headers: { Authorization: `Bearer ${token}` }
+// })
+//         .then(res => res.json())
+//         .then(data => setOrders(Array.isArray(data) ? data : []))
+//         .catch(() => setOrders([]));
+//     }
+//   }, [activeTab]);
+
+useEffect(() => {
+  if (activeTab === "InviteVolunteers" && activeEventDate) {
+    const token = localStorage.getItem("token");
+
+    fetch(`/api/order?date=${activeEventDate}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setOrders(Array.isArray(data) ? data : []))
+      .catch(() => setOrders([]));
+  }
+}, [activeTab, activeEventDate]);
 
   const handleEventCreated = (order_id, date) => {
     setAdminOrderId(order_id);
@@ -332,7 +348,7 @@ function AdminInvitePage() {
                     </>
                   ) : (
                     <span className="text-sm font-medium text-amber-700">
-                      ⚠️ No active event — go to Dashboard and create an event first.
+                      {/* ⚠️ No active event — go to Dashboard and create an event first. */}
                     </span>
                   )}
                 </div>
@@ -378,7 +394,7 @@ function AdminInvitePage() {
                     <div className="space-y-2">
 
                       {/* Active event — auto-set when admin creates event on Dashboard */}
-                      {selectedOrderId ? (
+                      {/* {selectedOrderId ? (
                         <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
                           <span className="text-sm font-semibold text-emerald-700">Event:</span>
                           <span className="text-sm text-emerald-800 font-mono">{activeEventDate || `Order #${selectedOrderId}`}</span>
@@ -388,6 +404,17 @@ function AdminInvitePage() {
                         <div className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 mb-2">
                           <span className="text-sm font-medium text-amber-700">
                             ⚠️ No active event — create an event on the Dashboard first.
+                          </span>
+                        </div>
+                      )} */}
+                      {selectedOrderId && (
+                        <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
+                          <span className="text-sm font-semibold text-emerald-700">Event:</span>
+                          <span className="text-sm text-emerald-800 font-mono">
+                            {activeEventDate || `Order #${selectedOrderId}`}
+                          </span>
+                          <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                            order #{selectedOrderId}
                           </span>
                         </div>
                       )}
