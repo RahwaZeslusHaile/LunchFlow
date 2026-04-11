@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 function StatusCard({ eventId, date }) {
   const steps = ["Start", "1", "2", "3", "Complete"];
+  const stepTitles = ["", "Attendance", "Leftover", "Place Order", ""];
   const [stepsData, setStepsData] = useState([]);
 
   useEffect(() => {
@@ -69,30 +70,68 @@ function StatusCard({ eventId, date }) {
 
           return (
             <div key={index} className="flex items-center w-full">
-              
-              {/* Step */}
-              <div
-                className={`flex items-center justify-center text-center
-                w-16 h-16 px-1 text-[11px] leading-tight font-medium
-                ${
-                  isFirst || isLast
-                    ? "rounded-2xl shadow-md border border-slate-300"
-                    : "rounded-full shadow-md border border-slate-300"
-                }
-                ${color} transition-all duration-300`}
-              >
-                {isFirst
-                  ? "Start"
-                  : isLast
-                  ? "Done"
-                  : labelMap[status] ||"⏳"}
-              </div>
+  
+  <div className="flex flex-col items-center">
+    
+    {/* Title */}
+    <span className="text-xs mb-1">
+      {stepTitles[index]}
+    </span>
 
-              {/* Line */}
-              {index !== steps.length - 1 && (
-                <div className="flex-1 h-2 mx-3 rounded bg-slate-200" />
-              )}
-            </div>
+    {/* Step */}
+    <div
+      className={`flex items-center justify-center text-center
+      w-16 h-16 px-1 text-[11px] leading-tight font-medium
+      ${
+        isFirst || isLast
+          ? "rounded-2xl shadow-md border border-slate-300"
+          : "rounded-full shadow-md border border-slate-300"
+      }
+      ${color} transition-all duration-300`}
+    >
+      {isFirst
+        ? "Start"
+        : isLast
+        ? "Completed"
+        : labelMap[status] || "⏳"}
+    </div>
+  </div>
+
+  {/* Line */}
+  {index !== steps.length - 1 && (
+    <div className="flex-1 h-2 mx-3 rounded bg-slate-200" />
+  )}
+</div>
+  //        <div key={index} className="flex flex-col items-center w-full">
+  
+  // {/* Title */}
+  // <span className="mb-2 text-xs text-slate-600 font-medium">
+  //   {stepTitles[index]}
+  // </span>
+
+  // {/* Step */}
+  //                 <div
+  //                   className={`flex items-center justify-center text-center
+  //                   w-16 h-16 px-1 text-[11px] leading-tight font-medium
+  //                   ${
+  //                     isFirst || isLast
+  //                       ? "rounded-2xl shadow-md border border-slate-300"
+  //                       : "rounded-full shadow-md border border-slate-300"
+  //                   }
+  //                   ${color} transition-all duration-300`}
+  //                 >
+  //                   {isFirst
+  //                     ? "Start"
+  //                     : isLast
+  //                     ? "Done"
+  //                     : labelMap[status] || "⏳"}
+  //                 </div>
+
+  //              {/* Line */}
+  //                {index !== steps.length - 1 && (
+  //                  <div className="flex-1 h-2 mt-3 w-full rounded bg-slate-200" />
+  //                   )}
+  //                 </div>
           );
         })}
       </div>

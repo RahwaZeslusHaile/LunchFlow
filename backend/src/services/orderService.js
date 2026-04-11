@@ -131,7 +131,7 @@ export async function deleteOrderById(order_id) {
     "DELETE FROM orders WHERE order_id = $1",
     [order_id]
   );
-
+}
 export async function getLatestOrder() {
   const result = await pool.query(
     `SELECT order_id, order_date, attendance 
