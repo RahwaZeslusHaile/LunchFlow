@@ -23,9 +23,6 @@ import StatusCard from "./StatusCard";
 import CreateEvent from "./CreateEvent";
 import OrderHistory from "./OrderHistory";
 
-
-
-
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
   { id: "InviteVolunteers", label: "Invite Volunteers", icon: <Bell size={20} /> },
@@ -59,19 +56,6 @@ function AdminInvitePage() {
       navigate("/login");
     }
   }, [navigate]);
-
-//   useEffect(() => {
-//     if (activeTab === "InviteVolunteers") {
-//       const token = localStorage.getItem("token");
-//       // fetch("/api/order", { headers: { Authorization: `Bearer ${token}` } })
-//       fetch(`/api/order?date=${activeEventDate}`, {
-//   headers: { Authorization: `Bearer ${token}` }
-// })
-//         .then(res => res.json())
-//         .then(data => setOrders(Array.isArray(data) ? data : []))
-//         .catch(() => setOrders([]));
-//     }
-//   }, [activeTab]);
 
 useEffect(() => {
   if (activeTab === "InviteVolunteers" && activeEventDate) {
@@ -284,52 +268,30 @@ useEffect(() => {
         {}
         <div className="flex-1 overflow-y-auto bg-slate-50 md:bg-[#f8fafc] p-6 md:p-10 relative">
           <div className="mx-auto max-w-6xl">
-            {/* Header / Title */}
-            <div className="mb-8 hidden md:block animate-in fade-in slide-in-from-top-4 duration-500">
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                {NAV_ITEMS.find((nav) => nav.id === activeTab)?.label ||
-                  "Dashboard"}
-              </h1>
-              <p className="mt-2 text-sm text-slate-500">
-                Manage the CYF menu by adding or removing menu items.
-              </p>
-            </div>
-
             {}
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {activeTab === "dashboard" && (
                 <div className="rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-8 shadow-sm">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-12 w-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                      <LayoutDashboard size={24} />
+                  <div className="flex flex-col items-center justify-center mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="h-16 w-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3 shadow-md">
+                      <Utensils size={32} />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-800">
-                      Welcome back, Admin
+                    <h2 className="text-3xl font-extrabold text-slate-800 text-center flex items-center gap-2">
+                      Welcome back to the Admin Dashboard <span className="text-2xl">👋</span>
                     </h2>
+                    <p className="mt-2 text-base text-slate-500 text-center max-w-xl">
+                      Manage attendance, assign volunteers, and organise lunch orders—all in one place.
+                    </p>
                   </div>
-                  <p className="text-slate-600 max-w-xl">
-                    Here is your central hub for managing the LunchFlow
-                    operations. Select any tool from the sidebar to review
-                    orders, manage attendance, handle leftovers, or generate new
-                    volunteer invites.
-                  </p>
                   <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2"> </h3>
-                     
-                    
-                     {/* Add Event */}
-                      <CreateEvent onEventCreated={handleEventCreated} />
+                    <CreateEvent onEventCreated={handleEventCreated} />
                     <StatusCard eventId={adminOrderId} date={activeEventDate} />
-                      
-
-                      {/* Event List */}
-                      <OrderHistory refreshKey={refreshKey} />
-                 
-
-                </div>
+                    {}
+                    <OrderHistory refreshKey={refreshKey} />
+                  </div>
                 </div>
               )}
-              {/* ── Active event banner — shown on all form tabs ── */}
+              {}
               {(activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement" || activeTab === "PlaceOrder") && (
                 <div className={`mb-4 flex items-center gap-3 rounded-2xl border px-5 py-3 ${
                   adminOrderId
@@ -348,16 +310,16 @@ useEffect(() => {
                     </>
                   ) : (
                     <span className="text-sm font-medium text-amber-700">
-                      {/* ⚠️ No active event — go to Dashboard and create an event first. */}
+                      {}
                     </span>
                   )}
                 </div>
               )}
 
-              {/* ── Place Order ── */}
+              {}
               {activeTab === "PlaceOrder" && <OrderManagement />}
 
-              {/* ── Attendance & Leftover: auto-use the active order_id ── */}
+              {}
               {(activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement") && (
                 adminOrderId ? (
                   <>
@@ -393,20 +355,8 @@ useEffect(() => {
                   <form onSubmit={handleInvite} className="space-y-6">
                     <div className="space-y-2">
 
-                      {/* Active event — auto-set when admin creates event on Dashboard */}
-                      {/* {selectedOrderId ? (
-                        <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
-                          <span className="text-sm font-semibold text-emerald-700">Event:</span>
-                          <span className="text-sm text-emerald-800 font-mono">{activeEventDate || `Order #${selectedOrderId}`}</span>
-                          <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">order #{selectedOrderId}</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 mb-2">
-                          <span className="text-sm font-medium text-amber-700">
-                            ⚠️ No active event — create an event on the Dashboard first.
-                          </span>
-                        </div>
-                      )} */}
+                      {}
+                      {}
                       {selectedOrderId && (
                         <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
                           <span className="text-sm font-semibold text-emerald-700">Event:</span>
@@ -535,7 +485,7 @@ useEffect(() => {
                                </span>
                             </td>
                             <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
-                              {new Date(invite.expires_at).toLocaleDateString()}
+                              {new Date(invite.expires_at).toLocaleDateString("en-GB")}
                             </td>
                           </tr>
                         )})}

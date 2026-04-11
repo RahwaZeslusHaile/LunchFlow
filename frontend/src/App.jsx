@@ -10,7 +10,7 @@ import VolunteerAttendanceRequestPage from "./pages/VolunteerAttendanceRequestPa
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<LoginForm />} />
       <Route path="/signup" element={<SignupForm />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/admin" element={<AdminInvitePage />} />

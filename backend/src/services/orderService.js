@@ -127,10 +127,21 @@ export async function getOrdersByDate(date) {
 }
 
 export async function deleteOrderById(order_id) {
-  await pool.query(
-    "DELETE FROM orders WHERE order_id = $1",
-    [order_id]
-  );
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('DELETE FROM form_submissions WHERE order_id = $1', [order_id]);
+    await client.query('DELETE FROM attendance WHERE order_id = $1', [order_id]);
+    await client.query('DELETE FROM leftover_food WHERE order_id = $1', [order_id]);
+    await client.query('DELETE FROM invites WHERE order_id = $1', [order_id]);
+    await client.query('DELETE FROM orders WHERE order_id = $1', [order_id]);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 export async function getLatestOrder() {
   const result = await pool.query(

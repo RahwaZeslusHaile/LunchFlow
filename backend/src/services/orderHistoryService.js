@@ -1,6 +1,9 @@
 import pool from "../db.js";
 
-export async function getLatestOrders() {
+export async function getLatestOrders(limit = 10, offset = 0) {
+  const countRes = await pool.query("SELECT COUNT(*) FROM orders");
+  const total = parseInt(countRes.rows[0].count, 10);
+
   const result = await pool.query(`
     SELECT 
       o.order_id,
@@ -42,17 +45,14 @@ export async function getLatestOrders() {
     LEFT JOIN account a 
       ON o.assigned_admin = a.account_id
 
-    WHERE o.order_id IN (
-      SELECT order_id 
-      FROM orders 
-      ORDER BY order_id DESC 
-      LIMIT 10
-    )
-
     ORDER BY o.order_id DESC
-  `);
+    LIMIT $1 OFFSET $2
+  `, [limit, offset]);
 
-  return result.rows;
+  return {
+    orders: result.rows,
+    total
+  };
 }
 
 
