@@ -36,7 +36,7 @@ function LoginForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.message || "Login failed. Please check your credentials.");
+        setError(data?.message || "Login failed. Please check your email and password.");
         return;
       }
 
