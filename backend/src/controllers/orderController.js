@@ -1,5 +1,5 @@
 
-import {updateOrderWithItems, getOrdersByDate, createOrder, createOrderWithSteps, getLatestOrder}  from "../services/orderService.js";
+import {updateOrderWithItems, getOrdersByDate, createOrder, createOrderWithSteps, getLatestOrder, deleteOrderById}  from "../services/orderService.js";
 
 export async function getActiveOrder(req, res) {
   try {

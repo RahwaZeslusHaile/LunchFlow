@@ -7,7 +7,11 @@ function sendError(res, err) {
 
 export async function fetchLatestOrders(req, res) {
   try {
-    const data = await getLatestOrders();
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
+    const data = await getLatestOrders(limit, offset);
     res.json(data);
   } catch (err) {
     sendError(res, err);

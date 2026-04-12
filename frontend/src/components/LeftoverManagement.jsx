@@ -90,55 +90,55 @@ function LeftoverManagement({ order_id }) {
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-100 p-2 sm:p-4">
-      <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl bg-white rounded-2xl shadow-md p-2 sm:p-6 space-y-4">
-        <h2 className="text-lg sm:text-2xl font-bold text-center mb-2 sm:mb-4">
+    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-4">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-10 space-y-8 flex flex-col justify-between" style={{ minHeight: '600px' }}>
+        <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-3 tracking-tight">
           Leftover Management
         </h2>
 
         <button
           onClick={handleSave}
           disabled={!isDirty}
-          className={`w-full rounded-lg py-2 text-white text-base sm:text-lg ${
-            isDirty ? "bg-black" : "bg-gray-400"
-          }`}
+          className={`w-full rounded-2xl py-3 text-lg font-bold text-white ${
+            isDirty ? "bg-black hover:bg-gray-900" : "bg-gray-400 cursor-not-allowed"
+          } transition`}
         >
           Save Leftovers
         </button>
 
-        <div className="h-[36rem] sm:h-[40rem] border border-gray-300 rounded-lg p-2 sm:p-4 overflow-y-auto bg-gray-50">
+        <div className="h-[36rem] border border-gray-300 rounded-2xl p-5 overflow-y-auto bg-gray-50">
           {loading && (
-            <p className="text-center text-gray-400 mt-20 text-base sm:text-lg">
+            <p className="text-center text-gray-400 mt-20 text-lg">
               Loading...
             </p>
           )}
           {!loading && items.length === 0 && (
-            <p className="text-center text-gray-400 mt-20 text-base sm:text-lg">
+            <p className="text-center text-gray-400 mt-20 text-lg">
               No menu items available
             </p>
           )}
           {!loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+            <div className="grid grid-cols-1 gap-5">
               {items.map(item => (
                 <div
                   key={item.menu_item_id}
-                  className="flex justify-between items-center bg-white p-2 sm:p-4 mb-2 rounded shadow-sm border border-gray-100"
+                  className="flex justify-between items-center bg-white p-5 mb-3 rounded-2xl shadow-sm border border-gray-100"
                 >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm sm:text-base truncate">{item.name}</p>
-                    <p className="text-xs text-gray-500">{item.type}</p>
+                  <div className="flex-1 min-w-[7rem] max-w-[12rem]">
+                    <p className="font-medium text-lg break-words">{item.name}</p>
+                    <p className="text-sm text-gray-500">{item.type}</p>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-4 min-w-[8rem] max-w-full">
                     <button
                       onClick={() => decreaseQuantity(item.menu_item_id)}
-                      className="bg-gray-300 px-2 sm:px-3 rounded text-lg sm:text-xl"
+                      className="bg-gray-300 px-4 rounded-2xl text-xl"
                     >
                       -
                     </button>
-                    <span className="w-6 text-center text-base sm:text-lg">{item.quantity}</span>
+                    <span className="w-8 text-center text-lg">{item.quantity}</span>
                     <button
                       onClick={() => increaseQuantity(item.menu_item_id)}
-                      className="bg-blue-500 text-white px-2 sm:px-3 rounded text-lg sm:text-xl"
+                      className="bg-blue-500 text-white px-4 rounded-2xl text-xl"
                     >
                       +
                     </button>
@@ -150,12 +150,12 @@ function LeftoverManagement({ order_id }) {
         </div>
 
         {error && (
-          <p className="text-red-600 text-sm sm:text-base text-center">
+          <p className="text-red-600 text-lg font-medium text-center">
             {error}
           </p>
         )}
         {success && (
-          <p className="text-green-600 text-sm sm:text-base text-center">
+          <p className="text-green-600 text-lg font-medium text-center">
             {success}
           </p>
         )}

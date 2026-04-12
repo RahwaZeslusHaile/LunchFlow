@@ -33,10 +33,20 @@ function StatusCard({ eventId, date }) {
     done: "Done",
   };
 
+  const formattedDate = date
+    ? (() => {
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+      })()
+    : null;
+
   return (
     <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-slate-800 mb-6">
-        {date || "No Event"} Status
+        {formattedDate || "No Event"} Status
       </h3>
 
       <div className="flex items-center justify-between gap-3">
@@ -65,7 +75,11 @@ function StatusCard({ eventId, date }) {
           }
 
           if (isFirst) {
-            color = "bg-slate-300 text-black";
+            if (eventId) {
+              color = "bg-green-400 text-black";
+            } else {
+              color = "bg-slate-300 text-black";
+            }
           }
 
           return (
@@ -73,12 +87,12 @@ function StatusCard({ eventId, date }) {
   
   <div className="flex flex-col items-center">
     
-    {/* Title */}
+    {}
     <span className="text-xs mb-1">
       {stepTitles[index]}
     </span>
 
-    {/* Step */}
+    {}
     <div
       className={`flex items-center justify-center text-center
       w-16 h-16 px-1 text-[11px] leading-tight font-medium
@@ -93,45 +107,20 @@ function StatusCard({ eventId, date }) {
         ? "Start"
         : isLast
         ? "Completed"
-        : labelMap[status] || "⏳"}
+        : labelMap[status] || (
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="mx-auto">
+              <circle cx="12" cy="12" r="10" strokeWidth="2" className="text-slate-300" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l2 2" className="text-indigo-400" />
+            </svg>
+          )}
     </div>
   </div>
 
-  {/* Line */}
+  {}
   {index !== steps.length - 1 && (
     <div className="flex-1 h-2 mx-3 rounded bg-slate-200" />
   )}
 </div>
-  //        <div key={index} className="flex flex-col items-center w-full">
-  
-  // {/* Title */}
-  // <span className="mb-2 text-xs text-slate-600 font-medium">
-  //   {stepTitles[index]}
-  // </span>
-
-  // {/* Step */}
-  //                 <div
-  //                   className={`flex items-center justify-center text-center
-  //                   w-16 h-16 px-1 text-[11px] leading-tight font-medium
-  //                   ${
-  //                     isFirst || isLast
-  //                       ? "rounded-2xl shadow-md border border-slate-300"
-  //                       : "rounded-full shadow-md border border-slate-300"
-  //                   }
-  //                   ${color} transition-all duration-300`}
-  //                 >
-  //                   {isFirst
-  //                     ? "Start"
-  //                     : isLast
-  //                     ? "Done"
-  //                     : labelMap[status] || "⏳"}
-  //                 </div>
-
-  //              {/* Line */}
-  //                {index !== steps.length - 1 && (
-  //                  <div className="flex-1 h-2 mt-3 w-full rounded bg-slate-200" />
-  //                   )}
-  //                 </div>
           );
         })}
       </div>

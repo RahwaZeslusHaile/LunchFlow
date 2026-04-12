@@ -1,402 +1,10 @@
-// import { useState, useEffect } from "react";
 
-// function OrderManagement() {
-//   const fallbackAttendance = 100;
-
-//   const [date, setDate] = useState("");
-//   const [attendance, setAttendance] = useState(0);
-//   const [order, setOrder] = useState([]);
-//   const [isDirty, setIsDirty] = useState(false);
-//   const [showModal, setShowModal] = useState(false);
-//   const [success, setSuccess] = useState("");
-//   const [canDownload, setCanDownload] = useState(false);
-
-//   const [dietStats, setDietStats] = useState({
-//     halal: 0,
-//     veg: 0,
-//     other: 0
-//   });
-
-//   const [selectedCategory, setSelectedCategory] = useState("All");
-
-//   const categories = [
-//     "All",
-//     "Bakery & Bases",
-//     "Fillings",
-//     "Fresh Produce",
-//     "Snacks",
-//     "Sweet Treats",
-//     "Drinks",
-//     "Non-Food Essentials",
-//     "Food Essentials",
-//   ];
-
-//   const fallbackMenu = [
-//     {
-//       id: 1,
-//       name: "Sainsburys Plain Tortilla Wraps",
-//       category: "Bakery & Bases",
-//     },
-//     { id: 2, name: "Packs of pita bread", category: "Bakery & Bases" },
-//     {
-//       id: 3,
-//       name: "Sainsburys Cooked Chicken Breast Chunks",
-//       category: "Fillings",
-//     },
-//     {
-//       id: 4,
-//       name: "Humza Signature Hot & Spicy Chicken Wings 600g",
-//       category: "Fillings",
-//     },
-//     { id: 5, name: "Sainsburys Falafels", category: "Fillings" },
-//     { id: 6, name: "Plant Pioneers (Vegan) Ham", category: "Fillings" },
-//     { id: 7, name: "Sainsburys Hummus", category: "Fillings" },
-//     { id: 8, name: "Sainsburys Creamy Coleslaw", category: "Fillings" },
-//     { id: 9, name: "Greek Feta Block", category: "Fillings" },
-//     { id: 10, name: "Soap", category: "Fresh Produce" },
-//     { id: 11, name: "Chips", category: "Fresh Produce" },
-//     { id: 12, name: "Large Cucumbers", category: "Fresh Produce" },
-//     {
-//       id: 13,
-//       name: "Packs of Small Ripe & Ready Avocados",
-//       category: "Fresh Produce",
-//     },
-//     { id: 14, name: "Lemons", category: "Fresh Produce" },
-//     { id: 15, name: "cheese grated", category: "Fresh Produce" },
-//     { id: 16, name: "Bags of Baby Spinach", category: "Fresh Produce" },
-//     { id: 17, name: "Mixed Leaf Salad", category: "Fresh Produce" },
-//     { id: 18, name: "Punnets Cherry Tomatoes", category: "Snacks" },
-//     {
-//       id: 19,
-//       name: "Large Bags of Tortilla Chips (Salted)",
-//       category: "Snacks",
-//     },
-//     { id: 20, name: "Large Bags of Sea Salt  Crisps", category: "Snacks" },
-//     { id: 21, name: "Jars of Salsa (Cool and Hot)", category: "Snacks" },
-//     {
-//       id: 22,
-//       name: "Packs of Assorted Biscuit Packs",
-//       category: "Sweet Treats",
-//     },
-//     { id: 23, name: "Large Bunches of Bananas", category: "Sweet Treats" },
-//     {
-//       id: 24,
-//       name: "Punnets of Seedless Grapes (Red & Green)",
-//       category: "Sweet Treats",
-//     },
-//     {
-//       id: 25,
-//       name: "Bags of Tangerines or Satsumas",
-//       category: "Sweet Treats",
-//     },
-//     {
-//       id: 26,
-//       name: "Sainsburys 100% Pure Orange/Apple Juice (1L Cartons)",
-//       category: "Drinks",
-//     },
-//     { id: 27, name: "Coca cola", category: "Drinks" },
-//     { id: 28, name: "Fanta", category: "Drinks" },
-//     { id: 29, name: "Sainsburys British Bottled Still Spring Water 5L Bottles", category: "Drinks" },
-//     { id: 30, name: "Semi-Skimmed Milk", category: "Drinks" },
-//     { id: 31, name: "Paper Towels", category: "Non-Food Essentials" },
-//     { id: 32, name: "Minky All Purpose Microfibre Cloths (6 pack)", category: "Non-Food Essentials" },
-//     { id: 33, name: "BRITA Marella 3.5L XL Water Filter Jug - White", category: "Non-Food Essentials" },
-//     { id: 34, name: "Ground Coffee", category: "Food Essentials" },
-
-//   ];
-
-//   useEffect(() => {
-//     if (!date) return;
-
-//     setIsDirty(false);
-//     setSuccess("");
-//     setCanDownload(false);
-
-//     // attendance
-//     fetch(`http://localhost:4000/attendance?date=${date}`)
-//       .then(res => res.json())
-//       .then(data => {
-//         const total = data?.total || fallbackAttendance;
-//         setAttendance(total);
-
-//         const halal = 30;
-//         const veg = 10;
-
-//         setDietStats({
-//           halal,
-//           veg,
-//           other: total - (halal + veg)
-//         });
-//       })
-//       .catch(() => {
-//         setAttendance(fallbackAttendance);
-//         setDietStats({
-//           halal: 30,
-//           veg: 10,
-//           other: fallbackAttendance - 40
-//         });
-//       });
-
-//     const fallbackLeftovers = [
-//       { menu_item_id: 1, quantity: 5 },
-//       { menu_item_id: 5, quantity: 3 }
-//     ];
-
-//     let filtered = fallbackMenu;
-
-//     if (selectedCategory !== "All") {
-//       filtered = fallbackMenu.filter(
-//         item => item.category === selectedCategory
-//       );
-//     }
-
-//     const result = filtered.map(item => {
-//       const foundLeftover = fallbackLeftovers.find(
-//         l => l.menu_item_id === item.id
-//       );
-
-//       const existing = order.find(o => o.id === item.id);
-
-//       return {
-//         id: item.id,
-//         name: item.name,
-//         leftover: foundLeftover ? foundLeftover.quantity : 0,
-//         quantity: existing ? existing.quantity : 0
-//       };
-//     });
-
-//     setOrder(result);
-
-//   }, [date, selectedCategory]);
-
-//   const increase = (id) => {
-//     setIsDirty(true);
-//     setOrder(prev =>
-//       prev.map(item =>
-//         item.id === id
-//           ? { ...item, quantity: item.quantity + 1 }
-//           : item
-//       )
-//     );
-//   };
-
-//   const decrease = (id) => {
-//     setIsDirty(true);
-//     setOrder(prev =>
-//       prev.map(item =>
-//         item.id === id
-//           ? { ...item, quantity: Math.max(0, item.quantity - 1) }
-//           : item
-//       )
-//     );
-//   };
-
-//   const handleSubmit = async () => {
-//     const filteredItems = order
-//       .filter(item => item.quantity > 0)
-//       .map(item => ({
-//         menu_item_id: item.id,
-//         quantity: item.quantity
-//       }));
-
-//     try {
-//       const res = await fetch("http://localhost:4000/orders", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//           date,
-//           attendance,
-//           items: filteredItems
-//         })
-//       });
-
-//       const data = await res.json();
-
-//       setSuccess(data.message || "Order saved");
-//       setShowModal(true);
-//       setIsDirty(false);
-//       setCanDownload(true);
-
-//     } catch (err) {
-//       setSuccess("Saved locally (backend later)");
-//       setShowModal(true);
-//       setIsDirty(false);
-//       setCanDownload(true);
-//     }
-//   };
-
-//   const downloadTxt = () => {
-//     const filteredItems = order.filter(i => i.quantity > 0);
-
-//     const text = `
-// Date: ${date || "Not selected"}
-// Attendance: ${attendance}
-// Halal: ${dietStats.halal}
-// Veg: ${dietStats.veg}
-// Other: ${dietStats.other}
-
-// Items:
-// ${filteredItems.map(i => `${i.name}: ${i.quantity}`).join("\n")}
-// `;
-
-//     const blob = new Blob([text], { type: "text/plain" });
-//     const url = URL.createObjectURL(blob);
-
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = `order-${date || "no-date"}.txt`;
-//     a.click();
-
-//     URL.revokeObjectURL(url);
-//   };
-
-//   const filteredOrder = order.filter(item => item.quantity > 0);
-
-//   return (
-//     <main className="h-screen flex items-center justify-center bg-gray-300">
-//       <div className="w-full max-w-md h-[80vh] bg-white rounded-2xl shadow-lg flex flex-col">
-
-//         <div className="p-4 border-b space-y-2">
-//           <h2 className="text-xl font-bold text-center">
-//             Order Management
-//           </h2>
-
-//           <input
-//             type="date"
-//             value={date}
-//             onChange={(e) => setDate(e.target.value)}
-//             className="w-full border rounded px-3 py-2"
-//           />
-
-//           <div className="flex justify-center gap-3 text-sm font-medium">
-//             <p>Attendance: {attendance}</p>
-//             <p>|</p>
-//             <p>Halal: {dietStats.halal}</p>
-//             <p>|</p>
-//             <p>Veg: {dietStats.veg}</p>
-//             <p>|</p>
-//             <p>Other: {dietStats.other}</p>
-//           </div>
-
-//           <button
-//             onClick={handleSubmit}
-//             disabled={!isDirty}
-//             className={`w-full py-2 rounded text-white ${
-//               isDirty ? "bg-black" : "bg-gray-400"
-//             }`}
-//           >
-//             Submit Order
-//           </button>
-
-//           <button
-//             onClick={downloadTxt}
-//             disabled={!canDownload}
-//             className={`w-full py-2 rounded text-white ${
-//               canDownload ? "bg-blue-500" : "bg-gray-400"
-//             }`}
-//           >
-//             Generate File for Admin
-//           </button>
-
-//           {success && (
-//             <p className="text-green-600 text-sm text-center">
-//               {success}
-//             </p>
-//           )}
-//         </div>
-
-//         <div className="flex-1 overflow-y-auto p-4 space-y-2">
-
-//           <select
-//             value={selectedCategory}
-//             onChange={(e) => setSelectedCategory(e.target.value)}
-//             className="w-full border rounded px-3 py-2"
-//           >
-//             {categories.map((cat, index) => (
-//               <option key={index} value={cat}>
-//                 {cat}
-//               </option>
-//             ))}
-//           </select>
-
-//           {!date && (
-//             <p className="text-center text-gray-400">
-//               Select a date
-//             </p>
-//           )}
-
-//           {date && order.map(item => (
-//             <div
-//               key={item.id}
-//               className="bg-gray-100 p-3 rounded flex justify-between items-center"
-//             >
-//               <div>
-//                 <p className="font-medium">{item.name}</p>
-//                 <p className="text-xs text-gray-500">
-//                   Leftover: {item.leftover}
-//                 </p>
-//               </div>
-
-//               <div className="flex items-center gap-2">
-//                 <button onClick={() => decrease(item.id)} className="bg-gray-300 px-2 rounded">-</button>
-//                 <span>{item.quantity}</span>
-//                 <button onClick={() => increase(item.id)} className="bg-blue-500 text-white px-2 rounded">+</button>
-//               </div>
-//             </div>
-//           ))}
-
-//         </div>
-
-//       </div>
-
-//       {showModal && (
-//         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-//           <div className="bg-white p-6 rounded-xl w-80 space-y-4">
-
-//             <h2 className="text-lg font-bold text-center">Order Summary</h2>
-
-//             <p>Date: {date || "Not selected"}</p>
-//             <p>Attendance: {attendance}</p>
-
-//             <p>
-//               Halal: {dietStats.halal} | Veg: {dietStats.veg} | Other: {dietStats.other}
-//             </p>
-
-//             <div className="space-y-1">
-//               {filteredOrder.length === 0 && (
-//                 <p className="text-gray-400 text-sm text-center">
-//                   No items selected
-//                 </p>
-//               )}
-
-//               {filteredOrder.map(item => (
-//                 <p key={item.id}>
-//                   {item.name}: {item.quantity}
-//                 </p>
-//               ))}
-//             </div>
-
-//             <button
-//               onClick={() => setShowModal(false)}
-//               className="w-full bg-black text-white py-2 rounded"
-//             >
-//               Close
-//             </button>
-
-//           </div>
-//         </div>
-//       )}
-
-//     </main>
-//   );
-// }
-
-// export default OrderManagement;
 import { useState, useEffect } from "react";
 
 function OrderManagement() {
+    const [stepsData, setStepsData] = useState([]);
+    const [stepStatusMsg, setStepStatusMsg] = useState("");
+    const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [leftovers, setLeftovers] = useState([]);
@@ -457,6 +65,41 @@ function OrderManagement() {
 
   useEffect(() => {
     if (!activeEvent) return;
+    const fetchSteps = async () => {
+      try {
+        const res = await fetch(`/api/eventStep/${activeEvent.order_id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setStepsData(data);
+      } catch (err) {
+        console.error("Failed to fetch event steps:", err);
+      }
+    };
+    fetchSteps();
+  }, [activeEvent]);
+
+  useEffect(() => {
+    if (!stepsData || stepsData.length < 3) return;
+    const attendanceStep = stepsData.find(s => s.step_position === 1);
+    const leftoverStep = stepsData.find(s => s.step_position === 2);
+    const orderStep = stepsData.find(s => s.step_position === 3);
+
+    if (orderStep?.step_status === "done") {
+      setOrderButtonDisabled(true);
+      setStepStatusMsg("All items have already been submitted. No further action is needed.");
+    } else if (attendanceStep?.step_status !== "done") {
+      setOrderButtonDisabled(true);
+      setStepStatusMsg("Attendance has not been submitted yet. Please submit attendance first before proceeding.");
+    } else if (leftoverStep?.step_status !== "done") {
+      setOrderButtonDisabled(false);
+      setStepStatusMsg("Just to remind you Leftover has not been submitted yet. You can still submit it when ready.");
+    } else {
+      setOrderButtonDisabled(false);
+      setStepStatusMsg("");
+    }
+  }, [stepsData]);
+  useEffect(() => {
+    if (!activeEvent) return;
 
     const fetchLeftovers = async () => {
       try {
@@ -498,7 +141,6 @@ function OrderManagement() {
     fetchAttendanceStats();
   }, [activeEvent]);
 
-  // Initialize/Update Order State
   useEffect(() => {
     if (menuItems.length === 0) return;
 
@@ -586,12 +228,11 @@ function OrderManagement() {
     }
   };
 
-  // Calculate "Other" dietary category
   const otherDietCount = Math.max(0, dietStats.attendance - (dietStats.halal + dietStats.veg));
 
   const downloadOrderFile = () => {
     const filteredItems = order.filter(i => i.quantity > 0);
-    const dateStr = activeEvent ? new Date(activeEvent.order_date).toLocaleDateString() : "N/A";
+    const dateStr = activeEvent ? new Date(activeEvent.order_date).toLocaleDateString("en-GB") : "N/A";
 
     const text = `
 LUNCHFLOW ORDER SUMMARY
@@ -608,7 +249,7 @@ DIETARY BREAKDOWN:
 ORDERED ITEMS:
 ${filteredItems.map(i => `- ${i.name} (${i.category}): ${i.quantity}`).join("\n")}
 
-Generated on: ${new Date().toLocaleString()}
+Generated on: ${new Date().toLocaleString("en-GB")}
 `;
   const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -633,7 +274,7 @@ Generated on: ${new Date().toLocaleString()}
     <main className="min-h-screen bg-[#F8FAFC] py-8 px-4 font-sans selection:bg-indigo-100">
       <div className="max-w-4xl mx-auto space-y-6">
         
-        {/* Header Section */}
+        {}
         <header className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -649,18 +290,23 @@ Generated on: ${new Date().toLocaleString()}
               <div className="bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-2xl flex items-center gap-2">
                 <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
                 <span className="text-indigo-700 font-bold text-sm">
-                  Active Event: {new Date(activeEvent.order_date).toLocaleDateString()}
+                  Active Event: {new Date(activeEvent.order_date).toLocaleDateString("en-GB")}
                 </span>
               </div>
             ) : (
-              <span className="text-red-500 font-bold text-sm bg-red-50 px-4 py-2 rounded-2xl border border-red-100">
-                No Active Event Found
-              </span>
+              <div className="flex flex-col items-center justify-center gap-2 bg-red-50 px-6 py-6 rounded-2xl border border-red-100">
+                <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-red-400 mb-2">
+                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h8M12 8v8" />
+                </svg>
+                <span className="text-red-500 font-bold text-sm">No Active Event Found</span>
+                <span className="text-red-400 text-xs text-center">Create an event to get started with attendance, leftovers, and orders.</span>
+              </div>
             )}
           </div>
         </header>
 
-        {/* Stats Dashboard */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatCard label="Total Attendance" value={dietStats.attendance} color="blue" />
           <StatCard label="Halal" value={dietStats.halal} color="amber" />
@@ -668,10 +314,10 @@ Generated on: ${new Date().toLocaleString()}
           <StatCard label="Other" value={otherDietCount} color="slate" />
         </div>
 
-        {/* Main Content Area */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 align-start">
           
-          {/* Menu & Catalog */}
+          {}
           <section className="lg:col-span-2 space-y-4">
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
@@ -740,7 +386,7 @@ Generated on: ${new Date().toLocaleString()}
           </section>
 
 
-          {/* Action Sidebar */}
+          {}
           <aside className="space-y-4">
             <div className="bg-indigo-900 rounded-3xl p-6 text-white shadow-xl shadow-indigo-100 space-y-6">
               <div className="space-y-1">
@@ -762,17 +408,26 @@ Generated on: ${new Date().toLocaleString()}
               </div>
 
               <div className="pt-4 space-y-3">
+
                 <button
                   onClick={handleSubmit}
-                  disabled={!isDirty || filteredOrder.length === 0}
+                  disabled={orderButtonDisabled || !isDirty || filteredOrder.length === 0}
                   className={`w-full py-4 rounded-2xl font-bold text-sm transition-all shadow-lg ${
-                    isDirty && filteredOrder.length > 0
+                    !orderButtonDisabled && isDirty && filteredOrder.length > 0
                       ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-900/40 active:scale-95"
                       : "bg-indigo-800/50 text-indigo-400 cursor-not-allowed border border-indigo-800"
                   }`}
                 >
-                  Confirm & Submit Order
+                  {orderButtonDisabled && stepsData.find(s => s.step_position === 3)?.step_status === "done"
+                    ? "Already submitted"
+                    : "Confirm & Submit Order"}
                 </button>
+
+                {stepStatusMsg && (
+                  <div className="mt-2 text-xs text-center font-medium text-amber-600 bg-amber-50 border border-amber-100 rounded-xl py-2 px-3">
+                    {stepStatusMsg}
+                  </div>
+                )}
 
                 <button
                   onClick={downloadOrderFile}
@@ -801,13 +456,13 @@ Generated on: ${new Date().toLocaleString()}
         </div>
       </div>
 
-      {/* Premium Order Summary Modal */}
+      {}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowModal(false)}></div>
           <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             
-            {/* Modal Header */}
+            {}
             <div className="relative bg-indigo-600 pt-16 pb-8 px-8 text-center text-white overflow-hidden">
               <div className="absolute top-0 right-0 p-6">
                 <button onClick={() => setShowModal(false)} className="text-white/60 hover:text-white transition-colors">
@@ -821,11 +476,11 @@ Generated on: ${new Date().toLocaleString()}
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <h2 className="text-2xl font-extrabold tracking-tight">Order Confirmed!</h2>
-                <p className="text-indigo-100 font-medium">Summary for {new Date(activeEvent?.order_date).toLocaleDateString()}</p>
+                <p className="text-indigo-100 font-medium">Summary for {new Date(activeEvent?.order_date).toLocaleDateString("en-GB")}</p>
               </div>
             </div>
 
-            {/* Modal Content */}
+            {}
             <div className="p-8 space-y-6 bg-white">
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div className="text-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
@@ -869,7 +524,7 @@ Generated on: ${new Date().toLocaleString()}
         </div>
       )}
 
-      {/* Additional CSS for Custom Scrollbar */}
+      {}
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
