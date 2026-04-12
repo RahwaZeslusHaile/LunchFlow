@@ -290,6 +290,8 @@ The application should be easy for CYF volunteers to maintain and deploy.
 **Possible platforms:**
 - Coolify
 
+Deployed application: 
+
 ---
 
 ## 📝 License
