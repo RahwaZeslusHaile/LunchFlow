@@ -302,7 +302,13 @@ useEffect(() => {
                     <>
                       <span className="text-sm font-semibold text-emerald-700">Active event:</span>
                       <span className="text-sm text-emerald-800 font-mono">
-                        {activeEventDate || `ID ${adminOrderId}`}
+                        {activeEventDate ? (() => {
+                          const d = new Date(activeEventDate);
+                          const day = String(d.getDate()).padStart(2, '0');
+                          const month = String(d.getMonth() + 1).padStart(2, '0');
+                          const year = d.getFullYear();
+                          return `${day}/${month}/${year}`;
+                        })() : `ID ${adminOrderId}`}
                       </span>
                       <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-medium">
                         order #{adminOrderId}
@@ -361,7 +367,13 @@ useEffect(() => {
                         <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 mb-2">
                           <span className="text-sm font-semibold text-emerald-700">Event:</span>
                           <span className="text-sm text-emerald-800 font-mono">
-                            {activeEventDate || `Order #${selectedOrderId}`}
+                            {activeEventDate ? (() => {
+                              const d = new Date(activeEventDate);
+                              const day = String(d.getDate()).padStart(2, '0');
+                              const month = String(d.getMonth() + 1).padStart(2, '0');
+                              const year = d.getFullYear();
+                              return `${day}/${month}/${year}`;
+                            })() : `Order #${selectedOrderId}`}
                           </span>
                           <span className="ml-auto text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
                             order #{selectedOrderId}

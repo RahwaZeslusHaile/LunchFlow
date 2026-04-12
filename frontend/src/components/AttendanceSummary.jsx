@@ -112,17 +112,17 @@ function AttendanceSummary({ order_id }) {
   const volunteerTotal = items.reduce((sum, i) => sum + (i.volunteers || 0), 0);
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow space-y-5">
-        <h2 className="text-lg font-bold text-center">Attendance Summary</h2>
+    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-4">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-10 space-y-8">
+        <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-3 tracking-tight">Attendance Summary</h2>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Class</label>
+        <div className="space-y-6">
+          <div className="grid grid-cols-3 items-center gap-5">
+            <label className="text-lg text-gray-600">Class</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="col-span-2 border border-gray-300 rounded-lg px-3 py-2"
+              className="col-span-2 border border-gray-300 rounded-2xl px-5 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
             >
               <option value="" disabled>Select</option>
               {classes.map((c) => (
@@ -131,21 +131,21 @@ function AttendanceSummary({ order_id }) {
             </select>
           </div>
 
-          <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Trainees Count</label>
+          <div className="grid grid-cols-3 items-center gap-5">
+            <label className="text-lg text-gray-600">Trainees Count</label>
             <input
               type="number"
               min="0"
               value={count}
               onChange={(e) => setCount(e.target.value)}
-              className="col-span-2 border border-gray-300 rounded-lg px-3 py-2"
+              className="col-span-2 border border-gray-300 rounded-2xl px-5 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
             />
           </div>
 
           {/* Halal Input */}
-          <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Halal</label>
-            <div className="flex items-center gap-2 col-span-2">
+          <div className="grid grid-cols-3 items-center gap-5">
+            <label className="text-lg text-gray-600">Halal</label>
+            <div className="flex items-center gap-3 col-span-2">
               <input
                 type="checkbox"
                 checked={isHalal}
@@ -153,6 +153,7 @@ function AttendanceSummary({ order_id }) {
                   setIsHalal(e.target.checked);
                   setHalalCount("");
                 }}
+                className="w-5 h-5"
               />
               <input
                 type="number"
@@ -161,15 +162,15 @@ function AttendanceSummary({ order_id }) {
                 disabled={!isHalal}
                 onChange={(e) => setHalalCount(e.target.value)}
                 placeholder="Number"
-                className={`w-full border border-gray-300 rounded-lg px-3 py-2 ${!isHalal && "bg-gray-100 text-gray-400"}`}
+                className={`w-full border border-gray-300 rounded-2xl px-5 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition ${!isHalal && "bg-gray-100 text-gray-400"}`}
               />
             </div>
           </div>
 
           {/* Vegetarian Input */}
-          <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Vegetarian</label>
-            <div className="flex items-center gap-2 col-span-2">
+          <div className="grid grid-cols-3 items-center gap-5">
+            <label className="text-lg text-gray-600">Vegetarian</label>
+            <div className="flex items-center gap-3 col-span-2">
               <input
                 type="checkbox"
                 checked={isVeg}
@@ -177,6 +178,7 @@ function AttendanceSummary({ order_id }) {
                   setIsVeg(e.target.checked);
                   setVegCount("");
                 }}
+                className="w-5 h-5"
               />
               <input
                 type="number"
@@ -185,61 +187,61 @@ function AttendanceSummary({ order_id }) {
                 disabled={!isVeg}
                 onChange={(e) => setVegCount(e.target.value)}
                 placeholder="Number"
-                className={`w-full border border-gray-300 rounded-lg px-3 py-2 ${!isVeg && "bg-gray-100 text-gray-400"}`}
+                className={`w-full border border-gray-300 rounded-2xl px-5 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition ${!isVeg && "bg-gray-100 text-gray-400"}`}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-3 items-center gap-2">
-            <label className="text-sm text-gray-600">Volunteers Count</label>
+          <div className="grid grid-cols-3 items-center gap-5">
+            <label className="text-lg text-gray-600">Volunteers Count</label>
             <input
               type="number"
               min="0"
               value={volunteersInput}
               onChange={(e) => setVolunteersInput(e.target.value)}
-              className="col-span-2 border border-gray-300 rounded-lg px-3 py-2"
+              className="col-span-2 border border-gray-300 rounded-2xl px-5 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
             />
           </div>
 
           <button
             onClick={addItem}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
+            className="w-full bg-blue-600 text-white rounded-2xl py-3 text-lg font-bold shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           >
             Add
           </button>
 
           <button
             onClick={handleSubmit}
-            className="w-full bg-black text-white py-2 rounded-lg"
+            className="w-full bg-black text-white rounded-2xl py-3 text-lg font-bold shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           >
             Submit
           </button>
         </div>
 
-        {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
-        {success && <p className="text-green-600 text-sm font-medium">{success}</p>}
+        {error && <p className="text-red-500 text-lg font-medium text-center">{error}</p>}
+        {success && <p className="text-green-600 text-lg font-medium text-center">{success}</p>}
 
-        <div className="bg-gray-50 p-3 rounded-lg text-sm">
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-gray-50 p-5 rounded-2xl text-lg mt-6">
+          <div className="flex flex-wrap gap-5">
             {classes.map((c) => {
               const item = items.find((x) => x.category === c.name);
               const traineeCount = item ? item.count : 0;
               const volunteerCount = item ? item.volunteers : 0;
               return (
-                <span key={c.class_id}>
+                <span key={c.class_id} className="font-bold">
                   {c.name}: T={traineeCount}, V={volunteerCount}
                 </span>
               );
             })}
           </div>
-          <div className="text-center font-bold mt-4">
+          <div className="text-center font-bold mt-5">
             Total Volunteers: {volunteerTotal}
           </div>
           <div className="text-center font-bold mt-2">
             Total Attendees: {previewTotal}
           </div>
-          <div className="text-sm text-gray-500 text-center mt-4">
-            <span className="mr-4">T = Trainees</span>
+          <div className="text-lg text-gray-500 text-center mt-5">
+            <span className="mr-6">T = Trainees</span>
             <span>V = Volunteers</span>
           </div>
         </div>

@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 
 function OrderManagement() {
+    const [stepsData, setStepsData] = useState([]);
+    const [stepStatusMsg, setStepStatusMsg] = useState("");
+    const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [leftovers, setLeftovers] = useState([]);
@@ -60,6 +63,41 @@ function OrderManagement() {
     Promise.all([fetchActiveEvent(), fetchMenu()]).finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!activeEvent) return;
+    const fetchSteps = async () => {
+      try {
+        const res = await fetch(`/api/eventStep/${activeEvent.order_id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setStepsData(data);
+      } catch (err) {
+        console.error("Failed to fetch event steps:", err);
+      }
+    };
+    fetchSteps();
+  }, [activeEvent]);
+
+  useEffect(() => {
+    if (!stepsData || stepsData.length < 3) return;
+    const attendanceStep = stepsData.find(s => s.step_position === 1);
+    const leftoverStep = stepsData.find(s => s.step_position === 2);
+    const orderStep = stepsData.find(s => s.step_position === 3);
+
+    if (orderStep?.step_status === "done") {
+      setOrderButtonDisabled(true);
+      setStepStatusMsg("All items have already been submitted. No further action is needed.");
+    } else if (attendanceStep?.step_status !== "done") {
+      setOrderButtonDisabled(true);
+      setStepStatusMsg("Attendance has not been submitted yet. Please submit attendance first before proceeding.");
+    } else if (leftoverStep?.step_status !== "done") {
+      setOrderButtonDisabled(false);
+      setStepStatusMsg("Just to remind you Leftover has not been submitted yet. You can still submit it when ready.");
+    } else {
+      setOrderButtonDisabled(false);
+      setStepStatusMsg("");
+    }
+  }, [stepsData]);
   useEffect(() => {
     if (!activeEvent) return;
 
@@ -370,17 +408,26 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               </div>
 
               <div className="pt-4 space-y-3">
+
                 <button
                   onClick={handleSubmit}
-                  disabled={!isDirty || filteredOrder.length === 0}
+                  disabled={orderButtonDisabled || !isDirty || filteredOrder.length === 0}
                   className={`w-full py-4 rounded-2xl font-bold text-sm transition-all shadow-lg ${
-                    isDirty && filteredOrder.length > 0
+                    !orderButtonDisabled && isDirty && filteredOrder.length > 0
                       ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-900/40 active:scale-95"
                       : "bg-indigo-800/50 text-indigo-400 cursor-not-allowed border border-indigo-800"
                   }`}
                 >
-                  Confirm & Submit Order
+                  {orderButtonDisabled && stepsData.find(s => s.step_position === 3)?.step_status === "done"
+                    ? "Already submitted"
+                    : "Confirm & Submit Order"}
                 </button>
+
+                {stepStatusMsg && (
+                  <div className="mt-2 text-xs text-center font-medium text-amber-600 bg-amber-50 border border-amber-100 rounded-xl py-2 px-3">
+                    {stepStatusMsg}
+                  </div>
+                )}
 
                 <button
                   onClick={downloadOrderFile}

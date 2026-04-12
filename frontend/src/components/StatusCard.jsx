@@ -75,7 +75,11 @@ function StatusCard({ eventId, date }) {
           }
 
           if (isFirst) {
-            color = "bg-slate-300 text-black";
+            if (eventId) {
+              color = "bg-green-400 text-black";
+            } else {
+              color = "bg-slate-300 text-black";
+            }
           }
 
           return (
