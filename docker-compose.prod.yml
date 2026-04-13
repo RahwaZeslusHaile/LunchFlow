@@ -66,12 +66,6 @@ services:
       - /var/cache/nginx
       - /var/run
       - /tmp
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
     networks:
       - private
       - public
