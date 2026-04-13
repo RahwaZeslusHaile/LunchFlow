@@ -1,6 +1,5 @@
 -- ============================================================
--- LunchFlow Database Schema
--- Tables are ordered so every FK reference is already defined.
+-- LunchFlow Database Schema (SAFE INIT VERSION)
 -- ============================================================
 
 -- 1. Roles
@@ -9,8 +8,9 @@ CREATE TABLE roles (
   position TEXT NOT NULL
 );
 
-INSERT INTO roles (position) VALUES ('Admin');
-INSERT INTO roles (position) VALUES ('Volunteer');
+INSERT INTO roles (roles_id, position) VALUES
+  (1, 'Admin'),
+  (2, 'Volunteer');
 
 -- 2. Accounts
 CREATE TABLE account (
@@ -22,6 +22,11 @@ CREATE TABLE account (
   forms      JSONB
 );
 
+-- Add a default admin with bcrypt-hashed password: Admin1234!
+-- Hash generated with bcrypt rounds=10. CHANGE THIS PASSWORD after first login.
+INSERT INTO account (account_id, email, pass, role_id, name)
+VALUES (1, 'admin@codeyourfuture.io', '$2b$10$xtPCy3oy.oxocAiVuaN8PeeyiMQb7bDaz45InfFHrZvwwzIlfQGL6', 1, 'CYF Admin');
+
 -- 3. Menu categories
 CREATE TABLE menu_categories (
   category_id SERIAL PRIMARY KEY,
@@ -29,15 +34,15 @@ CREATE TABLE menu_categories (
   created_at  TIMESTAMP DEFAULT NOW()
 );
 
-INSERT INTO menu_categories (name) VALUES
-  ('Bakery & Bases'),
-  ('Fillings'),
-  ('Fresh Produce'),
-  ('Snacks'),
-  ('Sweet Treats'),
-  ('Drinks'),
-  ('Non-Food Essentials'),
-  ('Food Essentials');
+INSERT INTO menu_categories (category_id, name) VALUES
+  (1, 'Bakery & Bases'),
+  (2, 'Fillings'),
+  (3, 'Fresh Produce'),
+  (4, 'Snacks'),
+  (5, 'Sweet Treats'),
+  (6, 'Drinks'),
+  (7, 'Non-Food Essentials'),
+  (8, 'Food Essentials');
 
 -- 4. Dietary restrictions
 CREATE TABLE dietary_restrictions (
@@ -45,11 +50,11 @@ CREATE TABLE dietary_restrictions (
   name    TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO dietary_restrictions (name) VALUES
-  ('Vegetarian'),
-  ('Non-Vegetarian'),
-  ('Halal'),
-  ('N/A');
+INSERT INTO dietary_restrictions (diet_id, name) VALUES
+  (1, 'Vegetarian'),
+  (2, 'Non-Vegetarian'),
+  (3, 'Halal'),
+  (4, 'N/A');
 
 -- 5. Menu items
 CREATE TABLE menu_items (
@@ -66,9 +71,9 @@ INSERT INTO menu_items (name, category_id, diet_id, quantity) VALUES
   ('Sainsburys Falafels',               2, 1, 1),
   ('Ground Coffee',                     4, 4, 1),
   ('Green Tea',                         5, 4, 1),
-  ('Paper Towels',                      6, 4, 1),
-  ('Large Bunches of Bananas',          6, 1, 1),
-  ('Packs of Assorted Biscuit Packs',   6, 1, 1);
+  ('Paper Towels',                      7, 4, 1),
+  ('Large Bunches of Bananas',          3, 1, 1),
+  ('Packs of Assorted Biscuit Packs',   4, 1, 1);
 
 -- 6. Classes
 CREATE TABLE classes (
@@ -76,14 +81,14 @@ CREATE TABLE classes (
   name     TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO classes (name) VALUES
-  ('ITD'),
-  ('ITP'),
-  ('Piscine'),
-  ('SDC'),
-  ('Launch');
+INSERT INTO classes (class_id, name) VALUES
+  (1, 'ITD'),
+  (2, 'ITP'),
+  (3, 'Piscine'),
+  (4, 'SDC'),
+  (5, 'Launch');
 
--- 7. Orders (must be defined before invites, leftover_food, attendance, event_steps, form_submissions)
+-- 7. Orders
 CREATE TABLE orders (
   order_id       SERIAL PRIMARY KEY,
   assigned_admin INTEGER REFERENCES account(account_id),
@@ -91,6 +96,10 @@ CREATE TABLE orders (
   attendance     INTEGER NOT NULL,
   created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Insert safe order (uses existing admin id = 1)
+INSERT INTO orders (order_id, assigned_admin, order_date, attendance)
+VALUES (1, 1, CURRENT_DATE, 50);
 
 -- 8. Order items
 CREATE TABLE order_items (
@@ -108,12 +117,11 @@ CREATE TABLE event_steps (
   assigned_admin     INTEGER REFERENCES account(account_id),
   assigned_volunteer INTEGER REFERENCES account(account_id),
   step_status        VARCHAR(50) DEFAULT 'pending',
-
-  CONSTRAINT check_step_status   CHECK (step_status IN ('pending', 'in_progress', 'done')),
+  CONSTRAINT check_step_status CHECK (step_status IN ('pending', 'in_progress', 'done')),
   CONSTRAINT unique_step_position UNIQUE (order_id, step_position)
 );
 
--- 10. Invites (references account + orders — both now defined above)
+-- 10. Invites
 CREATE TABLE invites (
   invite_id  SERIAL PRIMARY KEY,
   email      TEXT      NOT NULL,
@@ -126,7 +134,7 @@ CREATE TABLE invites (
   order_id   INTEGER   REFERENCES orders(order_id)
 );
 
--- 11. Leftover food (references menu_items + orders — both now defined above)
+-- 11. Leftover food
 CREATE TABLE leftover_food (
   leftover_id  SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
@@ -138,7 +146,7 @@ CREATE TABLE leftover_food (
   CONSTRAINT unique_menuitem_date UNIQUE (menu_item_id, leftover_date)
 );
 
--- 12. Attendance (references classes + orders — both now defined above)
+-- 12. Attendance
 CREATE TABLE attendance (
   attendance_id   SERIAL PRIMARY KEY,
   class_id        INTEGER NOT NULL REFERENCES classes(class_id),
@@ -149,12 +157,9 @@ CREATE TABLE attendance (
   order_id        INTEGER REFERENCES orders(order_id)
 );
 
-INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count) VALUES
-  (1, '2026-03-21', 33, 3),
-  (2, '2026-03-21', 23, 2),
-  (3, '2026-03-21', 11, 4),
-  (4, '2026-03-21', 15, 3),
-  (5, '2026-03-21',  7, 2);
+-- Safe insert (class_id exists)
+INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count)
+VALUES (1, CURRENT_DATE, 30, 3);
 
 -- 13. Attendance diet breakdown
 CREATE TABLE attendance_diet (
@@ -164,7 +169,7 @@ CREATE TABLE attendance_diet (
   count              INTEGER NOT NULL CHECK (count >= 0)
 );
 
--- 14. Form submissions (references account + orders — both now defined above)
+-- 14. Form submissions
 CREATE TABLE form_submissions (
   submission_id   SERIAL PRIMARY KEY,
   account_id      INTEGER REFERENCES account(account_id),
