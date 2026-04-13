@@ -179,3 +179,9 @@ CREATE TABLE form_submissions (
   submitted_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   order_id        INTEGER REFERENCES orders(order_id)
 );
+
+-- ============================================================
+-- Reset sequences so SERIAL columns don't conflict with seed data
+-- ============================================================
+SELECT setval('account_account_id_seq', (SELECT MAX(account_id) FROM account));
+SELECT setval('attendance_attendance_id_seq', (SELECT MAX(attendance_id) FROM attendance));
