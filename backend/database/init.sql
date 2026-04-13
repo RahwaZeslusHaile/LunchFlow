@@ -181,7 +181,11 @@ CREATE TABLE form_submissions (
 );
 
 -- ============================================================
--- Reset sequences so SERIAL columns don't conflict with seed data
+-- Reset ALL sequences so SERIAL columns don't conflict with seed data
 -- ============================================================
-SELECT setval('account_account_id_seq', (SELECT MAX(account_id) FROM account));
-SELECT setval('attendance_attendance_id_seq', (SELECT MAX(attendance_id) FROM attendance));
+SELECT setval('account_account_id_seq',          COALESCE((SELECT MAX(account_id)    FROM account), 1));
+SELECT setval('classes_class_id_seq',             COALESCE((SELECT MAX(class_id)      FROM classes), 1));
+SELECT setval('attendance_attendance_id_seq',     COALESCE((SELECT MAX(attendance_id) FROM attendance), 1));
+SELECT setval('dietary_restrictions_diet_id_seq', COALESCE((SELECT MAX(diet_id)       FROM dietary_restrictions), 1));
+SELECT setval('menu_categories_category_id_seq',  COALESCE((SELECT MAX(category_id)   FROM menu_categories), 1));
+SELECT setval('menu_items_menu_item_id_seq',      COALESCE((SELECT MAX(menu_item_id)  FROM menu_items), 1));
