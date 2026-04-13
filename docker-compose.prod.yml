@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   db:
@@ -72,10 +71,9 @@ services:
     tmpfs:
       - /var/cache/nginx
       - /var/run
-
+      - /tmp
     ports:
       - "8080:8080"
-      - /tmp
     cap_drop:
       - ALL
     security_opt:
