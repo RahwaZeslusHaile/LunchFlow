@@ -4,13 +4,14 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: launch
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-launch}
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d launch"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-launch}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -26,12 +27,17 @@ services:
       NODE_ENV: production
       PORT: 4000
       DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: launch
-      DB_SSL: "false"
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-launch}
+      DB_SSL: ${DB_SSL:-false}
       JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL:-}
+      EMAIL_SERVICE: ${EMAIL_SERVICE:-}
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
@@ -53,6 +59,8 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+    ports:
+      - "4000:4000"
     networks:
       - private
 
@@ -64,15 +72,13 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-
-
-
+    ports:
+      - "8080:8080"
     read_only: true
     tmpfs:
       - /var/cache/nginx
       - /var/run
       - /tmp
-    
     cap_drop:
       - ALL
     security_opt:

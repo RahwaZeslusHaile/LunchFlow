@@ -22,9 +22,10 @@ CREATE TABLE account (
   forms      JSONB
 );
 
--- Add a default admin (prevents FK issues later)
+-- Add a default admin with bcrypt-hashed password: Admin1234!
+-- Hash generated with bcrypt rounds=10. CHANGE THIS PASSWORD after first login.
 INSERT INTO account (account_id, email, pass, role_id, name)
-VALUES (1, 'admin@test.com', 'password', 1, 'Admin User');
+VALUES (1, 'admin@codeyourfuture.io', '$2b$10$xtPCy3oy.oxocAiVuaN8PeeyiMQb7bDaz45InfFHrZvwwzIlfQGL6', 1, 'CYF Admin');
 
 -- 3. Menu categories
 CREATE TABLE menu_categories (
