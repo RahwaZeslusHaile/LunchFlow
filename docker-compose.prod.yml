@@ -68,7 +68,7 @@ services:
 
     # ✅ THIS IS THE CRITICAL FIX (exposes app to internet)
     ports:
-      - "80:80"
+      - "80:8080"
 
     read_only: true
     tmpfs:
