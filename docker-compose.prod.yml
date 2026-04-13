@@ -72,6 +72,9 @@ services:
     tmpfs:
       - /var/cache/nginx
       - /var/run
+
+    ports:
+      - "8080:8080"
       - /tmp
     cap_drop:
       - ALL
