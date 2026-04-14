@@ -92,7 +92,6 @@ export async function createEvent(req, res) {
 }
 
 
-// Delete order record
 
 export async function deleteOrder(req, res) {
   try {
