@@ -1,9 +1,4 @@
--- ============================================================
--- LunchFlow Database Schema
--- Tables are ordered so every FK reference is already defined.
--- ============================================================
 
--- 1. Roles
 CREATE TABLE roles (
   roles_id SERIAL PRIMARY KEY,
   position TEXT NOT NULL
@@ -12,7 +7,7 @@ CREATE TABLE roles (
 INSERT INTO roles (position) VALUES ('Admin');
 INSERT INTO roles (position) VALUES ('Volunteer');
 
--- 2. Accounts
+
 CREATE TABLE account (
   account_id SERIAL PRIMARY KEY,
   email      TEXT    NOT NULL UNIQUE,
@@ -22,7 +17,7 @@ CREATE TABLE account (
   forms      JSONB
 );
 
--- 3. Menu categories
+
 CREATE TABLE menu_categories (
   category_id SERIAL PRIMARY KEY,
   name        TEXT NOT NULL UNIQUE,
@@ -39,7 +34,7 @@ INSERT INTO menu_categories (name) VALUES
   ('Non-Food Essentials'),
   ('Food Essentials');
 
--- 4. Dietary restrictions
+
 CREATE TABLE dietary_restrictions (
   diet_id SERIAL PRIMARY KEY,
   name    TEXT NOT NULL UNIQUE
@@ -51,7 +46,7 @@ INSERT INTO dietary_restrictions (name) VALUES
   ('Halal'),
   ('N/A');
 
--- 5. Menu items
+
 CREATE TABLE menu_items (
   menu_item_id SERIAL PRIMARY KEY,
   name         TEXT    NOT NULL,
@@ -70,7 +65,7 @@ INSERT INTO menu_items (name, category_id, diet_id, quantity) VALUES
   ('Large Bunches of Bananas',          6, 1, 1),
   ('Packs of Assorted Biscuit Packs',   6, 1, 1);
 
--- 6. Classes
+
 CREATE TABLE classes (
   class_id SERIAL PRIMARY KEY,
   name     TEXT NOT NULL UNIQUE
@@ -83,7 +78,7 @@ INSERT INTO classes (name) VALUES
   ('SDC'),
   ('Launch');
 
--- 7. Orders (must be defined before invites, leftover_food, attendance, event_steps, form_submissions)
+
 CREATE TABLE orders (
   order_id       SERIAL PRIMARY KEY,
   assigned_admin INTEGER REFERENCES account(account_id),
@@ -92,7 +87,7 @@ CREATE TABLE orders (
   created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 8. Order items
+
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
   order_id      INTEGER NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
@@ -100,7 +95,7 @@ CREATE TABLE order_items (
   quantity      INTEGER NOT NULL CHECK (quantity >= 0)
 );
 
--- 9. Event steps
+
 CREATE TABLE event_steps (
   step_id            SERIAL PRIMARY KEY,
   order_id           INTEGER NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
@@ -113,7 +108,7 @@ CREATE TABLE event_steps (
   CONSTRAINT unique_step_position UNIQUE (order_id, step_position)
 );
 
--- 10. Invites (references account + orders — both now defined above)
+
 CREATE TABLE invites (
   invite_id  SERIAL PRIMARY KEY,
   email      TEXT      NOT NULL,
@@ -126,7 +121,7 @@ CREATE TABLE invites (
   order_id   INTEGER   REFERENCES orders(order_id)
 );
 
--- 11. Leftover food (references menu_items + orders — both now defined above)
+
 CREATE TABLE leftover_food (
   leftover_id  SERIAL PRIMARY KEY,
   menu_item_id INTEGER NOT NULL REFERENCES menu_items(menu_item_id) ON DELETE CASCADE,
@@ -138,7 +133,7 @@ CREATE TABLE leftover_food (
   CONSTRAINT unique_menuitem_date UNIQUE (menu_item_id, leftover_date)
 );
 
--- 12. Attendance (references classes + orders — both now defined above)
+
 CREATE TABLE attendance (
   attendance_id   SERIAL PRIMARY KEY,
   class_id        INTEGER NOT NULL REFERENCES classes(class_id),
@@ -156,7 +151,7 @@ INSERT INTO attendance (class_id, session_date, trainee_count, volunteer_count) 
   (4, '2026-03-21', 15, 3),
   (5, '2026-03-21',  7, 2);
 
--- 13. Attendance diet breakdown
+
 CREATE TABLE attendance_diet (
   attendance_diet_id SERIAL PRIMARY KEY,
   attendance_id      INTEGER NOT NULL REFERENCES attendance(attendance_id) ON DELETE CASCADE,
@@ -164,7 +159,7 @@ CREATE TABLE attendance_diet (
   count              INTEGER NOT NULL CHECK (count >= 0)
 );
 
--- 14. Form submissions (references account + orders — both now defined above)
+
 CREATE TABLE form_submissions (
   submission_id   SERIAL PRIMARY KEY,
   account_id      INTEGER REFERENCES account(account_id),

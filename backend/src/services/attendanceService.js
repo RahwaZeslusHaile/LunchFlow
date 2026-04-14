@@ -85,8 +85,8 @@ export async function insertAttendance({
 }
 
 export async function getAttendanceStatsByOrderId(order_id) {
-  // We use a CTE or separate subqueries to avoid double counting attendance 
-  // when an attendance record has multiple entries in attendance_diet.
+  
+
   const result = await pool.query(
     `
     WITH attendance_totals AS (

@@ -44,7 +44,7 @@ export async function getMenuItems(req, res) {
 
 export async function createMenuItem(req, res) {
   try {
-    // Fix: service expects separate arguments . 
+  
     const { name, category_id, diet_id } = req.body;
     if (!name || !category_id || !diet_id) {
       return res.status(400).json({
