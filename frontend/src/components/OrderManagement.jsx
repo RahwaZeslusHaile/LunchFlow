@@ -14,6 +14,11 @@ function OrderManagement() {
   const [success, setSuccess] = useState("");
   const [canDownload, setCanDownload] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null);
+  const [aiError, setAiError] = useState("");
 
   const [dietStats, setDietStats] = useState({
     halal: 0,
@@ -187,6 +192,43 @@ function OrderManagement() {
     );
   };
 
+  const handleAutoSuggest = async () => {
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const res = await fetch("/api/ai/suggest-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          attendance: dietStats.attendance,
+          diets: { halal: dietStats.halal, veg: dietStats.veg, other: otherDietCount },
+          items: order
+        })
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.details || errData.error || errData.message || "AI suggestion failed");
+      }
+      const data = await res.json();
+      
+      if (data.suggestions) {
+        setOrder(prev => prev.map(item => {
+          const suggestion = data.suggestions.find(s => s.menu_item_id === item.menu_item_id);
+          return suggestion ? { ...item, quantity: Math.max(0, suggestion.suggested_quantity) } : item;
+        }));
+        setIsDirty(true);
+      }
+    } catch (err) {
+      console.error(err);
+      setAiError(err.message || "Failed to suggest quantities. Please check configuration.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const handleSubmit = async () => {
     const filteredItems = order
       .filter(item => item.quantity > 0)
@@ -225,6 +267,38 @@ function OrderManagement() {
     } catch (err) {
       setSuccess("Error saving order. Please try again.");
       setShowModal(true);
+    }
+  };
+
+  const handleEmailShare = async () => {
+    if (!emailInput) return;
+    setEmailLoading(true);
+    setEmailStatus(null);
+    try {
+      const orderData = {
+        order_id: activeEvent.order_id,
+        date: activeEvent.order_date,
+        attendance: dietStats.attendance,
+        items: filteredOrder
+      };
+      const res = await fetch("/api/order/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ email: emailInput, orderData })
+      });
+      if (res.ok) {
+        setEmailStatus({ type: "success", text: "Email outline sent successfully!" });
+        setEmailInput("");
+      } else {
+        throw new Error("Failed to send");
+      }
+    } catch(err) {
+      setEmailStatus({ type: "error", text: "Error sending email." });
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -408,6 +482,29 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               </div>
 
               <div className="pt-4 space-y-3">
+                <button
+                  onClick={handleAutoSuggest}
+                  disabled={aiLoading}
+                  className={`w-full py-3 rounded-2xl font-bold text-sm text-white shadow-xl flex items-center justify-center transition-all active:scale-95 ${
+                    aiLoading ? "bg-indigo-400 opacity-70 cursor-wait" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:shadow-purple-500/30"
+                  }`}
+                >
+                  {aiLoading ? (
+                    <span className="flex items-center gap-2">
+                       <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                       </svg>
+                       AI is Thinking...
+                    </span>
+                  ) : "✨ Auto-Suggest Quantities"}
+                </button>
+
+                {aiError && (
+                  <div className="text-xs text-center font-bold text-red-500 bg-red-50 rounded-xl py-2 px-3 animate-in fade-in slide-in-from-top-2">
+                    {aiError}
+                  </div>
+                )}
 
                 <button
                   onClick={handleSubmit}
@@ -420,7 +517,7 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                 >
                   {orderButtonDisabled && stepsData.find(s => s.step_position === 3)?.step_status === "done"
                     ? "Already submitted"
-                    : "Confirm & Submit Order"}
+                    : "Submit Order"}
                 </button>
 
                 {stepStatusMsg && (
@@ -429,13 +526,15 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                   </div>
                 )}
 
+
+
                 <button
                   onClick={downloadOrderFile}
                   disabled={!canDownload}
-                  className={`w-full py-3 rounded-2xl font-bold text-sm border flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                     canDownload
-                      ? "bg-white text-indigo-900 hover:bg-indigo-50 border-white active:scale-95 shadow-lg"
-                      : "bg-transparent text-indigo-300 border-indigo-800 cursor-not-allowed"
+                      ? "bg-white text-indigo-900 shadow-lg active:scale-95"
+                      : "bg-transparent text-indigo-300 border border-indigo-800 cursor-not-allowed"
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -513,8 +612,32 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                 </div>
               </div>
 
+              <div className="space-y-4">
+                <h4 className="text-sm font-extrabold text-slate-800 uppercase tracking-widest pl-1">Share via Email</h4>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="admin@example.com, cook@example.com" 
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none w-full"
+                  />
+                  <button 
+                    onClick={handleEmailShare}
+                    disabled={emailLoading}
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 rounded-2xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:bg-indigo-300"
+                  >
+                    {emailLoading ? "..." : "Send"}
+                  </button>
+                </div>
+                {emailStatus && <p className={`text-xs pl-2 font-bold ${emailStatus.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>{emailStatus.text}</p>}
+              </div>
+
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setEmailStatus(null);
+                }}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95"
               >
                 Done

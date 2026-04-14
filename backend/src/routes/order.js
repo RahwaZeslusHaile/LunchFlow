@@ -4,7 +4,8 @@ import {
   fetchOrders,
   createEvent,
   getActiveOrder,
-  deleteOrder
+  deleteOrder,
+  shareOrderEmail
 } from "../controllers/orderController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { fetchLatestOrders } from "../controllers/orderHistoryController.js";
@@ -12,6 +13,7 @@ import { fetchLatestOrders } from "../controllers/orderHistoryController.js";
 const router = Router();
 
 router.get("/active", getActiveOrder);
+router.post("/email", requireAuth, shareOrderEmail);
 router.post("/", requireAuth, addItems);
 router.get("/", fetchOrders);
 router.post("/event", createEvent);

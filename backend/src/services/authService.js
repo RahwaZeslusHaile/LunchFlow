@@ -200,7 +200,7 @@ export async function validateInvite(token) {
     throw serviceError(400, "Invite link is invalid or has expired");
   }
 
-  return { email: invite.email, name: invite.name };
+  return { email: invite.email, name: invite.name, forms: invite.forms, order_id: invite.order_id };
 }
 
 export function verifyJwt(token) {

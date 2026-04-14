@@ -63,6 +63,31 @@ This application automates the lunch planning workflow by:
 
 ---
 
+
+## ✨ Key Integrations
+
+### ✉️ Email Notifications
+
+- The backend uses **Nodemailer** to send emails (e.g., volunteer invites, order summaries).
+- Configure your email credentials in `.env`:
+    ```
+    EMAIL_USER=your_gmail_address
+    EMAIL_PASS=your_gmail_app_password
+    FRONTEND_URL=http://localhost:5173
+    ```
+- See `backend/src/services/mailService.js` for implementation details.
+
+### 🤖 AI Order Suggestions
+
+- The backend integrates with **Google Generative AI (Gemini)** to suggest optimal order quantities.
+- Configure your Gemini API key in `.env`:
+    ```
+    GEMINI_API_KEY=your_google_generative_ai_key
+    ```
+- See `backend/src/services/geminiService.js` for how AI is used to generate order suggestions.
+
+---
+
 ## 🚀 MVP Features
 
 ### Lunch Order Workflow
@@ -94,7 +119,6 @@ Users receive notifications when:
 
 Notifications may be sent via:
 
-- Slack
 - Email
 
 ---
@@ -255,7 +279,6 @@ The system will notify users when:
 - The delivery stage is approaching
 
 **Possible integrations:**
-- Slack
 - Email
 
 ---
@@ -287,7 +310,7 @@ The project will include:
 
 The application should be easy for CYF volunteers to maintain and deploy.
 
-**Possible platforms:**
+*platform:**
 - Coolify
 
 ---

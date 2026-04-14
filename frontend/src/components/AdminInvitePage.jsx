@@ -149,8 +149,6 @@ useEffect(() => {
 
       setInviteLink("");
       setEmail("");
-      setSelectedForms([]);
-      setSelectedOrderId("");
       setShowSuccess(true);
       fetchInvites();
     } catch (err) {
@@ -270,29 +268,7 @@ useEffect(() => {
           <div className="mx-auto max-w-6xl">
             {}
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {activeTab === "dashboard" && (
-                <div className="rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-8 shadow-sm">
-                  <div className="flex flex-col items-center justify-center mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="h-16 w-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3 shadow-md">
-                      <Utensils size={32} />
-                    </div>
-                    <h2 className="text-3xl font-extrabold text-slate-800 text-center flex items-center gap-2">
-                      Welcome back to the Admin Dashboard <span className="text-2xl">👋</span>
-                    </h2>
-                    <p className="mt-2 text-base text-slate-500 text-center max-w-xl">
-                      Manage attendance, assign volunteers, and organise lunch orders—all in one place.
-                    </p>
-                  </div>
-                  <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
-                    <CreateEvent onEventCreated={handleEventCreated} />
-                    <StatusCard eventId={adminOrderId} date={activeEventDate} />
-                    {}
-                    <OrderHistory refreshKey={refreshKey} />
-                  </div>
-                </div>
-              )}
-              {}
-              {(activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement" || activeTab === "PlaceOrder") && (
+              {(activeTab === "dashboard" || activeTab === "AttendanceSummary" || activeTab === "LeftoverManagement" || activeTab === "PlaceOrder") && (
                 <div className={`mb-4 flex items-center gap-3 rounded-2xl border px-5 py-3 ${
                   adminOrderId
                     ? "border-emerald-100 bg-emerald-50/60"
@@ -319,6 +295,28 @@ useEffect(() => {
                       {}
                     </span>
                   )}
+                </div>
+              )}
+
+              {activeTab === "dashboard" && (
+                <div className="rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-8 shadow-sm">
+                  <div className="flex flex-col items-center justify-center mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="h-16 w-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3 shadow-md">
+                      <Utensils size={32} />
+                    </div>
+                    <h2 className="text-3xl font-extrabold text-slate-800 text-center flex items-center gap-2">
+                      Welcome back to the Admin Dashboard <span className="text-2xl">👋</span>
+                    </h2>
+                    <p className="mt-2 text-base text-slate-500 text-center max-w-xl">
+                      Manage attendance, assign volunteers, and organise lunch orders—all in one place.
+                    </p>
+                  </div>
+                  <div className="mt-6 rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 shadow-sm">
+                    <CreateEvent onEventCreated={handleEventCreated} />
+                    <StatusCard eventId={adminOrderId} date={activeEventDate} />
+                    {}
+                    <OrderHistory refreshKey={refreshKey} />
+                  </div>
                 </div>
               )}
 

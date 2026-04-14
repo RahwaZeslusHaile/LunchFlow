@@ -16,11 +16,7 @@ const pool = new Pool({
   ssl: useSsl ? { rejectUnauthorized: false }
      : false
 });
-console.log({process: process.env.DB_HOST, ssl: useSsl, user: process.env.DB_USER, database: process.env.DB_NAME, port: process.env.DB_PORT, password: process.env.DB_PASSWORD ,user: process.env.DB_USER });
-pool.on("error", (err) => {
-  console.error("Unexpected error on idle client", err);
-  process.exit(-1);
-});
+
 
 pool.query("SELECT NOW()", (err, res) => {
   if (err) {
