@@ -6,7 +6,7 @@ const { default: app } = await import("../../../backend/src/app.js");
 describe("Auth Routes", () => {
   it("returns 400 when login username is missing", async () => {
     const response = await request(app)
-      .post("/api/auth/login")
+      .post("http://localhost:4000/api/auth/login")
       .send({ userName: "", password: "password123" });
 
     expect(response.status).toBe(400);
