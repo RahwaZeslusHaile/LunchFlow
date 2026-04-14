@@ -22,10 +22,9 @@ CREATE TABLE account (
   forms      JSONB
 );
 
--- Add a default admin with bcrypt-hashed password: Admin1234!
--- Hash generated with bcrypt rounds=10. CHANGE THIS PASSWORD after first login.
+-- Dynamic default admin injected by migrate.js
 INSERT INTO account (account_id, email, pass, role_id, name)
-VALUES (1, 'admin@codeyourfuture.io', '$2b$10$xtPCy3oy.oxocAiVuaN8PeeyiMQb7bDaz45InfFHrZvwwzIlfQGL6', 1, 'CYF Admin');
+VALUES (1, '{{ADMIN_EMAIL}}', '{{ADMIN_PASS}}', 1, '{{ADMIN_NAME}}');
 
 -- 3. Menu categories
 CREATE TABLE menu_categories (
@@ -189,3 +188,4 @@ SELECT setval('attendance_attendance_id_seq',     COALESCE((SELECT MAX(attendanc
 SELECT setval('dietary_restrictions_diet_id_seq', COALESCE((SELECT MAX(diet_id)       FROM dietary_restrictions), 1));
 SELECT setval('menu_categories_category_id_seq',  COALESCE((SELECT MAX(category_id)   FROM menu_categories), 1));
 SELECT setval('menu_items_menu_item_id_seq',      COALESCE((SELECT MAX(menu_item_id)  FROM menu_items), 1));
+SELECT setval('orders_order_id_seq',              COALESCE((SELECT MAX(order_id)      FROM orders), 1));
