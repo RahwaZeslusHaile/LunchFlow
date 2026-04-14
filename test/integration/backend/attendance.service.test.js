@@ -29,9 +29,9 @@ describe("insertAttendance", () => {
   it("should insert attendance successfully", async () => {
 
     mockQuery
-      .mockResolvedValueOnce({}) // BEGIN
-      .mockResolvedValueOnce({ rows: [{ attendance_id: 10 }] }) // INSERT
-      .mockResolvedValueOnce({}); // COMMIT
+      .mockResolvedValueOnce({}) 
+      .mockResolvedValueOnce({ rows: [{ attendance_id: 10 }] }) 
+      .mockResolvedValueOnce({}); 
 
     const result = await insertAttendance({
       class_id: 1,
