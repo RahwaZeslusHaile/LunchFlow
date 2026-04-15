@@ -190,8 +190,17 @@ function OrderManagement() {
     );
   };
 
-                {/* AI Auto-Suggest button removed */}
 
+  const handleSaveOrder = async () => {
+    try {
+      const res = await fetch("/api/order/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ order: filteredOrder, order_id: activeEvent?.order_id })
+      });
       if (res.ok) {
         const data = await res.json();
         setSuccess(data.message || "Order saved successfully");
@@ -199,11 +208,10 @@ function OrderManagement() {
         setIsDirty(false);
         setCanDownload(true);
       } else {
-            const data = await res.json();
-          console.log("BACKEND ERROR:", data);
-          throw new Error(data.message || "Failed to save order");
+        const data = await res.json();
+        console.log("BACKEND ERROR:", data);
+        throw new Error(data.message || "Failed to save order");
       }
-
     } catch (err) {
       setSuccess("Error saving order. Please try again.");
       setShowModal(true);
@@ -424,7 +432,7 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               <div className="pt-4 space-y-3">
 
                 <button
-                  onClick={handleSubmit}
+                  onClick={handleSaveOrder}
                   disabled={orderButtonDisabled || !isDirty || filteredOrder.length === 0}
                   className={`w-full py-4 rounded-2xl font-bold text-sm transition-all shadow-lg ${
                     !orderButtonDisabled && isDirty && filteredOrder.length > 0
