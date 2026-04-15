@@ -77,16 +77,7 @@ This application automates the lunch planning workflow by:
     ```
 - See `backend/src/services/mailService.js` for implementation details.
 
-### 🤖 AI Order Suggestions
 
-- The backend integrates with **Google Generative AI (Gemini)** to suggest optimal order quantities.
-- Configure your Gemini API key in `.env`:
-    ```
-    GEMINI_API_KEY=your_google_generative_ai_key
-    ```
-- See `backend/src/services/geminiService.js` for how AI is used to generate order suggestions.
-
----
 
 ## 🚀 MVP Features
 

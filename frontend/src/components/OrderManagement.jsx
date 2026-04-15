@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 
 function OrderManagement() {
-    const [stepsData, setStepsData] = useState([]);
-    const [stepStatusMsg, setStepStatusMsg] = useState("");
-    const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
+  const [stepsData, setStepsData] = useState([]);
+  const [stepStatusMsg, setStepStatusMsg] = useState("");
+  const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [leftovers, setLeftovers] = useState([]);
@@ -14,11 +14,9 @@ function OrderManagement() {
   const [success, setSuccess] = useState("");
   const [canDownload, setCanDownload] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [aiLoading, setAiLoading] = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
-  const [aiError, setAiError] = useState("");
 
   const [dietStats, setDietStats] = useState({
     halal: 0,
@@ -192,65 +190,7 @@ function OrderManagement() {
     );
   };
 
-  const handleAutoSuggest = async () => {
-    setAiLoading(true);
-    setAiError("");
-    try {
-      const res = await fetch("/api/ai/suggest-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({
-          attendance: dietStats.attendance,
-          diets: { halal: dietStats.halal, veg: dietStats.veg, other: otherDietCount },
-          items: order
-        })
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.details || errData.error || errData.message || "AI suggestion failed");
-      }
-      const data = await res.json();
-      
-      if (data.suggestions) {
-        setOrder(prev => prev.map(item => {
-          const suggestion = data.suggestions.find(s => s.menu_item_id === item.menu_item_id);
-          return suggestion ? { ...item, quantity: Math.max(0, suggestion.suggested_quantity) } : item;
-        }));
-        setIsDirty(true);
-      }
-    } catch (err) {
-      console.error(err);
-      setAiError(err.message || "Failed to suggest quantities. Please check configuration.");
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    const filteredItems = order
-      .filter(item => item.quantity > 0)
-      .map(item => ({
-        menu_item_id: item.menu_item_id,
-        quantity: item.quantity
-      }));
-
-    try {
-      const res = await fetch("/api/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({
-          order_id: activeEvent.order_id,
-          date: activeEvent.order_date,
-          attendance: dietStats.attendance,
-          items: filteredItems
-        })
-      });
+                {/* AI Auto-Suggest button removed */}
 
       if (res.ok) {
         const data = await res.json();
@@ -482,29 +422,6 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               </div>
 
               <div className="pt-4 space-y-3">
-                <button
-                  onClick={handleAutoSuggest}
-                  disabled={aiLoading}
-                  className={`w-full py-3 rounded-2xl font-bold text-sm text-white shadow-xl flex items-center justify-center transition-all active:scale-95 ${
-                    aiLoading ? "bg-indigo-400 opacity-70 cursor-wait" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:shadow-purple-500/30"
-                  }`}
-                >
-                  {aiLoading ? (
-                    <span className="flex items-center gap-2">
-                       <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
-                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                       </svg>
-                       AI is Thinking...
-                    </span>
-                  ) : "✨ Auto-Suggest Quantities"}
-                </button>
-
-                {aiError && (
-                  <div className="text-xs text-center font-bold text-red-500 bg-red-50 rounded-xl py-2 px-3 animate-in fade-in slide-in-from-top-2">
-                    {aiError}
-                  </div>
-                )}
 
                 <button
                   onClick={handleSubmit}

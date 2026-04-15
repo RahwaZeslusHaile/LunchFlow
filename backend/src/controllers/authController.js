@@ -2,11 +2,18 @@
 import { createVolunteerInvite, login, signup, validateInvite, getUserForms, getAllInvites } from "../services/authService.js";
 
 function sendError(res, err) {
-  console.error(err);
+  console.error("❌ Controller Error:", err.message || err);
+  
   if (err.status) {
     return res.status(err.status).json(err.message);
   }
-  return res.status(500).json("Database error");
+
+  // Handle PG connection timeouts distinctly
+  if (err.message && err.message.includes("timeout")) {
+    return res.status(503).json("Database connection timeout. Please check if the DB is running.");
+  }
+
+  return res.status(500).json("Internal server error");
 }
 
 export async function signupController(req, res) {

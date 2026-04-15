@@ -9,7 +9,6 @@ import classesRouter from "./routes/classes.js";
 import leftoversRouter from "./routes/leftovers.js";
 import eventStepRouter from "./routes/eventStep.js";
 import orderHistoryRouter from "./routes/orderHistory.js";
-import aiRouter from "./routes/ai.js";
 
 
 
@@ -34,5 +33,4 @@ app.use("/api/classes", classesRouter);
 app.use("/api/leftovers", leftoversRouter);
 app.use("/api/eventStep", eventStepRouter);
 app.use("/api/latest", orderHistoryRouter);
-app.use("/api/ai", aiRouter);
 export default app;
