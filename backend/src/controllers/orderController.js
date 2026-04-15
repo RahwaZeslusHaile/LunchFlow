@@ -1,5 +1,6 @@
 
 import {updateOrderWithItems, getOrdersByDate, createOrder, createOrderWithSteps, getLatestOrder, deleteOrderById}  from "../services/orderService.js";
+import { sendOrderSummary } from "../services/mailService.js";
 
 export async function getActiveOrder(req, res) {
   try {
@@ -104,5 +105,18 @@ export async function deleteOrder(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error deleting order" });
+  }
+}
+
+export async function shareOrderEmail(req, res) {
+  try {
+    const { email, orderData } = req.body;
+    if (!email || !orderData) {
+      return res.status(400).json({ message: "Email and order data are required" });
+    }
+    await sendOrderSummary(email, orderData);
+    res.json({ message: "Order summary sent successfully to " + email });
+  } catch (err) {
+    sendError(res, err);
   }
 }

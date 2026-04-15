@@ -233,3 +233,76 @@ export async function sendVolunteerUpdateNotification(email, forms) {
     throw error;
   }
 }
+
+export async function sendOrderSummary(email, orderData) {
+  console.log(`Attempting to send order summary to: ${email}`);
+  
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.error("Email credentials missing in environment variables!");
+    throw new Error("Email service not configured - missing credentials");
+  }
+
+  const dateStr = orderData.date ? new Date(orderData.date).toLocaleDateString("en-GB") : "N/A";
+
+  const mailOptions = {
+    from: `"LunchFlow Admin" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `LunchFlow Order Summary: ${dateStr}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        </style>
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'Inter', -apple-system, sans-serif;">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 24px; overflow: hidden;">
+          
+          <div style="background-color: #4f46e5; padding: 40px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800;">Order Summary</h1>
+            <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0 0; font-size: 16px;">${dateStr}</p>
+          </div>
+
+          <div style="padding: 40px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0;">
+              <div>
+                <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Total Attendance</p>
+                <p style="margin: 4px 0 0 0; color: #1e293b; font-size: 24px; font-weight: 800;">${orderData.attendance}</p>
+              </div>
+              <div style="text-align: right;">
+                <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Event ID</p>
+                <p style="margin: 4px 0 0 0; color: #1e293b; font-size: 18px; font-weight: 700;">#${orderData.order_id}</p>
+              </div>
+            </div>
+
+            <h3 style="color: #1e293b; font-size: 18px; font-weight: 800; margin: 0 0 16px 0;">Items Ordered</h3>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              ${orderData.items.map(item => `
+                <tr>
+                  <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600;">${item.name}</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #4f46e5; font-weight: 800; text-align: right;">x${item.quantity}</td>
+                </tr>
+              `).join("")}
+            </table>
+          </div>
+
+          <div style="padding: 32px; background-color: #f8fafc; text-align: center;">
+            <p style="color: #94a3b8; margin: 0; font-size: 13px; font-weight: 500;">Code Your Future &mdash; LunchFlow Automatically Generated Order</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error(`Error sending order summary to ${email}:`, error);
+    throw error;
+  }
+}

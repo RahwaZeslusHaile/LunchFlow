@@ -66,7 +66,11 @@ function StatusCard({ eventId, date }) {
             } else if (status === "in_progress") {
               color = "bg-sky-400 text-black";
             } else if (status === "done") {
-              color = "bg-green-400 text-black";
+              if (index === 3) {
+                color = "bg-green-500 text-black";
+              } else {
+                color = "bg-green-400 text-black";
+              }
             }
           }
 

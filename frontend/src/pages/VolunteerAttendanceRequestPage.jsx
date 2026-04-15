@@ -7,6 +7,7 @@ function VolunteerRequestPage() {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [orderId, setOrderId] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -20,6 +21,7 @@ function VolunteerRequestPage() {
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(data => {
         setForms(data.forms || []);
+        if (data.order_id) setOrderId(data.order_id);
         setLoading(false);
       })
       .catch(() => {
@@ -33,8 +35,8 @@ function VolunteerRequestPage() {
 
   return (
     <div className="space-y-8 p-4 max-w-3xl mx-auto">
-      {forms.includes("attendance") && <AttendanceSummary />}
-      {forms.includes("leftover") && <LeftoverManagement />}
+      {forms.includes("attendance") && <AttendanceSummary order_id={orderId} />}
+      {forms.includes("leftover") && <LeftoverManagement order_id={orderId} />}
       {forms.includes("order") && <OrderManagement />}
       {forms.length === 0 && (
         <div className="text-center text-gray-500">No forms assigned to this invite.</div>

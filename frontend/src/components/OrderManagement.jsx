@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 
 function OrderManagement() {
-    const [stepsData, setStepsData] = useState([]);
-    const [stepStatusMsg, setStepStatusMsg] = useState("");
-    const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
+  const [stepsData, setStepsData] = useState([]);
+  const [stepStatusMsg, setStepStatusMsg] = useState("");
+  const [orderButtonDisabled, setOrderButtonDisabled] = useState(false);
   const [activeEvent, setActiveEvent] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [leftovers, setLeftovers] = useState([]);
@@ -14,6 +14,9 @@ function OrderManagement() {
   const [success, setSuccess] = useState("");
   const [canDownload, setCanDownload] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null);
 
   const [dietStats, setDietStats] = useState({
     halal: 0,
@@ -187,29 +190,17 @@ function OrderManagement() {
     );
   };
 
-  const handleSubmit = async () => {
-    const filteredItems = order
-      .filter(item => item.quantity > 0)
-      .map(item => ({
-        menu_item_id: item.menu_item_id,
-        quantity: item.quantity
-      }));
 
+  const handleSaveOrder = async () => {
     try {
-      const res = await fetch("/api/order", {
+      const res = await fetch("/api/order/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({
-          order_id: activeEvent.order_id,
-          date: activeEvent.order_date,
-          attendance: dietStats.attendance,
-          items: filteredItems
-        })
+        body: JSON.stringify({ order: filteredOrder, order_id: activeEvent?.order_id })
       });
-
       if (res.ok) {
         const data = await res.json();
         setSuccess(data.message || "Order saved successfully");
@@ -217,14 +208,45 @@ function OrderManagement() {
         setIsDirty(false);
         setCanDownload(true);
       } else {
-            const data = await res.json();
-          console.log("BACKEND ERROR:", data);
-          throw new Error(data.message || "Failed to save order");
+        const data = await res.json();
+        console.log("BACKEND ERROR:", data);
+        throw new Error(data.message || "Failed to save order");
       }
-
     } catch (err) {
       setSuccess("Error saving order. Please try again.");
       setShowModal(true);
+    }
+  };
+
+  const handleEmailShare = async () => {
+    if (!emailInput) return;
+    setEmailLoading(true);
+    setEmailStatus(null);
+    try {
+      const orderData = {
+        order_id: activeEvent.order_id,
+        date: activeEvent.order_date,
+        attendance: dietStats.attendance,
+        items: filteredOrder
+      };
+      const res = await fetch("/api/order/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ email: emailInput, orderData })
+      });
+      if (res.ok) {
+        setEmailStatus({ type: "success", text: "Email outline sent successfully!" });
+        setEmailInput("");
+      } else {
+        throw new Error("Failed to send");
+      }
+    } catch(err) {
+      setEmailStatus({ type: "error", text: "Error sending email." });
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -410,7 +432,7 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               <div className="pt-4 space-y-3">
 
                 <button
-                  onClick={handleSubmit}
+                  onClick={handleSaveOrder}
                   disabled={orderButtonDisabled || !isDirty || filteredOrder.length === 0}
                   className={`w-full py-4 rounded-2xl font-bold text-sm transition-all shadow-lg ${
                     !orderButtonDisabled && isDirty && filteredOrder.length > 0
@@ -420,7 +442,7 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                 >
                   {orderButtonDisabled && stepsData.find(s => s.step_position === 3)?.step_status === "done"
                     ? "Already submitted"
-                    : "Confirm & Submit Order"}
+                    : "Submit Order"}
                 </button>
 
                 {stepStatusMsg && (
@@ -429,13 +451,15 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                   </div>
                 )}
 
+
+
                 <button
                   onClick={downloadOrderFile}
                   disabled={!canDownload}
-                  className={`w-full py-3 rounded-2xl font-bold text-sm border flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                     canDownload
-                      ? "bg-white text-indigo-900 hover:bg-indigo-50 border-white active:scale-95 shadow-lg"
-                      : "bg-transparent text-indigo-300 border-indigo-800 cursor-not-allowed"
+                      ? "bg-white text-indigo-900 shadow-lg active:scale-95"
+                      : "bg-transparent text-indigo-300 border border-indigo-800 cursor-not-allowed"
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -513,8 +537,32 @@ Generated on: ${new Date().toLocaleString("en-GB")}
                 </div>
               </div>
 
+              <div className="space-y-4">
+                <h4 className="text-sm font-extrabold text-slate-800 uppercase tracking-widest pl-1">Share via Email</h4>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="admin@example.com, cook@example.com" 
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none w-full"
+                  />
+                  <button 
+                    onClick={handleEmailShare}
+                    disabled={emailLoading}
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 rounded-2xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:bg-indigo-300"
+                  >
+                    {emailLoading ? "..." : "Send"}
+                  </button>
+                </div>
+                {emailStatus && <p className={`text-xs pl-2 font-bold ${emailStatus.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>{emailStatus.text}</p>}
+              </div>
+
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setEmailStatus(null);
+                }}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95"
               >
                 Done
