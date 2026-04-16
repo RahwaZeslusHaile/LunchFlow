@@ -15,17 +15,29 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
   ssl: useSsl ? { rejectUnauthorized: false }
      : false,
+  max: 20,
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,
 });
 
 
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    console.error("❌ Database connection error:", err.message);
-  } else {
-    console.log("✅ Successfully connected to the database");
+async function testConnection(retries = 5, delay = 5000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await pool.query("SELECT NOW()");
+      console.log("✅ Successfully connected to the database at:", res.rows[0].now);
+      return true;
+    } catch (err) {
+      console.error(`❌ Database connection attempt ${i + 1} failed:`, err.message);
+      if (i < retries - 1) {
+        console.log(`⏱️ Retrying in ${delay / 1000}s...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
-});
+  return false;
+}
+
+testConnection();
 
 export default pool;
