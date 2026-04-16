@@ -193,27 +193,30 @@ function OrderManagement() {
 
   const handleSaveOrder = async () => {
     try {
-      const res = await fetch("/api/order/save", {
+      const res = await fetch("/api/order/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({ order: filteredOrder, order_id: activeEvent?.order_id })
+        body: JSON.stringify({ 
+          items: filteredOrder, 
+          order_id: activeEvent?.order_id,
+          attendance: dietStats.attendance
+        })
       });
       if (res.ok) {
         const data = await res.json();
         setSuccess(data.message || "Order saved successfully");
         setShowModal(true);
         setIsDirty(false);
-        setCanDownload(true);
       } else {
         const data = await res.json();
-        console.log("BACKEND ERROR:", data);
+        console.error("BACKEND ERROR:", data);
         throw new Error(data.message || "Failed to save order");
       }
     } catch (err) {
-      setSuccess("Error saving order. Please try again.");
+      setSuccess("Error saving order: " + err.message);
       setShowModal(true);
     }
   };
@@ -455,9 +458,9 @@ Generated on: ${new Date().toLocaleString("en-GB")}
 
                 <button
                   onClick={downloadOrderFile}
-                  disabled={!canDownload}
+                  disabled={filteredOrder.length === 0}
                   className={`w-full py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
-                    canDownload
+                    filteredOrder.length > 0
                       ? "bg-white text-indigo-900 shadow-lg active:scale-95"
                       : "bg-transparent text-indigo-300 border border-indigo-800 cursor-not-allowed"
                   }`}
