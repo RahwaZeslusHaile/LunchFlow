@@ -2,7 +2,10 @@ import pool from "../db.js";
 
 export async function healthCheckController(req, res) {
   try {
-    const dbCheck = await pool.query("SELECT 1");
+    const dbCheck = await Promise.race([
+      pool.query("SELECT 1"),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 2000))
+    ]);
     res.status(200).json({ 
       ok: true, 
       database: "connected",
