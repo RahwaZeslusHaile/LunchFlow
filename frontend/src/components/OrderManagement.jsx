@@ -68,18 +68,20 @@ function OrderManagement() {
 
   useEffect(() => {
     if (!activeEvent) return;
-    const fetchSteps = async () => {
-      try {
-        const res = await fetch(`/api/eventStep/${activeEvent.order_id}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        setStepsData(data);
-      } catch (err) {
-        console.error("Failed to fetch event steps:", err);
-      }
-    };
     fetchSteps();
   }, [activeEvent]);
+
+  const fetchSteps = async () => {
+    if (!activeEvent) return;
+    try {
+      const res = await fetch(`/api/eventStep/${activeEvent.order_id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setStepsData(data);
+    } catch (err) {
+      console.error("Failed to fetch event steps:", err);
+    }
+  };
 
   useEffect(() => {
     if (!stepsData || stepsData.length < 3) return;
@@ -250,6 +252,25 @@ function OrderManagement() {
       setEmailStatus({ type: "error", text: "Error sending email." });
     } finally {
       setEmailLoading(false);
+    }
+  };
+
+  const handleCompleteStep = async (position, status) => {
+    if (!activeEvent) return;
+    try {
+      const res = await fetch(`/api/eventStep/${activeEvent.order_id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ step_position: position, step_status: status })
+      });
+      if (res.ok) {
+        await fetchSteps();
+      }
+    } catch (err) {
+      console.error("Failed to update step status:", err);
     }
   };
 
@@ -562,9 +583,11 @@ Generated on: ${new Date().toLocaleString("en-GB")}
               </div>
 
               <button
-                onClick={() => {
+                onClick={async () => {
+                  await handleCompleteStep(3, "done");
                   setShowModal(false);
                   setEmailStatus(null);
+                  setSuccess("");
                 }}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95"
               >
