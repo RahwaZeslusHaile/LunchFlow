@@ -51,7 +51,7 @@ function SignupForm() {
         return;
       }
 
-      navigate("/login");
+      navigate("/login?new=true&role=volunteer");
     } catch (err) {
       console.error("Server-side or Network error:", err);
       setError("Server error, please try again");
@@ -79,7 +79,7 @@ function SignupForm() {
               : "Direct signup is disabled. Ask an admin to generate and share your invite link."}
           </p>
           <Link to="/" className="text-teal-600 hover:underline text-sm font-medium">
-            Back to home
+            Back to login
           </Link>
         </div>
       </main>

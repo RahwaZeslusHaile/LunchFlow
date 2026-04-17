@@ -33,7 +33,7 @@ export async function sendVolunteerInvite(email, token, forms) {
   }
 
   const inviteLink = `${FRONTEND_URL}/signup?token=${token}`;
-  const loginLink = `${FRONTEND_URL}/login`;
+  const loginLink = `${FRONTEND_URL}/login?role=volunteer`;
   
   const getBadgeStyle = (form) => {
     switch (form.toLowerCase()) {
@@ -147,7 +147,7 @@ export async function sendVolunteerUpdateNotification(email, forms) {
     throw new Error("Email service not configured - missing credentials");
   }
 
-  const loginLink = `${FRONTEND_URL}/login`;
+  const loginLink = `${FRONTEND_URL}/login?role=volunteer`;
   
   const getBadgeStyle = (form) => {
     switch (form.toLowerCase()) {
