@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import getApiUrl from "../api";
 
 function LeftoverManagement({ order_id }) {
   const [items, setItems] = useState([]);
@@ -13,7 +14,7 @@ function LeftoverManagement({ order_id }) {
     setLoading(true);
     setSuccess("");
     setIsDirty(false); 
-    fetch(`/api/menu/menu-items`)
+    fetch(getApiUrl("/menu/menu-items"))
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch menu items");
         return res.json();
@@ -57,7 +58,7 @@ function LeftoverManagement({ order_id }) {
     setSuccess("");
     setLoading(true);
     try {
-      const res = await fetch("/api/leftovers", {
+      const res = await fetch(getApiUrl("/leftovers"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import getApiUrl from "../api";
 
 const getNextSaturday = () => {
   const today = new Date();
@@ -24,7 +25,7 @@ function CreateEvent({ onEventCreated }) {
     };
 
     try {
-      const res = await fetch("/api/order/event", {
+      const res = await fetch(getApiUrl("/order/event"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(eventPayload),

@@ -14,7 +14,10 @@ import orderHistoryRouter from "./routes/orderHistory.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io",
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => {

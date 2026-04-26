@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import getApiUrl from "../api";
 import { Mail, Lock, ShieldCheck, Utensils, ChevronRight, Eye, EyeOff, Sparkles } from "lucide-react";
 
 function LoginForm() {
@@ -43,7 +44,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(getApiUrl("/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, password }),

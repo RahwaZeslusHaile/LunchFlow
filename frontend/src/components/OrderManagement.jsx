@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import getApiUrl from "../api";
 
 function OrderManagement() {
   const [stepsData, setStepsData] = useState([]);
@@ -41,7 +42,7 @@ function OrderManagement() {
   useEffect(() => {
     const fetchActiveEvent = async () => {
       try {
-        const res = await fetch("/api/order/active");
+        const res = await fetch(getApiUrl("/order/active"));
         if (res.ok) {
           const data = await res.json();
           setActiveEvent(data);
@@ -53,7 +54,7 @@ function OrderManagement() {
 
     const fetchMenu = async () => {
       try {
-        const res = await fetch("/api/menu/menu-items");
+        const res = await fetch(getApiUrl("/menu/menu-items"));
         if (res.ok) {
           const data = await res.json();
           setMenuItems(data);
@@ -74,7 +75,7 @@ function OrderManagement() {
   const fetchSteps = async () => {
     if (!activeEvent) return;
     try {
-      const res = await fetch(`/api/eventStep/${activeEvent.order_id}`);
+      const res = await fetch(getApiUrl(`/eventStep/${activeEvent.order_id}`));
       if (!res.ok) return;
       const data = await res.json();
       setStepsData(data);
@@ -108,7 +109,7 @@ function OrderManagement() {
 
     const fetchLeftovers = async () => {
       try {
-        const res = await fetch(`/api/leftovers/${activeEvent.order_id}`, {
+        const res = await fetch(getApiUrl(`/leftovers/${activeEvent.order_id}`), {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -124,7 +125,7 @@ function OrderManagement() {
 
     const fetchAttendanceStats = async () => {
       try {
-        const res = await fetch(`/api/attendance/stats/${activeEvent.order_id}`, {
+        const res = await fetch(getApiUrl(`/attendance/stats/${activeEvent.order_id}`), {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -195,7 +196,7 @@ function OrderManagement() {
 
   const handleSaveOrder = async () => {
     try {
-      const res = await fetch("/api/order/", {
+      const res = await fetch(getApiUrl("/order/"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -234,7 +235,7 @@ function OrderManagement() {
         attendance: dietStats.attendance,
         items: filteredOrder
       };
-      const res = await fetch("/api/order/email", {
+      const res = await fetch(getApiUrl("/order/email"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -258,7 +259,7 @@ function OrderManagement() {
   const handleCompleteStep = async (position, status) => {
     if (!activeEvent) return;
     try {
-      const res = await fetch(`/api/eventStep/${activeEvent.order_id}/status`, {
+      const res = await fetch(getApiUrl(`/eventStep/${activeEvent.order_id}/status`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
