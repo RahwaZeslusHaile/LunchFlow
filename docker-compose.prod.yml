@@ -33,6 +33,7 @@ services:
       DB_NAME: ${POSTGRES_DB:-launch}
       DB_SSL: ${DB_SSL:-false}
       JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL:-https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io}
     depends_on:
       db:
         condition: service_healthy
@@ -49,6 +50,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_URL=${VITE_API_URL:-https://cyf-lunch-organizer-backend.hosting.codeyourfuture.io}
     restart: unless-stopped
     depends_on:
       backend:
