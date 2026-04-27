@@ -120,6 +120,12 @@ CREATE TABLE event_steps (
   CONSTRAINT unique_step_position UNIQUE (order_id, step_position)
 );
 
+INSERT INTO event_steps (order_id, step_position, assigned_admin, step_status) VALUES
+  (1, 1, 1, 'pending'),
+  (1, 2, 1, 'pending'),
+  (1, 3, 1, 'pending');
+
+
 -- 10. Invites
 CREATE TABLE invites (
   invite_id  SERIAL PRIMARY KEY,
