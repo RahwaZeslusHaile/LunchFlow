@@ -180,6 +180,14 @@ CREATE TABLE form_submissions (
 );
 
 -- ============================================================
+-- Performance Indexes
+-- ============================================================
+CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(order_date);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_invites_token ON invites(token);
+CREATE INDEX IF NOT EXISTS idx_event_steps_order_id ON event_steps(order_id);
+
+-- ============================================================
 -- Reset ALL sequences so SERIAL columns don't conflict with seed data
 -- ============================================================
 SELECT setval('account_account_id_seq',          COALESCE((SELECT MAX(account_id)    FROM account), 1));

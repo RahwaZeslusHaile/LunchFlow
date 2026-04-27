@@ -51,7 +51,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
-        - VITE_API_URL=${VITE_API_URL:-}
+        - VITE_API_URL=https://cyf-lunch-organizer-backend.hosting.codeyourfuture.io
     restart: unless-stopped
     networks:
       - private
