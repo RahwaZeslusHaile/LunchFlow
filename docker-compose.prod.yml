@@ -54,6 +54,14 @@ services:
       args:
         - VITE_API_URL=https://cyf-lunch-organizer-backend.hosting.codeyourfuture.io
     restart: unless-stopped
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     networks:
       - private
       - public
