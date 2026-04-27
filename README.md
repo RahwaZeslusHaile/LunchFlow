@@ -191,6 +191,8 @@ docker compose up --build
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:4000`
 
+For production containers, the frontend is built once and served by a small Node static server with no nginx layer. API calls should go through `/api`, which is proxied by the deployment layer or resolved by the configured backend URL.
+
 ---
 
 ## 📂 Project Structure
