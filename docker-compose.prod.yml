@@ -45,6 +45,7 @@ services:
       start_period: 30s
     networks:
       - private
+      - public
 
   frontend:
     build:
