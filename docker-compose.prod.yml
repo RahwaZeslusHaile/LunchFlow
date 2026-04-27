@@ -15,8 +15,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-    networks:
-      - private
 
   backend:
     build:
@@ -33,7 +31,10 @@ services:
       DB_NAME: ${POSTGRES_DB:-launch}
       DB_SSL: ${DB_SSL:-false}
       JWT_SECRET: ${JWT_SECRET}
-      FRONTEND_URL: ${FRONTEND_URL:-https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io}
+      FRONTEND_URL: ${FRONTEND_URL}
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
     depends_on:
       db:
         condition: service_healthy
@@ -43,33 +44,21 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-    networks:
-      - private
-      - public
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
-        - VITE_API_URL=https://cyf-lunch-organizer-backend.hosting.codeyourfuture.io
+        # Allows you to set this from Coolify's Environment Variables panel
+        - VITE_API_URL=${VITE_API_URL}
     restart: unless-stopped
-    expose:
-      - "8080"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 15s
-    networks:
-      - private
-      - public
 
 volumes:
   db_data_v6:
-
-networks:
-  private:
-    internal: true
-  public:
