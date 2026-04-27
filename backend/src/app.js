@@ -17,7 +17,7 @@ const app = express();
 const frontendUrl = (process.env.FRONTEND_URL || "https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io").replace(/\/$/, "");
 
 app.use(cors({
-  origin: [frontendUrl, `${frontendUrl}/`],
+  origin: [frontendUrl, `${frontendUrl}/`, "https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io"],
   credentials: true
 }));
 app.use(express.json());
