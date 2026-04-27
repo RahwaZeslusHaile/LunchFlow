@@ -38,6 +38,6 @@ async function testConnection(retries = 5, delay = 5000) {
   return false;
 }
 
-testConnection();
+// testConnection();
 
 export default pool;

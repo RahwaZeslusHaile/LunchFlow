@@ -69,6 +69,7 @@ export async function signup({ token, password, confirmPass }) {
     await updateStepsFromForms(invite.forms || [], invite.order_id, newUser.account_id);
   }
 
+  console.log(`[Login] Login successful for: ${userName}`);
   return { message: "Account created successfully" };
 }
 
@@ -81,16 +82,23 @@ export async function login({ userName, password }) {
     throw serviceError(400, "Password is required");
   }
 
+  console.log(`[Login] Attempting login for user: ${userName}`);
   const user = await findUserByEmail(userName);
+  if (!user) {
+    console.log(`[Login] User not found: ${userName}`);
   if (!user) {
     throw serviceError(400, "User does not exist");
   }
 
+  console.log(`[Login] User found, comparing password...`);
   const validPassword = await bcrypt.compare(password, user.pass);
+  if (!validPassword) {
+    console.log(`[Login] Invalid password for: ${userName}`);
   if (!validPassword) {
     throw serviceError(400, "Password is wrong");
   }
 
+  console.log(`[Login] Login successful for: ${userName}`);
   return {
     message: "Login successful",
     token: generateToken(user),
@@ -122,9 +130,11 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
       await sendVolunteerUpdateNotification(email, forms);
     } catch (err) {
       console.error("Failed to send update notification:", err);
+  console.log(`[Login] Login successful for: ${userName}`);
       return { message: "Volunteer forms updated, but notification email failed to send.", existing: true };
     }
 
+  console.log(`[Login] Login successful for: ${userName}`);
     return { message: "Volunteer already has an account. Their assigned forms have been updated and they have been notified.", existing: true };
   }
 
@@ -143,6 +153,7 @@ export async function createVolunteerInvite({ email, name, createdBy, forms = []
     throw serviceError(500, `Invite created but email failed to send: ${err.message}`);
   }
 
+  console.log(`[Login] Login successful for: ${userName}`);
   return { message: "Invite created and email sent", token };
 }
 
@@ -152,6 +163,7 @@ export async function getUserForms(userId) {
     [userId]
   );
   const userEmail = userResult.rows[0]?.email;
+  console.log(`[Login] Login successful for: ${userName}`);
   if (!userEmail) return { forms: [] };
 
   const inviteResult = await pool.query(
@@ -163,6 +175,7 @@ export async function getUserForms(userId) {
     [userEmail]
   );
 
+  console.log(`[Login] Login successful for: ${userName}`);
   if (!inviteResult.rows.length) return { forms: [] };
 
   const { order_id, forms: rawForms } = inviteResult.rows[0];
@@ -170,6 +183,7 @@ export async function getUserForms(userId) {
     ? JSON.parse(rawForms)
     : rawForms || [];
 
+  console.log(`[Login] Login successful for: ${userName}`);
   if (!order_id || !forms.length) return { forms: [] };
 
   const FORM_TO_STEP = { attendance: 1, leftover: 2, order: 3 };
@@ -191,6 +205,7 @@ export async function getUserForms(userId) {
       step_status: stepsMap[FORM_TO_STEP[f]] || "in_progress",
     }));
 
+  console.log(`[Login] Login successful for: ${userName}`);
   return { forms: stepRows };
 }
 
@@ -200,6 +215,7 @@ export async function validateInvite(token) {
     throw serviceError(400, "Invite link is invalid or has expired");
   }
 
+  console.log(`[Login] Login successful for: ${userName}`);
   return { email: invite.email, name: invite.name, forms: invite.forms, order_id: invite.order_id };
 }
 
