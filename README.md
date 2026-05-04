@@ -318,4 +318,27 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
+## 🔗 Additional Resources
+
+### 🌐 Live Application
+
+[CYF Lunch Organizer](https://your-live-url.com)
+
+---
+
+### 🧪 Demo Access (Admin)
+
+Use the following demo account to explore the application:
+
+**Email:** admin@codeyourfuture.io  
+**Password:** Admin1234!
+
+---
+
+### 📊 Project Presentation
+
+[CYF Lunch Organizer Presentation Slides](https://your-presentation-link.com)
+
+
+
 **Built with ❤️ for the CodeYourFuture community**
