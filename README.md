@@ -322,7 +322,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ### 🌐 Live Application
 
-[CYF Lunch Organizer](https://your-live-url.com)
+[CYF Lunch Organizer](https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io/)
 
 ---
 
