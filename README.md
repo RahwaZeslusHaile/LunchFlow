@@ -337,7 +337,7 @@ Use the following demo account to explore the application:
 
 ### 📊 Project Presentation
 
-[CYF Lunch Organizer Presentation Slides](https://your-presentation-link.com)
+[CYF Lunch Organizer Presentation Slides](https://www.canva.com/design/DAHHagva8KI/zPU5h4DbXA3i370Lp7WT4w/edit)
 
 ---
 
