@@ -318,4 +318,35 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
+## 🔗 Additional Resources
+
+### 🌐 Live Application
+
+[CYF Lunch Organizer](https://cyf-lunch-organizer-frontend.hosting.codeyourfuture.io/)
+
+---
+
+### 🧪 Demo Access (Admin)
+
+Use the following demo account to explore the application:
+
+**Email:** admin@codeyourfuture.io  
+**Password:** Admin1234!
+
+---
+
+### 📊 Project Presentation
+
+[CYF Lunch Organizer Presentation Slides](https://www.canva.com/design/DAHHagva8KI/zPU5h4DbXA3i370Lp7WT4w/edit)
+
+---
+
+### 🎥 Application Walkthrough
+
+A full walkthrough of the application from both **Admin** and **Volunteer** perspectives:
+
+[Watch the walkthrough video](https://drive.google.com/file/d/1zKHHbTuw8ZXzvOJzd277HuVONT4fPdU-/view?usp=drive_link)
+
+
+
 **Built with ❤️ for the CodeYourFuture community**
