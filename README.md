@@ -339,6 +339,14 @@ Use the following demo account to explore the application:
 
 [CYF Lunch Organizer Presentation Slides](https://your-presentation-link.com)
 
+---
+
+### 🎥 Application Walkthrough
+
+A full walkthrough of the application from both **Admin** and **Volunteer** perspectives:
+
+[Watch the walkthrough video](https://drive.google.com/file/d/1zKHHbTuw8ZXzvOJzd277HuVONT4fPdU-/view?usp=drive_link)
+
 
 
 **Built with ❤️ for the CodeYourFuture community**
