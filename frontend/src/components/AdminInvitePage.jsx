@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import getApiUrl from "../api";
 import {
   LayoutDashboard,
   Bell,
@@ -61,7 +62,7 @@ useEffect(() => {
   if (activeTab === "InviteVolunteers" && activeEventDate) {
     const token = localStorage.getItem("token");
 
-    fetch(`/api/order?date=${activeEventDate}`, {
+    fetch(getApiUrl(`/order?date=${activeEventDate}`), {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -87,7 +88,7 @@ useEffect(() => {
     try {
       setLoadingHistory(true);
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/auth/invite/all", {
+      const res = await fetch(getApiUrl("/auth/invite/all"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -131,7 +132,7 @@ useEffect(() => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/auth/invite", {
+      const response = await fetch(getApiUrl("/auth/invite"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

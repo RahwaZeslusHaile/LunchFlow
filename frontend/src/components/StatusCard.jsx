@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import getApiUrl from "../api";
 
 function StatusCard({ eventId, date }) {
   const steps = ["Start", "1", "2", "3", "Complete"];
@@ -10,7 +11,7 @@ function StatusCard({ eventId, date }) {
 
     const fetchSteps = async () => {
       try {
-        const res = await fetch(`/api/eventStep/${eventId}`);
+        const res = await fetch(getApiUrl(`/eventStep/${eventId}`));
         if (!res.ok) return;
 
         const data = await res.json();
