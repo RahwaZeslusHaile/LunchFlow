@@ -62,8 +62,7 @@ export async function updateOrderWithItems(order_id, attendance, items, userId, 
       );
     }
 
-    await updateSingleStep(order_id, 3, "done", userId);
-
+   
     await recordSubmission(userId, email, "order", { order_id, attendance, items }, order_id);
 
     await client.query("COMMIT");
