@@ -17,9 +17,11 @@ function VolunteerRequestPage() {
       setLoading(false);
       return;
     }
-    fetch(`/api/auth/invite/validate/${token}`)
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => {
+    fetch(
+      `https://cyf-lunch-organizer-backend.trainees.hosting.cyf.academy/api/auth/invite/validate/${token}`
+    )
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => {
         setForms(data.forms || []);
         if (data.order_id) setOrderId(data.order_id);
         setLoading(false);
