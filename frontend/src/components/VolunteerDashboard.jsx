@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import getApiUrl from "../api";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -60,7 +61,7 @@ function VolunteerDashboard() {
     }
 
     const token = localStorage.getItem("token");
-    fetch("/api/auth/me/forms", {
+    fetch(getApiUrl("/auth/me/forms"), {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))

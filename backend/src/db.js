@@ -16,7 +16,7 @@ const pool = new Pool({
   ssl: useSsl ? { rejectUnauthorized: false }
      : false,
   max: 20,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 30000,
 });
 
@@ -38,6 +38,6 @@ async function testConnection(retries = 5, delay = 5000) {
   return false;
 }
 
-testConnection();
+// testConnection();
 
 export default pool;

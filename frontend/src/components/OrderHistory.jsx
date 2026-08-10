@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import getApiUrl from "../api";
 
 function OrderHistory({ refreshKey }) {
   const [orders, setOrders] = useState([]);
@@ -16,7 +17,7 @@ function OrderHistory({ refreshKey }) {
     setDeleting(true);
     setDeleteError(null);
     try {
-      const res = await fetch(`/api/order/event/${orderId}`, { method: "DELETE" });
+      const res = await fetch(getApiUrl(`/order/event/${orderId}`), { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete event");
       setSelectedOrder(null);
       setOrders(orders => orders.filter(o => o.order_id !== orderId));
@@ -31,7 +32,7 @@ function OrderHistory({ refreshKey }) {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/order/latest?page=${currentPage}&limit=${limit}`);
+        const res = await fetch(getApiUrl(`/order/latest?page=${currentPage}&limit=${limit}`));
         const data = await res.json();
       
         setOrders(data.orders || []);

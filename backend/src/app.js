@@ -14,7 +14,12 @@ import orderHistoryRouter from "./routes/orderHistory.js";
 
 const app = express();
 
-app.use(cors());
+const frontendUrl = (process.env.FRONTEND_URL || "https://cyf-lunch-organizer-frontend.trainees.hosting.cyf.academy").replace(/\/$/, "");
+
+app.use(cors({
+  origin: [frontendUrl, `${frontendUrl}/`, "https://cyf-lunch-organizer-frontend.trainees.hosting.cyf.academy"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => {

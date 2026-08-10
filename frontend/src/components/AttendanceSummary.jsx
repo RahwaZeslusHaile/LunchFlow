@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import getApiUrl from "../api";
 
 function AttendanceSummary({ order_id }) {
   const [category, setCategory] = useState("");
@@ -16,7 +17,7 @@ function AttendanceSummary({ order_id }) {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await fetch("/api/classes");
+        const res = await fetch(getApiUrl("/classes"));
         const data = await res.json();
         setClasses(data.length ? data : []);
       } catch {
@@ -77,7 +78,7 @@ function AttendanceSummary({ order_id }) {
         const classObj = classes.find(c => c.name === item.category);
         if (!classObj) continue;
 
-        await fetch("/api/attendance", {
+        await fetch(getApiUrl("/attendance"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
