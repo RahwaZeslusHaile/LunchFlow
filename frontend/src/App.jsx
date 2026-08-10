@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import LandingPage from "./LandingPage";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
 import AdminInvitePage from "./components/AdminInvitePage";
@@ -16,7 +15,6 @@ function App() {
       <Route path="/admin" element={<AdminInvitePage />} />
       <Route path="/volunteer" element={<VolunteerDashboard />} />
       <Route path="/volunteer/attendance" element={<VolunteerAttendanceRequestPage />} />
-
     </Routes>
   );
 }

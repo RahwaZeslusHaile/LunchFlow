@@ -12,11 +12,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-launch}"]
       interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    networks:
-      - private
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   backend:
     build:
@@ -33,38 +31,34 @@ services:
       DB_NAME: ${POSTGRES_DB:-launch}
       DB_SSL: ${DB_SSL:-false}
       JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
-      interval: 20s
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:4000/api/health"]
+      interval: 15s
       timeout: 10s
       retries: 5
-      start_period: 120s
-    networks:
-      - private
+      start_period: 60s
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+        # Allows you to set this from Coolify's Environment Variables panel
+        - VITE_API_URL=${VITE_API_URL}
     restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_started
-    tmpfs:
-      - /var/cache/nginx
-      - /var/run
-      - /tmp
-    networks:
-      - private
-      - public
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
 volumes:
   db_data_v6:
-
-networks:
-  private:
-    internal: true
-  public:
