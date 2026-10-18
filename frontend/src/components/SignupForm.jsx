@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import getApiUrl from "../api";
 
 function SignupForm() {
   const [password, setPassword] = useState("");
@@ -17,7 +18,7 @@ function SignupForm() {
       setTokenValid(false);
       return;
     }
-    fetch(`/api/auth/invite/validate/${token}`)
+    fetch(getApiUrl(`/auth/invite/validate/${token}`))
       .then((res) => {
         if (!res.ok) throw new Error("invalid");
         return res.json();
@@ -38,7 +39,7 @@ function SignupForm() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch(getApiUrl("/auth/signup"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password, confirmPass }),
@@ -51,7 +52,7 @@ function SignupForm() {
         return;
       }
 
-      navigate("/login");
+      navigate("/login?new=true&role=volunteer");
     } catch (err) {
       console.error("Server-side or Network error:", err);
       setError("Server error, please try again");
@@ -79,7 +80,7 @@ function SignupForm() {
               : "Direct signup is disabled. Ask an admin to generate and share your invite link."}
           </p>
           <Link to="/" className="text-teal-600 hover:underline text-sm font-medium">
-            Back to home
+            Back to login
           </Link>
         </div>
       </main>

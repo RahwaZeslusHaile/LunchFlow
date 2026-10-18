@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import getApiUrl from "../api";
 
 function CreateMenu() {
 
@@ -21,9 +22,9 @@ function CreateMenu() {
 
       try {
         const [catRes, dietRes, menuRes] = await Promise.all([
-          fetch("/api/menu/categories"),
-          fetch("/api/menu/dietary-restrictions"),
-          fetch("/api/menu/menu-items"),
+          fetch(getApiUrl("/menu/categories")),
+          fetch(getApiUrl("/menu/dietary-restrictions")),
+          fetch(getApiUrl("/menu/menu-items")),
         ]);
 
         if (!catRes.ok) {
@@ -79,7 +80,7 @@ function CreateMenu() {
 
  
     try {
-      const res = await fetch("/api/menu/menu-items", {
+      const res = await fetch(getApiUrl("/menu/menu-items"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -143,7 +144,7 @@ function CreateMenu() {
 
     
       try {
-        const res = await fetch(`/api/menu/menu-items/${id}`, { method: "DELETE" });
+        const res = await fetch(getApiUrl(`/menu/menu-items/${id}`), { method: "DELETE" });
 
         if (!res.ok) throw new Error();
 
